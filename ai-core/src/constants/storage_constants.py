@@ -54,3 +54,18 @@ class FileSize:
     MB = 1024 * KB
 
     GB = 1024 * MB
+
+class StorageTypes:
+    """
+    Supported storage providers.
+    """
+
+    LOCAL = "local"
+
+    S3 = "s3"
+
+    AZURE = "azure"
+
+    GCS = "gcs"
+
+    MINIO = "minio"

@@ -2,6 +2,7 @@ from .storage_constants import (
     StorageDirectory,
     FileExtension,
     FileSize,
+    storage_types,
 )
 
 
