@@ -2,3 +2,4 @@
 .env
 .env.*
 !.env.example
+git rm --cached ai-customer-agent/backend/credentials/service-account.json

@@ -1,0 +1,9 @@
+{
+    "framework": "AI Engineering Framework",
+    "version": "0.1.0",
+    "modules": [
+        "storage",
+        "base",
+        "utils"
+    ]
+}
