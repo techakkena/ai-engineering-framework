@@ -17,7 +17,7 @@ class FrameworkException(Exception):
     def __init__(
         self,
         message: str,
-        error_code: str = "UNKNOWN",
+        error_code: str = "BASE001",
         status_code: int = 500,
         module: str = "Framework",
         details: Any = None,

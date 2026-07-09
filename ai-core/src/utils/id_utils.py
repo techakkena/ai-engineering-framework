@@ -8,7 +8,6 @@ Author : TECHAKKENA
 from uuid import uuid4
 import secrets
 
-class IDUtils:
 
 def generate_uuid() -> str:
     """
@@ -29,4 +28,3 @@ def generate_short_id(length: int = 8) -> str:
     Generate a short random identifier.
     """
     return secrets.token_hex(length // 2)
-

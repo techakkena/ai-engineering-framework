@@ -10,7 +10,7 @@ class ErrorCode(str, Enum):
     AUTHORIZATION_ERROR = "AUTHZ001"
 
     DATABASE_ERROR = "DB001"
-
+ 
     AI_ERROR = "AI001"
 
     INTEGRATION_ERROR = "INT001"

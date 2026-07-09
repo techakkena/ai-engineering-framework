@@ -26,4 +26,4 @@ class SortOrder:
 
 class DatabaseStatus:
     CONNECTED = "CONNECTED"
-    DISCONNECTED = "DISCONNECTED"
+    DISCONNECTED = "DISCONNECTED" 

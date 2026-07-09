@@ -28,4 +28,4 @@ class IntegrationException(FrameworkException):
             status_code=502,
             module="Integration",
             details=details,
-        )
+        ) 

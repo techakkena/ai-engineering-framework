@@ -1,4 +1,5 @@
 from pathlib import Path
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from .paths import FRAMEWORK_ROOT
 # --------------------------------------------------
@@ -33,9 +34,17 @@ class Settings(BaseSettings):
 
     DEFAULT_EMBEDDING_MODEL: str = "text-embedding-3-small"
 
+    OPENAI_API_KEY: str = Field(
+    default="",
+    description="OpenAI API Key",
+    )
+
+    OPENAI_MODEL: str = Field(
+        default="gpt-5.5",
+        description="Default OpenAI Chat Model",
+    )
     TEMPERATURE: float = 0.2
     MAX_TOKENS: int = 4096
-
     # ==================================================
 # Storage
 # ==================================================
@@ -60,7 +69,7 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: str = "INFO"
 
-    LOG_FILE: Path = STORAGE_ROOT / StorageDirectory.LOGS / "framework.log"
+#LOG_FILE: Path = STORAGE_ROOT / StorageDirectory.LOGS / "framework.log"
 # ==================================================
 # Security
 # ==================================================    

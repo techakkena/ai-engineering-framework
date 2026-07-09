@@ -17,7 +17,7 @@ class StorageProvider(ABC):
     object storage, vector storage, etc.) should
     implement this interface.
     """
-
+ 
     @abstractmethod
     def save(
         self,

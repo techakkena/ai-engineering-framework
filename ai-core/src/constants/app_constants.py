@@ -55,6 +55,8 @@ class ContentType:
 
     TEXT = "text/plain"
 
+    XML = "application/xml"
+
 
 class LogLevel(str, Enum):
 
