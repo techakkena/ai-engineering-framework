@@ -1,49 +1,16 @@
-[build-system]
-requires = ["setuptools>=69.0", "wheel"]
-build-backend = "setuptools.build_meta"
+[tool.black]
+line-length = 88
+target-version = ["py314"]
 
-[project]
-name = "ai-core"
-version = "0.1.0"
-description = "Reusable AI Engineering Framework Core"
-readme = "README.md"
-requires-python = ">=3.11"
-license = { text = "MIT" }
-
-authors = [
-    { name = "TECHAKKENA" }
-]
-
-keywords = [
-    "ai",
-    "framework",
-    "openai",
-    "llm",
-    "rag",
-    "agents"
-]
-
-dependencies = [
-    "openai",
-    "pydantic",
-    "pydantic-settings",
-    "python-dotenv",
-    "httpx"
-]
-
-[tool.setuptools]
-package-dir = { "" = "src" }
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.pytest.ini_options]
-pythonpath = ["src"]
-testpaths = ["tests"]
+[tool.ruff]
+line-length = 88
+target-version = "py314"
 
 [tool.mypy]
 python_version = "3.14"
+
 ignore_missing_imports = true
+
 exclude = [
     "^examples/",
 ]

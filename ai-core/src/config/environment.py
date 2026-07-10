@@ -40,7 +40,10 @@ class EnvironmentManager:
 
         if sys.version_info < minimum_version:
             raise RuntimeError(
-                f"Python {minimum_version[0]}.{minimum_version[1]} or higher is required."
+                (
+                    f"Python {minimum_version[0]}."
+                    f"{minimum_version[1]} or higher is required."
+                )
             )
 
         print(f"Python Version : {sys.version.split()[0]}")
