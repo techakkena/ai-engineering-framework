@@ -42,9 +42,7 @@ class LogFormat:
 
     SIMPLE = "%(levelname)s | %(message)s"
 
-    STANDARD = (
-        "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-    )
+    STANDARD = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 
     DETAILED = (
         "%(asctime)s | %(levelname)-8s | %(name)s | "
@@ -57,7 +55,7 @@ class Rotation:
     Log rotation defaults.
     """
 
-    MAX_FILE_SIZE = 10 * 1024 * 1024      # 10 MB
+    MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
     BACKUP_COUNT = 5
 

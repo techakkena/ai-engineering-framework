@@ -1,6 +1,7 @@
 from exceptions.authentication_exception import AuthenticationException
 from exceptions.error_codes import ErrorCode
 
+
 def test_authentication_exception():
     message = "Invalid username or password."
     details = {"username": "admin", "reason": "Invalid credentials"}

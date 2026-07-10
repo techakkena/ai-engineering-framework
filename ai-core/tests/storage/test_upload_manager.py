@@ -1,5 +1,6 @@
 from storage.upload_manager import UploadManager
 
+
 def test_upload_manager_upload_delete_exists():
     upload_manager = UploadManager()
 

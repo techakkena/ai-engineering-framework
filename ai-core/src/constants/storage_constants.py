@@ -55,6 +55,7 @@ class FileSize:
 
     GB = 1024 * MB
 
+
 class StorageTypes:
     """
     Supported storage providers.

@@ -1,10 +1,10 @@
 from constants.auth_constants import (
+    JWT,
     AuthProvider,
     AuthScheme,
-    TokenType,
-    JWT,
-    UserRole,
     Permission,
+    TokenType,
+    UserRole,
 )
 
 
@@ -48,4 +48,3 @@ def test_permission():
     assert Permission.UPDATE == "update"
     assert Permission.DELETE == "delete"
     assert Permission.EXECUTE == "execute"
-

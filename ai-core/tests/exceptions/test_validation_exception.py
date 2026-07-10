@@ -1,5 +1,6 @@
-from exceptions.validation_exception import ValidationException
 from exceptions.error_codes import ErrorCode
+from exceptions.validation_exception import ValidationException
+
 
 def test_validation_exception():
     message = "Validation failed."

@@ -48,7 +48,4 @@ class FrameworkException(Exception):
 
     def __str__(self) -> str:
 
-        return (
-            f"[{self.error_code}] "
-            f"{self.message}"
-        )
+        return f"[{self.error_code}] {self.message}"

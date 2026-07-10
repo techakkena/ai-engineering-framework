@@ -1,22 +1,17 @@
 """
-OpenAI provider implementation.
+AI Engineering Framework
+OpenAI Provider
 
-This module adapts the OpenAI SDK to the ai-core
-provider interface.
+Author : TECHAKKENA
 """
 
-from __future__ import annotations
+from openai import OpenAI
 
-from collections.abc import AsyncIterator
-
-from openai import AsyncOpenAI
-
-from .base_provider import BaseProvider
-from .types import (
-    ChatRequest,
-    ChatResponse,
-    EmbeddingResponse,
-    HealthResponse,
+from ai.providers.base_provider import BaseProvider
+from ai.providers.types import (
+    ProviderConfig,
+    ProviderMessage,
+    ProviderResponse,
 )
 
 
@@ -27,93 +22,68 @@ class OpenAIProvider(BaseProvider):
 
     def __init__(
         self,
-        api_key: str,
-        timeout: float = 60.0,
+        config: ProviderConfig,
     ):
-       self.client: AsyncOpenAI = AsyncOpenAI(
-        api_key=api_key,
-        timeout=timeout,
-    )
+        super().__init__(config)
 
-    async def chat(
+        self.client: OpenAI | None = None
+
+    def connect(
         self,
-        request: ChatRequest,
-    ) -> ChatResponse:
+    ) -> None:
+        """
+        Initialize OpenAI client.
+        """
 
-        response = await self.client.chat.completions.create(
-            model=request.model,
-            messages=[
-                {
-                    "role": m.role,
-                    "content": m.content,
-                }
-                for m in request.messages
-            ],
-            temperature=request.temperature,
-            max_tokens=request.max_tokens,
+        self.client = OpenAI(
+            api_key=self.config.api_key,
         )
 
-        return ChatResponse(
-            content=response.choices[0].message.content or "",
-            model=response.model,
-            usage=response.usage.model_dump(),
-            raw=response,
-        )
-
-    async def stream(
+    def chat(
         self,
-        request: ChatRequest,
-    ) -> AsyncIterator[str]:
+        messages: list[ProviderMessage],
+    ) -> ProviderResponse:
+        """
+        Generate chat completion.
+        """
 
-        stream = await self.client.chat.completions.create(
-            model=request.model,
-            messages=[
-                {
-                    "role": m.role,
-                    "content": m.content,
-                }
-                for m in request.messages
-            ],
-            stream=True,
-        )
+        raise NotImplementedError("Chat not implemented yet.")
 
-        async for chunk in stream:
-            delta = chunk.choices[0].delta.content
-
-            if delta:
-                yield delta
-
-    async def embeddings(
+    def embeddings(
         self,
         text: str,
-    ) -> EmbeddingResponse:
+    ):
+        """
+        Generate embeddings.
+        """
 
-        response = await self.client.embeddings.create(
-            model="text-embedding-3-small",
-            input=text,
-        )
+        raise NotImplementedError("Embeddings not implemented yet.")
 
-        embedding = response.data[0].embedding
-
-        return EmbeddingResponse(
-            embedding=embedding,
-            model=response.model,
-            dimensions=len(embedding),
-        )
-
-    async def health(
+    def image(
         self,
-    ) -> HealthResponse:
+        prompt: str,
+    ):
+        """
+        Generate image.
+        """
 
-        return HealthResponse(
-            provider="openai",
-            status="healthy",
-            latency_ms=0.0,
-        )
+        raise NotImplementedError("Image generation not implemented yet.")
 
-    async def close(self) -> None:
-        await self.client.close()
+    def speech(
+        self,
+        text: str,
+    ):
+        """
+        Generate speech.
+        """
 
-        __all__ = [
-        "OpenAIProvider",
-    ]
+        raise NotImplementedError("Speech generation not implemented yet.")
+
+    def close(
+        self,
+    ) -> None:
+        """
+        Release provider resources.
+        """
+
+        self.client = None

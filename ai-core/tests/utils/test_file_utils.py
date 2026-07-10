@@ -12,6 +12,7 @@ def test_read_text(tmp_path: Path):
 
     assert content == test_content
 
+
 def test_write_text(tmp_path: Path):
     test_file = tmp_path / "test.txt"
     test_content = "Hello, World!"
@@ -19,6 +20,7 @@ def test_write_text(tmp_path: Path):
     FileUtils.write_text(test_file, test_content)
 
     assert test_file.read_text() == test_content
+
 
 def test_copy(tmp_path: Path):
     source_file = tmp_path / "source.txt"
@@ -29,6 +31,7 @@ def test_copy(tmp_path: Path):
     FileUtils.copy(source_file, destination_file)
 
     assert destination_file.read_text() == test_content
+
 
 def test_move(tmp_path: Path):
     source_file = tmp_path / "source.txt"
@@ -41,6 +44,7 @@ def test_move(tmp_path: Path):
     assert destination_file.read_text() == test_content
     assert not source_file.exists()
 
+
 def test_rename():
     source_file = Path("source.txt")
     destination_file = Path("destination.txt")
@@ -52,6 +56,7 @@ def test_rename():
     assert destination_file.read_text() == test_content
     assert not source_file.exists()
 
+
 def test_size():
     test_file = Path("test.txt")
     test_content = "Hello, World!"
@@ -60,6 +65,7 @@ def test_size():
     size = FileUtils.size(test_file)
 
     assert size == len(test_content)
+
 
 def test_delete():
     test_file = Path("test.txt")

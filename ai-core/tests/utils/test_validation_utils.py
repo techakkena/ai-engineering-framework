@@ -30,13 +30,9 @@ def test_is_url():
 
 
 def test_is_uuid():
-    assert ValidationUtils.is_uuid(
-        "550e8400-e29b-41d4-a716-446655440000"
-    ) is True
+    assert ValidationUtils.is_uuid("550e8400-e29b-41d4-a716-446655440000") is True
 
-    assert ValidationUtils.is_uuid(
-        "invalid-uuid"
-    ) is False
+    assert ValidationUtils.is_uuid("invalid-uuid") is False
 
 
 def test_is_json():
@@ -67,20 +63,29 @@ def test_is_filename():
 
 
 def test_has_extension():
-    assert ValidationUtils.has_extension(
-        "sample.pdf",
-        ".pdf",
-        ".docx",
-    ) is True
+    assert (
+        ValidationUtils.has_extension(
+            "sample.pdf",
+            ".pdf",
+            ".docx",
+        )
+        is True
+    )
 
-    assert ValidationUtils.has_extension(
-        "image.png",
-        ".jpg",
-        ".png",
-    ) is True
+    assert (
+        ValidationUtils.has_extension(
+            "image.png",
+            ".jpg",
+            ".png",
+        )
+        is True
+    )
 
-    assert ValidationUtils.has_extension(
-        "archive.zip",
-        ".pdf",
-        ".docx",
-    ) is False
+    assert (
+        ValidationUtils.has_extension(
+            "archive.zip",
+            ".pdf",
+            ".docx",
+        )
+        is False
+    )

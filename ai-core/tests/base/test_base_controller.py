@@ -2,13 +2,8 @@ from base.base_controller import BaseController
 
 
 class DemoController(BaseController):
-
     def execute(self):
-        return self.success(
-            data={
-                "framework": "AI Engineering Framework"
-            }
-        )
+        return self.success(data={"framework": "AI Engineering Framework"})
 
 
 def test_demo_controller_creation():

@@ -1,5 +1,6 @@
-from exceptions.integration_exception import IntegrationException
 from exceptions.error_codes import ErrorCode
+from exceptions.integration_exception import IntegrationException
+
 
 def test_integration_exception():
     message = "Integration error occurred."

@@ -6,8 +6,9 @@ Author : TECHAKKENA
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
 from dataclasses import dataclass
+from typing import Any, Dict, List
+
 
 class VectorStorage(ABC):
     """
@@ -73,6 +74,7 @@ class VectorStorage(ABC):
         Load vector index.
         """
         pass
+
 
 @dataclass
 class VectorRecord:

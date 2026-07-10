@@ -1,6 +1,8 @@
+import pytest
+
 from base.base_component import BaseComponent
 from base.base_manager import BaseManager
-import pytest
+
 
 class DemoComponent(BaseComponent):
     pass
@@ -16,13 +18,13 @@ class DemoManager(BaseManager):
             description="Testing BaseManager",
         )
 
-
     @pytest.fixture
     def components():
         return [
             DemoComponent("Chat"),
             DemoComponent("RAG"),
         ]
+
 
 def test_register_components():
     manager = DemoManager(

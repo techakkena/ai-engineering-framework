@@ -1,58 +1,64 @@
-from dataclasses import dataclass, field
-from typing import Any
+"""
+AI Engineering Framework
+Provider Types
+
+Author : TECHAKKENA
+"""
+
+from pydantic import BaseModel, Field
 
 
-@dataclass(slots=True)
-class ChatMessage:
+class ProviderConfig(BaseModel):
     """
-    Represents a single chat message.
+    Provider configuration.
+    """
+
+    api_key: str | None = None
+
+    model: str
+
+    temperature: float = 0.2
+
+    max_tokens: int = 4096
+
+    timeout: int = 60
+
+    stream: bool = False
+
+
+class ProviderMessage(BaseModel):
+    """
+    Provider message.
     """
 
     role: str
-    content: str
-
-
-@dataclass(slots=True)
-class ChatRequest:
-    """
-    Standard chat request for all providers.
-    """
-
-    messages: list[ChatMessage]
-    model: str
-    temperature: float = 0.7
-    max_tokens: int | None = None
-
-
-@dataclass(slots=True)
-class ChatResponse:
-    """
-    Standard chat response.
-    """
 
     content: str
+
+
+class ProviderUsage(BaseModel):
+    """
+    Token usage information.
+    """
+
+    prompt_tokens: int = 0
+
+    completion_tokens: int = 0
+
+    total_tokens: int = 0
+
+
+class ProviderResponse(BaseModel):
+    """
+    Provider response.
+    """
+
+    content: str
+
     model: str
-    usage: dict[str, Any] = field(default_factory=dict)
-    raw: Any = None
 
+    finish_reason: str = "stop"
 
-@dataclass(slots=True)
-class EmbeddingResponse:
-    """
-    Standard embedding response.
-    """
-
-    embedding: list[float]
-    model: str
-    dimensions: int
-
-
-@dataclass(slots=True)
-class HealthResponse:
-    """
-    Health check result.
-    """
-
-    provider: str
-    status: str
-    latency_ms: float
+    usage: ProviderUsage = Field(
+        default_factory=ProviderUsage,
+    )

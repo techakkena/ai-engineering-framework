@@ -1,5 +1,6 @@
-from exceptions.network_exception import NetworkException
 from exceptions.error_codes import ErrorCode
+from exceptions.network_exception import NetworkException
+
 
 def test_network_exception():
     message = "Network error occurred."

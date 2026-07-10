@@ -1,66 +1,78 @@
-from __future__ import annotations
+"""
+AI Engineering Framework
+Base Provider
+
+Author : TECHAKKENA
+"""
 
 from abc import ABC, abstractmethod
-from collections.abc import AsyncIterator
 
-from .types import (
-    ChatRequest,
-    ChatResponse,
-    EmbeddingResponse,
-    HealthResponse,
+from ai.providers.types import (
+    ProviderConfig,
+    ProviderMessage,
+    ProviderResponse,
 )
 
 
 class BaseProvider(ABC):
     """
-    Abstract base class for AI providers.
-
-    All provider implementations must inherit from this class
-    and implement the required methods.
+    Base class for all AI providers.
     """
 
-    @abstractmethod
-    async def chat(
+    def __init__(
         self,
-        request: ChatRequest,
-    ) -> ChatResponse:
-        """
-        Execute a chat completion request.
-        """
-        raise NotImplementedError
+        config: ProviderConfig,
+    ):
+        self.config = config
 
     @abstractmethod
-    async def stream(
+    def connect(
         self,
-        request: ChatRequest,
-    ) -> AsyncIterator[str]:
+    ) -> None:
         """
-        Stream chat completion tokens.
+        Initialize provider.
         """
-        raise NotImplementedError
 
     @abstractmethod
-    async def embeddings(
+    def chat(
+        self,
+        messages: list[ProviderMessage],
+    ) -> ProviderResponse:
+        """
+        Generate chat completion.
+        """
+
+    @abstractmethod
+    def embeddings(
         self,
         text: str,
-    ) -> EmbeddingResponse:
+    ):
         """
         Generate embeddings.
         """
-        raise NotImplementedError
 
     @abstractmethod
-    async def health(
+    def image(
         self,
-    ) -> HealthResponse:
+        prompt: str,
+    ):
         """
-        Check provider health.
+        Generate image.
         """
-        raise NotImplementedError
 
     @abstractmethod
-    async def close(self) -> None:
+    def speech(
+        self,
+        text: str,
+    ):
+        """
+        Generate speech.
+        """
+
+    @abstractmethod
+    def close(
+        self,
+    ) -> None:
         """
         Close provider resources.
         """
-        raise NotImplementedError

@@ -16,4 +16,3 @@ def test_storage_provider_is_abstract():
     """
     with pytest.raises(TypeError):
         StorageProvider()
-

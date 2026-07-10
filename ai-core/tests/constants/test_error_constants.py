@@ -1,4 +1,4 @@
-from constants.error_constants import ErrorMessage, ErrorCategory
+from constants.error_constants import ErrorCategory, ErrorMessage
 
 
 def test_error_messages():
@@ -16,6 +16,3 @@ def test_error_categories():
     assert ErrorCategory.DATABASE == "database"
     assert ErrorCategory.NETWORK == "network"
     assert ErrorCategory.AI == "ai"
-
-
-    

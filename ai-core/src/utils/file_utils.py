@@ -100,7 +100,6 @@ class FileUtils:
     ) -> bool:
 
         if file_path.exists():
-
             file_path.unlink()
 
             return True

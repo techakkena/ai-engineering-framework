@@ -20,5 +20,3 @@ class ComponentStatus:
     STOPPED = "stopped"
 
     FAILED = "failed"
-
-    

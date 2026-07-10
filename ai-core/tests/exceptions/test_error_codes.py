@@ -1,5 +1,6 @@
 from exceptions.error_codes import ErrorCode
 
+
 def test_error_codes():
     assert ErrorCode.VALIDATION_ERROR.value == "VAL001"
     assert ErrorCode.AUTHENTICATION_ERROR.value == "AUTH001"

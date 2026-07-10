@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Union
 
+
 class StorageProvider(ABC):
     """
     Abstract base class for all storage providers.
@@ -17,7 +18,7 @@ class StorageProvider(ABC):
     object storage, vector storage, etc.) should
     implement this interface.
     """
- 
+
     @abstractmethod
     def save(
         self,

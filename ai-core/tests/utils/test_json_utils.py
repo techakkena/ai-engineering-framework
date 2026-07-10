@@ -2,6 +2,7 @@ from pathlib import Path
 
 from utils.json_utils import JsonUtils
 
+
 def test_dumps():
     data = {"name": "John", "age": 30}
     json_str = JsonUtils.dumps(data)
@@ -9,12 +10,14 @@ def test_dumps():
     assert '"name": "John"' in json_str
     assert '"age": 30' in json_str
 
+
 def test_loads():
     json_str = '{"name": "John", "age": 30}'
     data = JsonUtils.loads(json_str)
     assert isinstance(data, dict)
     assert data["name"] == "John"
     assert data["age"] == 30
+
 
 def test_write():
     data = {"name": "John", "age": 30}
@@ -25,6 +28,7 @@ def test_write():
     assert read_data == data
     file_path.unlink()  # Clean up
 
+
 def test_read():
     data = {"name": "John", "age": 30}
     file_path = Path("test.json")
@@ -32,6 +36,7 @@ def test_read():
     read_data = JsonUtils.read(file_path)
     assert read_data == data
     file_path.unlink()  # Clean up
+
 
 def test_pretty_print():
     data = {"name": "John", "age": 30}

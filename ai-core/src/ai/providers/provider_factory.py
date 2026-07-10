@@ -1,39 +1,31 @@
-from __future__ import annotations
+"""
+AI Engineering Framework
+Provider Factory
 
-from typing import Type
+Author : TECHAKKENA
+"""
 
-from .base_provider import BaseProvider
+from ai.providers.openai_provider import OpenAIProvider
+from ai.providers.types import ProviderConfig
 
 
 class ProviderFactory:
     """
-    Factory for registering and creating AI providers.
+    Factory for creating AI providers.
     """
 
-    _providers: dict[str, Type[BaseProvider]] = {}
-
-    @classmethod
-    def register(
-        cls,
-        name: str,
-        provider: Type[BaseProvider],
-    ) -> None:
-        """
-        Register a provider implementation.
-        """
-        cls._providers[name.lower()] = provider
-
-    @classmethod
+    @staticmethod
     def create(
-        cls,
-        name: str,
-    ) -> BaseProvider:
+        provider: str,
+        config: ProviderConfig,
+    ):
         """
         Create a provider instance.
         """
-        provider = cls._providers.get(name.lower())
 
-        if provider is None:
-            raise ValueError(f"Unknown provider: {name}")
+        provider = provider.lower()
 
-        return provider()
+        if provider == "openai":
+            return OpenAIProvider(config)
+
+        raise ValueError(f"Unsupported provider: {provider}")

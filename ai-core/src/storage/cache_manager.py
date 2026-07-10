@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from config.settings import settings
+
 from .storage_manager import StorageManager
 
 
@@ -63,7 +64,6 @@ class CacheManager:
         file_path = self._cache_file(key)
 
         if not self.storage.exists(file_path):
-
             return None
 
         data = self.storage.load(file_path)
@@ -75,25 +75,19 @@ class CacheManager:
         key: str,
     ) -> bool:
 
-        return self.storage.exists(
-            self._cache_file(key)
-        )
+        return self.storage.exists(self._cache_file(key))
 
     def delete(
         self,
         key: str,
     ) -> bool:
 
-        return self.storage.delete(
-            self._cache_file(key)
-        )
+        return self.storage.delete(self._cache_file(key))
 
     def clear(self):
         """
         Remove all cache files.
         """
 
-        for file in self.storage.list_files(
-            self.cache_dir
-        ):
+        for file in self.storage.list_files(self.cache_dir):
             self.storage.delete(file)

@@ -7,12 +7,12 @@ Author : TECHAKKENA
 
 from abc import ABC, abstractmethod
 
-from .base_component import BaseComponent
-from constants.ai_constants import AIProvider, ChatModels
 from config.settings import settings
 
-class BaseAgent(BaseComponent, ABC):
+from .base_component import BaseComponent
 
+
+class BaseAgent(BaseComponent, ABC):
     def __init__(
         self,
         name: str,

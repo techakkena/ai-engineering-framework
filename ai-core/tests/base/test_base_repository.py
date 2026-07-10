@@ -2,7 +2,6 @@ from base.base_repository import BaseRepository
 
 
 class DemoRepository(BaseRepository):
-
     def __init__(self):
         super().__init__(
             name="Demo Repository",

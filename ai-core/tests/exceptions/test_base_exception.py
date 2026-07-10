@@ -1,5 +1,5 @@
 from exceptions.base_exception import FrameworkException
-from exceptions.error_codes import ErrorCode
+
 
 def test_framework_exception():
     message = "An unexpected error occurred."
@@ -12,6 +12,7 @@ def test_framework_exception():
     assert exception.status_code == 500
     assert exception.module == "Framework"
     assert exception.details == details
+
 
 def test_framework_exception_to_dict():
     message = "An unexpected error occurred."
@@ -26,6 +27,7 @@ def test_framework_exception_to_dict():
     assert exception_dict["module"] == "Framework"
     assert exception_dict["details"] == details
     assert "timestamp" in exception_dict
+
 
 def test_framework_exception_str():
     message = "An unexpected error occurred."

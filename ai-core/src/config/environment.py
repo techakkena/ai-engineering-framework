@@ -9,11 +9,9 @@ Module: ai-core
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
-
+from .logging_config import LoggingManager
 from .settings import settings
 
-from .logging_config import LoggingManager
 
 class EnvironmentManager:
     """
@@ -45,9 +43,7 @@ class EnvironmentManager:
                 f"Python {minimum_version[0]}.{minimum_version[1]} or higher is required."
             )
 
-        print(
-            f"Python Version : {sys.version.split()[0]}"
-        )
+        print(f"Python Version : {sys.version.split()[0]}")
 
     def create_directories(self):
         """
@@ -55,21 +51,17 @@ class EnvironmentManager:
         """
 
         directories = [
-        settings.STORAGE_ROOT,
-        settings.UPLOAD_FOLDER,
-        settings.TEMP_FOLDER,
-        settings.VECTOR_DB_PATH,
-        settings.CACHE_FOLDER,
-        settings.BACKUP_FOLDER,
-        Path(settings.LOG_FILE).parent,
-    ]
+            settings.STORAGE_ROOT,
+            settings.UPLOAD_FOLDER,
+            settings.TEMP_FOLDER,
+            settings.VECTOR_DB_PATH,
+            settings.CACHE_FOLDER,
+            settings.BACKUP_FOLDER,
+            Path(settings.LOG_FILE).parent,
+        ]
 
         for directory in directories:
-
-            Path(directory).mkdir(
-                parents=True,
-                exist_ok=True
-            )
+            Path(directory).mkdir(parents=True, exist_ok=True)
 
         print("Folders verified.")
 
@@ -85,7 +77,6 @@ class EnvironmentManager:
         missing = []
 
         for key, value in required_settings.items():
-
             if value is None or value == "":
                 missing.append(key)
 

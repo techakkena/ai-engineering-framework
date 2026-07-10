@@ -1,16 +1,20 @@
 from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from .paths import FRAMEWORK_ROOT
+
 # --------------------------------------------------
 # Framework Root
 # --------------------------------------------------
 from constants.storage_constants import StorageDirectory
 
+from .paths import FRAMEWORK_ROOT
+
+
 class Settings(BaseSettings):
-# ==================================================
-# Framework
-# ==================================================
+    # ==================================================
+    # Framework
+    # ==================================================
 
     FRAMEWORK_DESCRIPTION: str = "Reusable AI Engineering Framework"
     AUTHOR: str = "TECHAKKENA"
@@ -18,25 +22,25 @@ class Settings(BaseSettings):
     APP_NAME: str = "AI Core"
     VERSION: str = "0.1.0"
     DEBUG: bool = True
-# ==================================================
-# API
-# ==================================================
+    # ==================================================
+    # API
+    # ==================================================
     API_HOST: str = "127.0.0.1"
     API_PORT: int = 8000
     API_PREFIX: str = "/api/v1"
 
     DATABASE_URL: str = "sqlite:///framework.db"
-# ==================================================
-# AI
-# ==================================================
+    # ==================================================
+    # AI
+    # ==================================================
 
     DEFAULT_CHAT_MODEL: str = "gpt-5.5"
 
     DEFAULT_EMBEDDING_MODEL: str = "text-embedding-3-small"
 
     OPENAI_API_KEY: str = Field(
-    default="",
-    description="OpenAI API Key",
+        default="",
+        description="OpenAI API Key",
     )
 
     OPENAI_MODEL: str = Field(
@@ -46,8 +50,8 @@ class Settings(BaseSettings):
     TEMPERATURE: float = 0.2
     MAX_TOKENS: int = 4096
     # ==================================================
-# Storage
-# ==================================================
+    # Storage
+    # ==================================================
 
     STORAGE_ROOT: Path = FRAMEWORK_ROOT / StorageDirectory.STORAGE
 
@@ -63,17 +67,21 @@ class Settings(BaseSettings):
 
     LOG_FILE: Path = STORAGE_ROOT / StorageDirectory.LOGS / "framework.log"
 
-# ==================================================
-# Logging
-# ==================================================
+    # ==================================================
+    # Logging
+    # ==================================================
 
     LOG_LEVEL: str = "INFO"
 
-#LOG_FILE: Path = STORAGE_ROOT / StorageDirectory.LOGS / "framework.log"
-# ==================================================
-# Security
-# ==================================================    
-    SECRET_KEY: str
+    # LOG_FILE: Path = STORAGE_ROOT / StorageDirectory.LOGS / "framework.log"
+    # ==================================================
+    # Security
+    # ==================================================
+    SECRET_KEY: str = Field(
+        default="change-this-in-production",
+        description="Application Secret Key",
+    )
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     model_config = SettingsConfigDict(

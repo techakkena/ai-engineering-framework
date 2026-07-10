@@ -5,8 +5,8 @@ ID Utilities
 Author : TECHAKKENA
 """
 
-from uuid import uuid4
 import secrets
+from uuid import uuid4
 
 
 def generate_uuid() -> str:

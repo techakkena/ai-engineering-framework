@@ -3,12 +3,14 @@ from pathlib import Path
 from storage.backup_manager import BackupManager
 from storage.storage_manager import StorageManager
 
+
 def test_backup_manager_creation():
     backup_manager = BackupManager()
 
     assert backup_manager is not None
     assert isinstance(backup_manager.storage, StorageManager)
     assert isinstance(backup_manager.backup_dir, Path)
+
 
 def test_backup():
     backup_manager = BackupManager()
@@ -25,6 +27,7 @@ def test_backup():
     # Clean up
     temp_file.unlink()
     backup_path.unlink()
+
 
 def test_restore():
     backup_manager = BackupManager()
@@ -43,17 +46,17 @@ def test_restore():
     backup_file.unlink()
     restored_path.unlink()
 
+
 def test_delete_backup():
     backup_manager = BackupManager()
 
-    # Create a temporary backup file
     backup_file = Path("temp_backup_file.txt")
     backup_file.write_text("This is a backup file.")
 
-    # Delete the backup file
-    backup_file.unlink()
+    backup_manager.delete_backup(backup_file)
 
     assert not backup_file.exists()
+
 
 def test_exists():
     backup_manager = BackupManager()
@@ -67,8 +70,8 @@ def test_exists():
     # Clean up
     backup_file.unlink()
 
-def test_list_backups(tmp_path):
 
+def test_list_backups(tmp_path):
     backup_manager = BackupManager()
 
     source1 = tmp_path / "file1.txt"

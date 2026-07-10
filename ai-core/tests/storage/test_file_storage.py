@@ -17,6 +17,7 @@ def test_save():
     # Clean up
     file_path.unlink()
 
+
 def test_load():
     storage = FileStorage()
 
@@ -33,6 +34,7 @@ def test_load():
     # Clean up
     file_path.unlink()
 
+
 def test_delete():
     storage = FileStorage()
 
@@ -46,6 +48,7 @@ def test_delete():
     file_path.unlink()
 
     assert not file_path.exists()
+
 
 def test_exists():
     storage = FileStorage()
@@ -62,6 +65,7 @@ def test_exists():
     file_path.unlink()
 
     assert storage.exists(file_path) is False
+
 
 def test_list_files():
     storage = FileStorage()
@@ -83,6 +87,7 @@ def test_list_files():
     file1.unlink()
     file2.unlink()
 
+
 def test_size():
     storage = FileStorage()
 
@@ -97,4 +102,4 @@ def test_size():
     assert size == len(data.encode("utf-8"))
 
     # Clean up
-    file_path.unlink()  
+    file_path.unlink()

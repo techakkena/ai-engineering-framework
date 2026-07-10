@@ -1,5 +1,6 @@
-from exceptions.not_found_exception import NotFoundException
 from exceptions.error_codes import ErrorCode
+from exceptions.not_found_exception import NotFoundException
+
 
 def test_not_found_exception():
     message = "Resource not found."
@@ -12,4 +13,3 @@ def test_not_found_exception():
     assert exception.status_code == 404
     assert exception.module == "Not Found"
     assert exception.details == details
-

@@ -58,10 +58,7 @@ class StringUtils:
         """
         Capitalize every word.
         """
-        return " ".join(
-            word.capitalize()
-            for word in value.split()
-        )
+        return " ".join(word.capitalize() for word in value.split())
 
     @staticmethod
     def snake_case(
@@ -88,13 +85,7 @@ class StringUtils:
 
         words = value.split("_")
 
-        return (
-            words[0].lower()
-            + "".join(
-                word.capitalize()
-                for word in words[1:]
-            )
-        )
+        return words[0].lower() + "".join(word.capitalize() for word in words[1:])
 
     @staticmethod
     def slugify(

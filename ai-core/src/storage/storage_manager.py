@@ -8,9 +8,10 @@ Author : TECHAKKENA
 from pathlib import Path
 from typing import Union
 
+from constants.storage_constants import StorageTypes
+
 from .storage_factory import StorageFactory
 from .storage_provider import StorageProvider
-from constants.storage_constants import StorageTypes
 
 
 class StorageManager:

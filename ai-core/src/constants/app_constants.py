@@ -9,7 +9,6 @@ from enum import Enum
 
 
 class Application:
-
     NAME = "AI Engineering Framework"
 
     VERSION = "0.1.0"
@@ -18,7 +17,6 @@ class Application:
 
 
 class Environment:
-
     DEVELOPMENT = "development"
 
     TESTING = "testing"
@@ -27,7 +25,6 @@ class Environment:
 
 
 class HTTPStatus:
-
     OK = 200
 
     CREATED = 201
@@ -46,7 +43,6 @@ class HTTPStatus:
 
 
 class ContentType:
-
     JSON = "application/json"
 
     PDF = "application/pdf"
@@ -59,7 +55,6 @@ class ContentType:
 
 
 class LogLevel(str, Enum):
-
     DEBUG = "DEBUG"
 
     INFO = "INFO"
