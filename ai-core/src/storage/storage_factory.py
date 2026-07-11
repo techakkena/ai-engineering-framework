@@ -5,10 +5,11 @@ Storage Factory
 Author : TECHAKKENA
 """
 
-from .file_storage import FileStorage
-from .storage_provider import StorageProvider
 from constants.storage_constants import StorageTypes
 from exceptions.configuration_exception import ConfigurationException
+
+from .file_storage import FileStorage
+from .storage_provider import StorageProvider
 
 
 class StorageFactory:

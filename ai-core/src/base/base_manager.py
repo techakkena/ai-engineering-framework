@@ -7,7 +7,7 @@ Author : TECHAKKENA
 
 from abc import ABC
 
-from .base_component import BaseComponent
+from base.base_component import BaseComponent
 
 
 class BaseManager(BaseComponent, ABC):
@@ -27,7 +27,7 @@ class BaseManager(BaseComponent, ABC):
 
         super().__init__(name, version, description)
 
-        self._components = {}
+        self._components: dict[str, BaseComponent] = {}
 
     def register(self, component: BaseComponent):
         """
@@ -60,11 +60,9 @@ class BaseManager(BaseComponent, ABC):
     def start_all(self):
 
         for component in self._components.values():
-
             component.initialize()
 
     def stop_all(self):
 
         for component in self._components.values():
-
             component.shutdown()

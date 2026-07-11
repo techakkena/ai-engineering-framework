@@ -32,9 +32,7 @@ class BaseModel:
         """
 
         for key, value in kwargs.items():
-
             if hasattr(self, key):
-
                 setattr(self, key, value)
 
         self.updated_at = datetime.now()
@@ -62,7 +60,6 @@ class BaseModel:
         result = {}
 
         for key, value in self.__dict__.items():
-
             if isinstance(value, datetime):
                 result[key] = value.isoformat()
             else:

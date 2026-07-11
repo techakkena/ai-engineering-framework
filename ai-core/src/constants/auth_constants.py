@@ -79,4 +79,4 @@ class Permission:
 
     DELETE = "delete"
 
-    EXECUTE = "execute" 
+    EXECUTE = "execute"

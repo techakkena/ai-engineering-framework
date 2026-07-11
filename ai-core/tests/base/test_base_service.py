@@ -2,7 +2,6 @@ from base.base_service import BaseService
 
 
 class DemoService(BaseService):
-
     def __init__(self):
         super().__init__(name="Demo Service")
 

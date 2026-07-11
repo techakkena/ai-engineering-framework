@@ -5,12 +5,12 @@ Validation Utilities
 Author : TECHAKKENA
 """
 
+import ipaddress
 import json
 import re
 from pathlib import Path
-from uuid import UUID
 from urllib.parse import urlparse
-import ipaddress
+from uuid import UUID
 
 
 class ValidationUtils:
@@ -51,13 +51,11 @@ class ValidationUtils:
         """
 
         try:
-
             UUID(value)
 
             return True
 
         except ValueError:
-
             return False
 
     @staticmethod
@@ -67,13 +65,11 @@ class ValidationUtils:
         """
 
         try:
-
             json.loads(value)
 
             return True
 
         except Exception:
-
             return False
 
     @staticmethod
@@ -83,13 +79,11 @@ class ValidationUtils:
         """
 
         try:
-
             float(value)
 
             return True
 
         except ValueError:
-
             return False
 
     @staticmethod
@@ -99,13 +93,11 @@ class ValidationUtils:
         """
 
         try:
-
             ipaddress.ip_address(value)
 
             return True
 
         except ValueError:
-
             return False
 
     @staticmethod
@@ -125,7 +117,4 @@ class ValidationUtils:
         Validate file extension.
         """
 
-        return Path(filename).suffix.lower() in {
-            ext.lower()
-            for ext in extensions
-        }
+        return Path(filename).suffix.lower() in {ext.lower() for ext in extensions}

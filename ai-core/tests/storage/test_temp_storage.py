@@ -1,5 +1,6 @@
 from storage.temp_storage import TempStorage
 
+
 def test_temp_storage_create_read_delete():
     temp_storage = TempStorage()
 
@@ -19,4 +20,3 @@ def test_temp_storage_create_read_delete():
     deleted = temp_storage.delete(file_path)
     assert deleted is True
     assert temp_storage.exists(file_path) is False
-

@@ -5,12 +5,15 @@ Base Component
 Author : TECHAKKENA
 """
 
+import logging
 from abc import ABC
 from datetime import datetime
-import logging
+from typing import Any
 
 from config.settings import settings
+
 from .component_status import ComponentStatus
+
 
 class BaseComponent(ABC):
     """
@@ -48,7 +51,7 @@ class BaseComponent(ABC):
 
         self.created_at = datetime.now()
 
-        self.metadata = {}
+        self.metadata: dict[str, Any] = {}
 
     def initialize(self):
         """
@@ -62,7 +65,7 @@ class BaseComponent(ABC):
     def shutdown(self):
         self.status = ComponentStatus.STOPPED
         self.logger.info("%s stopped.", self.name)
-        
+
     def validate(self) -> bool:
         """
         Validation hook.
@@ -81,19 +84,15 @@ class BaseComponent(ABC):
             "healthy": self.status != ComponentStatus.FAILED,
         }
 
-    def initialize(self):
-        self.status = ComponentStatus.INITIALIZED
-        self.logger.info("%s initialized successfully.", self.name)
-
     def get_info(self) -> dict:
 
         return {
-        "name": self.name,
-        "version": self.version,
-        "description": self.description,
-        "status": self.status,
-        "created_at": self.created_at.isoformat(),
-    }
+            "name": self.name,
+            "version": self.version,
+            "description": self.description,
+            "status": self.status,
+            "created_at": self.created_at.isoformat(),
+        }
 
     def to_dict(self) -> dict:
 
@@ -104,5 +103,3 @@ class BaseComponent(ABC):
             "created_at": self.created_at.isoformat(),
             "metadata": self.metadata,
         }
-    
-    

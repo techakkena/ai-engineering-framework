@@ -1,8 +1,8 @@
 from constants.database_constants import (
     DatabaseEngine,
-    Transaction,
-    SortOrder,
     DatabaseStatus,
+    SortOrder,
+    Transaction,
 )
 
 
@@ -27,4 +27,3 @@ def test_sort_order():
 def test_database_status():
     assert DatabaseStatus.CONNECTED == "CONNECTED"
     assert DatabaseStatus.DISCONNECTED == "DISCONNECTED"
-

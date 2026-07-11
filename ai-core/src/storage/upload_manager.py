@@ -6,18 +6,13 @@ Author : TECHAKKENA
 """
 
 from pathlib import Path
-from uuid import uuid4
 from typing import Union
-
-from .storage_manager import StorageManager
+from uuid import uuid4
 
 from config.settings import settings
 
-from constants.storage_constants import FileExtension
-from constants.storage_constants import (
-    FileExtension,
-    FileSize,
-)
+from .storage_manager import StorageManager
+
 
 class UploadManager:
     """
@@ -37,10 +32,7 @@ class UploadManager:
         Upload a file.
         """
 
-        file_path = (
-            settings.UPLOAD_FOLDER
-            / f"{uuid4()}_{filename}"
-        )
+        file_path = settings.UPLOAD_FOLDER / f"{uuid4()}_{filename}"
 
         self.storage.save(
             file_path,

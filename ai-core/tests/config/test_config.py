@@ -6,11 +6,11 @@ Tests:
 1. Settings
 2. Environment
 3. Logging
-""" 
+"""
 
-from config.settings import settings
 from config.environment import environment
 from config.logging_config import LoggingManager
+from config.settings import settings
 
 
 def test_settings():

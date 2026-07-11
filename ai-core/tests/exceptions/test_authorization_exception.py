@@ -13,4 +13,3 @@ def test_authorization_exception():
     assert exception.status_code == 403
     assert exception.module == "Authorization"
     assert exception.details == details
-

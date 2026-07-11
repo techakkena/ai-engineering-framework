@@ -6,8 +6,8 @@ Author : TECHAKKENA
 """
 
 from pathlib import Path
-from uuid import uuid4
 from typing import Union
+from uuid import uuid4
 
 from config.settings import settings
 
@@ -71,7 +71,5 @@ class TempStorage:
         Delete every temporary file.
         """
 
-        for file in self.storage.list_files(
-            self.temp_dir
-        ):
+        for file in self.storage.list_files(self.temp_dir):
             self.storage.delete(file)

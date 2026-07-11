@@ -1,0 +1,21 @@
+[project]
+name = "__PACKAGE_NAME__"
+version = "0.1.0"
+description = "__PACKAGE_DESCRIPTION__"
+readme = "README.md"
+requires-python = ">=3.14"
+
+[tool.black]
+line-length = 88
+target-version = ["py314"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+exclude = [
+    "^examples/",
+]

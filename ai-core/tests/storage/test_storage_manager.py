@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from storage.storage_manager import StorageManager
 
 
@@ -7,6 +8,7 @@ def test_initialize_storage_manager():
 
     assert isinstance(storage_manager, StorageManager)
     assert storage_manager.provider is not None
+
 
 def test_save():
     storage_manager = StorageManager()
@@ -21,6 +23,7 @@ def test_save():
 
     # Clean up
     file_path.unlink()
+
 
 def test_load():
     storage_manager = StorageManager()
@@ -38,6 +41,7 @@ def test_load():
     # Clean up
     file_path.unlink()
 
+
 def test_delete():
     storage_manager = StorageManager()
 
@@ -52,6 +56,7 @@ def test_delete():
 
     assert not file_path.exists()
 
+
 def test_exists():
     storage_manager = StorageManager()
 
@@ -65,6 +70,7 @@ def test_exists():
 
     # Clean up
     file_path.unlink()
+
 
 def test_list_files():
     storage_manager = StorageManager()
@@ -88,6 +94,7 @@ def test_list_files():
     file1.unlink()
     file2.unlink()
     directory.rmdir()
+
 
 def test_size():
     storage_manager = StorageManager()

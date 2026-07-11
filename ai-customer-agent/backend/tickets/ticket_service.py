@@ -8,8 +8,9 @@ ESCALATION_KEYWORDS = [
     "broken",
     "cancel",
     "return",
-    "support"
+    "support",
 ]
+
 
 def needs_escalation(message):
 
@@ -26,18 +27,10 @@ def detect_priority(issue):
 
     text = issue.lower()
 
-    if any(word in text for word in [
-        "urgent",
-        "critical",
-        "emergency"
-    ]):
+    if any(word in text for word in ["urgent", "critical", "emergency"]):
         return "Critical"
 
-    if any(word in text for word in [
-        "refund",
-        "broken",
-        "damaged"
-    ]):
+    if any(word in text for word in ["refund", "broken", "damaged"]):
         return "High"
 
     return "Medium"
@@ -47,12 +40,7 @@ def create_ticket(user_id, issue, priority="Medium"):
 
     db = SessionLocal()
 
-    ticket = Ticket(
-        user_id=user_id,
-        issue=issue,
-        priority=priority,
-        status="Open"
-    )
+    ticket = Ticket(user_id=user_id, issue=issue, priority=priority, status="Open")
 
     db.add(ticket)
     db.commit()
@@ -72,15 +60,12 @@ def get_all_tickets():
 
     return tickets
 
+
 def update_ticket_status(ticket_id, status):
 
     db = SessionLocal()
 
-    ticket = (
-        db.query(Ticket)
-        .filter(Ticket.id == ticket_id)
-        .first()
-    )
+    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
 
     if ticket:
         ticket.status = status

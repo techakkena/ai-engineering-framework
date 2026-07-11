@@ -1,6 +1,6 @@
 """
 AI Engineering Framework
-File Storage 
+File Storage
 
 Author : TECHAKKENA
 """
@@ -8,8 +8,9 @@ Author : TECHAKKENA
 from pathlib import Path
 from typing import Union
 
-from .storage_provider import StorageProvider
 from exceptions.file_exception import FileException
+
+from .storage_provider import StorageProvider
 
 
 class FileStorage(StorageProvider):
@@ -27,18 +28,15 @@ class FileStorage(StorageProvider):
         """
 
         try:
-
             file_path.parent.mkdir(
                 parents=True,
                 exist_ok=True,
             )
 
             if isinstance(data, bytes):
-
                 file_path.write_bytes(data)
 
             else:
-
                 file_path.write_text(
                     data,
                     encoding="utf-8",
@@ -47,7 +45,6 @@ class FileStorage(StorageProvider):
             return True
 
         except Exception as exc:
-
             raise FileException(
                 message="Unable to save file.",
                 details={
@@ -65,7 +62,6 @@ class FileStorage(StorageProvider):
         """
 
         if not file_path.exists():
-
             raise FileException(
                 message="File not found.",
                 details={
@@ -86,7 +82,6 @@ class FileStorage(StorageProvider):
         """
 
         if file_path.exists():
-
             file_path.unlink()
 
         return True
@@ -104,16 +99,9 @@ class FileStorage(StorageProvider):
     ):
 
         if not directory.exists():
-
             return []
 
-        return sorted(
-            [
-                file
-                for file in directory.iterdir()
-                if file.is_file()
-            ]
-    )
+        return sorted([file for file in directory.iterdir() if file.is_file()])
 
     def size(
         self,
@@ -121,9 +109,6 @@ class FileStorage(StorageProvider):
     ) -> int:
 
         if not file_path.exists():
-
             return 0
 
         return file_path.stat().st_size
-
-    

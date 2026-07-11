@@ -78,6 +78,4 @@ class JsonUtils:
         Print formatted JSON.
         """
 
-        print(
-            JsonUtils.dumps(data)
-        )
+        print(JsonUtils.dumps(data))

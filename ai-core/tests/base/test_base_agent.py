@@ -3,7 +3,6 @@ from constants.ai_constants import AIProvider, ChatModels
 
 
 class DemoAgent(BaseAgent):
-
     def __init__(self):
         super().__init__(
             name="Demo Agent",

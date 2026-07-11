@@ -2,7 +2,6 @@ from enum import Enum
 
 
 class ErrorCode(str, Enum):
-
     VALIDATION_ERROR = "VAL001"
 
     AUTHENTICATION_ERROR = "AUTH001"
@@ -10,7 +9,7 @@ class ErrorCode(str, Enum):
     AUTHORIZATION_ERROR = "AUTHZ001"
 
     DATABASE_ERROR = "DB001"
- 
+
     AI_ERROR = "AI001"
 
     INTEGRATION_ERROR = "INT001"

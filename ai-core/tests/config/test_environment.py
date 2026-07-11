@@ -1,6 +1,7 @@
 from config.environment import environment
 
-environment.startup()  
+environment.startup()
+
 
 def test_environment_creation():
     assert environment is not None
@@ -40,6 +41,7 @@ def test_startup():
     environment.startup()
 
     assert True
+
 
 def shutdown(self):
     """

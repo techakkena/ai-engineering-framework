@@ -38,6 +38,19 @@ class ChatModels:
     GEMINI_PRO = "gemini-pro"
 
 
+class AIModels:
+    GPT_5_5 = "gpt-5.5"
+    GPT_5_MINI = "gpt-5-mini"
+    GPT_4_1 = "gpt-4.1"
+
+    CLAUDE_SONNET = "claude-sonnet-4"
+    CLAUDE_OPUS = "claude-opus-4"
+
+    GEMINI_2_5_PRO = "gemini-2.5-pro"
+
+    OLLAMA_LLAMA3 = "llama3"
+
+
 class EmbeddingModels:
     """
     Embedding models.
@@ -55,20 +68,25 @@ class ImageModels:
 
     GPT_IMAGE_1 = "gpt-image-1"
 
+
 class AudioModels:
     """
     Audio AI models.
     """
+
     GPT_4O_TRANSCRIBE = "gpt-4o-transcribe"
     GPT_4O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
     GPT_4O_MINI_TTS = "gpt-4o-mini-tts"
+
 
 class ReasoningModels:
     """
     Reasoning AI models.
     """
+
     GPT_5 = "gpt-5"
     GPT_5_MINI = "gpt-5-mini"
+
 
 class ResponseFormat:
     """
@@ -107,6 +125,7 @@ class TokenLimits:
 
     DEFAULT_OUTPUT = 4096
 
+
 class VectorStores:
     """
     Vector store types.
@@ -117,6 +136,7 @@ class VectorStores:
     PINECONE = "pinecone"
     WEAVIATE = "weaviate"
     MILVUS = "milvus"
+
 
 class FinishReasons:
     """
@@ -131,6 +151,7 @@ class FinishReasons:
 
     CONTENT_FILTER = "content_filter"
 
+
 class ToolTypes:
     """
     Types of tools available.
@@ -144,6 +165,7 @@ class ToolTypes:
 
     CODE_INTERPRETER = "code_interpreter"
 
+
 class RetrievalStrategy:
     """
     Retrieval strategies.
@@ -152,6 +174,7 @@ class RetrievalStrategy:
     SIMILARITY = "similarity"
     MMR = "mmr"
     HYBRID = "hybrid"
+
 
 class ChunkStrategy:
     """
@@ -162,6 +185,7 @@ class ChunkStrategy:
     RECURSIVE = "recursive"
     SEMANTIC = "semantic"
 
+
 class DistanceMetric:
     """
     Vector distance metrics.
@@ -170,6 +194,7 @@ class DistanceMetric:
     COSINE = "cosine"
     EUCLIDEAN = "euclidean"
     DOT_PRODUCT = "dot_product"
+
 
 class AITask:
     """

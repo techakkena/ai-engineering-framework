@@ -1,9 +1,9 @@
-from rag.pdf_loader import load_pdf
-from rag.pdf_loader import split_docs
-
-from rag.vector_store import create_or_update_vector_store
 import os
+
 from rag.document_registry import save_document
+from rag.pdf_loader import load_pdf, split_docs
+from rag.vector_store import create_or_update_vector_store
+
 
 def process_pdf(pdf_path):
 
@@ -15,9 +15,6 @@ def process_pdf(pdf_path):
 
     create_or_update_vector_store(chunks)
 
-    save_document(
-        pdf_path,
-        len(chunks)
-    )
+    save_document(pdf_path, len(chunks))
 
     return len(chunks)
