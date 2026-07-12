@@ -7,41 +7,83 @@ param(
 )
 
 Write-Host ""
-Write-Host "========================================="
-Write-Host " AI Engineering Framework"
-Write-Host " File Generator"
-Write-Host "========================================="
+Write-Host "===================================" -ForegroundColor Cyan
+Write-Host " AI Engineering Framework" -ForegroundColor Cyan
+Write-Host " File Generator" -ForegroundColor Cyan
+Write-Host "===================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Check directory exists
-if (!(Test-Path $Directory)) {
-    Write-Host "Directory does not exist:"
-    Write-Host $Directory
-    exit
-}
+$created = 0
+$skipped = 0
 
-foreach ($file in $Files) {
+$oldPreference = $ErrorActionPreference
+$ErrorActionPreference = "Stop"
 
-    $path = Join-Path $Directory $file
+try {
 
-    if (!(Test-Path $path)) {
+    # -------------------------------------------------
+    # Validate Directory
+    # -------------------------------------------------
 
-        New-Item `
-            -ItemType File `
-            -Path $path `
-            -Force | Out-Null
+    if (!(Test-Path $Directory)) {
 
-        Write-Host "[CREATED] $file"
-
-    }
-    else {
-
-        Write-Host "[EXISTS ] $file"
-
+        throw "Directory does not exist: $Directory"
     }
 
-}
+    Write-Host "Directory : $Directory"
+    Write-Host ""
 
-Write-Host ""
-Write-Host "Completed Successfully."
-Write-Host ""
+    # -------------------------------------------------
+    # Create Files
+    # -------------------------------------------------
+
+    foreach ($file in $Files) {
+
+        $path = Join-Path $Directory $file
+
+        if (!(Test-Path $path)) {
+
+            New-Item `
+                -ItemType File `
+                -Path $path | Out-Null
+
+            Write-Host "Created file    : $file" -ForegroundColor Green
+            $created++
+        }
+        else {
+
+            Write-Host "Skipped file    : $file" -ForegroundColor Yellow
+            $skipped++
+        }
+    }
+
+    # -------------------------------------------------
+    # Summary
+    # -------------------------------------------------
+
+    Write-Host ""
+    Write-Host "===================================" -ForegroundColor Cyan
+    Write-Host " File generation completed." -ForegroundColor Green
+    Write-Host "===================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    Write-Host "Summary" -ForegroundColor Cyan
+    Write-Host "-------"
+
+    Write-Host "Created : $created"
+    Write-Host "Skipped : $skipped"
+
+    Write-Host ""
+
+}
+catch {
+
+    Write-Host ""
+    Write-Host "File generation failed." -ForegroundColor Red
+    Write-Host $_.Exception.Message
+    exit 1
+}
+finally {
+
+    $ErrorActionPreference = $oldPreference
+}

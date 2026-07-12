@@ -12,7 +12,7 @@ param(
         "Service",
         "Processor"
     )]
-    [string]$Type = "Basic",
+    #[string]$Type = "Basic",
 
     [string]$Description = "Reusable AI Engineering Framework Package"
 )
@@ -40,10 +40,15 @@ Write-Host ""
 # Create Package Structure
 # -----------------------------------------------------
 
-& "$PSScriptRoot\create-package.ps1" $PackageName
+$ErrorActionPreference = "Stop"
 
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
+try {
+    & "$PSScriptRoot\create-package.ps1" $PackageName
+}
+catch {
+    Write-Host "Package creation failed." -ForegroundColor Red
+    Write-Host $_.Exception.Message
+    exit 1
 }
 
 Write-Host ""
@@ -62,7 +67,7 @@ $requirements = Join-Path $packagePath "requirements.txt"
 
 $testPath = Join-Path $packagePath "tests\test_package.py"
 
-$examplePath = Join-Path $packagePath "examples\basic\main.py"
+#$examplePath = Join-Path $packagePath "examples\basic\main.py"
 
 $initPath = Join-Path $packagePath "src\$moduleName\__init__.py"
 
@@ -130,37 +135,31 @@ $replaceFiles = @(
 
 foreach ($file in $replaceFiles) {
 
-    if (!($createdFiles -contains $file)) {
+    $path = Join-Path $packagePath $file
+
+    if (!(Test-Path $path)) {
         continue
     }
 
-    $path = Join-Path $packagePath $file
-
-    $content = Get-Content `
-        -Path $path `
-        -Raw `
-        -Encoding UTF8
+    $content = Get-Content -Path $path -Raw -Encoding UTF8
 
     $content = $content.Replace("__PACKAGE_NAME__", $PackageName)
     $content = $content.Replace("__MODULE_NAME__", $moduleName)
     $content = $content.Replace("__PACKAGE_DESCRIPTION__", $Description)
 
-    Set-Content `
-    -Path $path `
-    -Value $content `
-    -Encoding UTF8
+    Set-Content -Path $path -Value $content -Encoding UTF8
 }
 
 # -----------------------------------------------------
-# requirements.txt
+# # Runtime dependencies
 # -----------------------------------------------------
 
 if (!(Test-Path $requirements)) {
 
     Set-Content `
-        -Path $requirements `
-        -Value "" `
-        -Encoding UTF8
+    -Path $requirements `
+    -Value "# Runtime dependencies" `
+    -Encoding UTF8
 
     Write-Host "Created : requirements.txt" -ForegroundColor Green
     $createdFiles += "requirements.txt"
@@ -175,12 +174,15 @@ else {
 if (!(Test-Path $testPath)) {
 
     Set-Content `
-        -Path $testPath `
-        -Value @"
+    -Path $testPath `
+    -Value @"
 def test_import():
-    assert True
+
+    import $moduleName
+
+    assert $moduleName is not None
 "@ `
-        -Encoding UTF8
+    -Encoding UTF8
 
     Write-Host "Created : tests/test_package.py" -ForegroundColor Green
     $createdFiles += "tests/test_package.py"
@@ -188,31 +190,7 @@ def test_import():
 else {
     $skippedFiles += "tests/test_package.py"
 }
-# -----------------------------------------------------
-# Example Program
-# -----------------------------------------------------
 
-if (!(Test-Path $examplePath)) {
-
-    $exampleContent = @"
-def main():
-    print("Hello from $PackageName")
-
-if __name__ == "__main__":
-    main()
-"@
-
-    Set-Content `
-        -Path $examplePath `
-        -Value $exampleContent `
-        -Encoding UTF8
-
-    Write-Host "Created : examples/basic/main.py" -ForegroundColor Green
-    $createdFiles += "examples/basic/main.py"
-}
-else {
-    $skippedFiles += "examples/basic/main.py"
-}
 # -----------------------------------------------------
 # Package __init__.py
 # -----------------------------------------------------
@@ -228,7 +206,7 @@ $PackageName
 Author: TECHAKKENA
 \"\"\"
 
-__version__ = "0.1.0"
+__version__ = "0.0.1"
 "@ `
         -Encoding UTF8
 

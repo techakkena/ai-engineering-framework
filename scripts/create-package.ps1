@@ -14,25 +14,6 @@ Write-Host " Package Structure Creator" -ForegroundColor Cyan
 Write-Host "===================================" -ForegroundColor Cyan
 Write-Host ""
 
-# -------------------------------------------------
-# Package Root
-# -------------------------------------------------
-
-if (!(Test-Path $packagePath)) {
-    New-Item `
-        -ItemType Directory `
-        -Path $packagePath | Out-Null
-
-    Write-Host "Created package: $PackageName" -ForegroundColor Green
-}
-else {
-    Write-Host "Package already exists: $PackageName" -ForegroundColor Yellow
-}
-
-# -------------------------------------------------
-# Directories
-# -------------------------------------------------
-
 $directories = @(
     "docs",
     "examples",
@@ -43,43 +24,8 @@ $directories = @(
     "tests"
 )
 
-foreach ($dir in $directories) {
-
-    $path = Join-Path $packagePath $dir
-
-    if (!(Test-Path $path)) {
-
-        New-Item `
-            -ItemType Directory `
-            -Path $path | Out-Null
-
-        Write-Host "Created directory : $dir" -ForegroundColor Green
-    }
-}
-
-# -------------------------------------------------
-# Python Package
-# -------------------------------------------------
-
-$srcPackage = Join-Path $packagePath "src\$moduleName"
-
-if (!(Test-Path $srcPackage)) {
-
-    New-Item `
-        -ItemType Directory `
-        -Path $srcPackage | Out-Null
-
-    Write-Host "Created module directory : src\$moduleName" -ForegroundColor Green
-}
-
-# -------------------------------------------------
-# Empty Files
-# -------------------------------------------------
-
 $files = @(
     ".gitignore",
-    ".pre-commit-config.yaml",
-    ".ruff.toml",
     "pyproject.toml",
     "pytest.ini",
     "MANIFEST.in",
@@ -93,14 +39,11 @@ $files = @(
     "docs\installation.md",
     "docs\usage.md",
 
-    "examples\basic\main.py",
     "examples\basic\README.md",
     "examples\basic\requirements.txt",
 
-    "examples\advanced\main.py",
     "examples\advanced\README.md",
 
-    "examples\integration\main.py",
     "examples\integration\README.md",
 
     "tests\__init__.py",
@@ -108,23 +51,139 @@ $files = @(
     "src\$moduleName\__init__.py"
 )
 
-foreach ($file in $files) {
+$createdDirectories = 0
+$createdFiles = 0
+$skippedDirectories = 0
+$skippedFiles = 0
 
-    $path = Join-Path $packagePath $file
+$oldPreference = $ErrorActionPreference
+$ErrorActionPreference = "Stop"
 
-    if (!(Test-Path $path)) {
+try {
+
+    # -------------------------------------------------
+    # Package Root
+    # -------------------------------------------------
+
+    if (!(Test-Path $packagePath)) {
 
         New-Item `
-            -ItemType File `
-            -Path $path | Out-Null
+            -ItemType Directory `
+            -Path $packagePath | Out-Null
 
-        Write-Host "Created file      : $file" -ForegroundColor Green
+        Write-Host "Created package      : $PackageName" -ForegroundColor Green
     }
-}
+    else {
 
-Write-Host ""
-Write-Host "===================================" -ForegroundColor Cyan
-Write-Host "Package structure is ready." -ForegroundColor Green
-Write-Host "Location : $packagePath"
-Write-Host "===================================" -ForegroundColor Cyan
-Write-Host ""
+        Write-Host "Package exists       : $PackageName" -ForegroundColor Yellow
+    }
+
+    # -------------------------------------------------
+    # Directories
+    # -------------------------------------------------
+
+    foreach ($dir in $directories) {
+
+        $path = Join-Path $packagePath $dir
+
+        if (!(Test-Path $path)) {
+
+            New-Item `
+                -ItemType Directory `
+                -Path $path | Out-Null
+
+            Write-Host "Created directory   : $dir" -ForegroundColor Green
+            $createdDirectories++
+        }
+        else {
+
+            Write-Host "Skipped directory   : $dir" -ForegroundColor Yellow
+            $skippedDirectories++
+        }
+    }
+
+    # -------------------------------------------------
+    # Python Package
+    # -------------------------------------------------
+
+    $srcPackage = Join-Path $packagePath "src\$moduleName"
+
+    if (!(Test-Path $srcPackage)) {
+
+        New-Item `
+            -ItemType Directory `
+            -Path $srcPackage | Out-Null
+
+        Write-Host "Created module      : src\$moduleName" -ForegroundColor Green
+        $createdDirectories++
+    }
+    else {
+
+        Write-Host "Skipped module      : src\$moduleName" -ForegroundColor Yellow
+        $skippedDirectories++
+    }
+
+    # -------------------------------------------------
+    # Files
+    # -------------------------------------------------
+
+    foreach ($file in $files) {
+
+        $path = Join-Path $packagePath $file
+
+        if (!(Test-Path $path)) {
+
+            New-Item `
+                -ItemType File `
+                -Path $path | Out-Null
+
+            Write-Host "Created file        : $file" -ForegroundColor Green
+            $createdFiles++
+        }
+        else {
+
+            Write-Host "Skipped file        : $file" -ForegroundColor Yellow
+            $skippedFiles++
+        }
+    }
+
+    # -------------------------------------------------
+    # Summary
+    # -------------------------------------------------
+
+    Write-Host ""
+    Write-Host "===================================" -ForegroundColor Cyan
+    Write-Host " Package structure is ready." -ForegroundColor Green
+    Write-Host "===================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    Write-Host "Package  : $PackageName"
+    Write-Host "Module   : $moduleName"
+    Write-Host "Location : $packagePath"
+
+    Write-Host ""
+    Write-Host "Summary" -ForegroundColor Cyan
+    Write-Host "-------"
+
+    Write-Host "Directories Created : $createdDirectories"
+    Write-Host "Directories Skipped : $skippedDirectories"
+
+    Write-Host ""
+
+    Write-Host "Files Created       : $createdFiles"
+    Write-Host "Files Skipped       : $skippedFiles"
+
+    Write-Host ""
+
+}
+catch {
+
+    Write-Host ""
+    Write-Host "Package creation failed." -ForegroundColor Red
+    Write-Host $_.Exception.Message
+    exit 1
+}
+finally {
+
+    $ErrorActionPreference = $oldPreference
+}

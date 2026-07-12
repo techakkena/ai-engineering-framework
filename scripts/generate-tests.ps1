@@ -4,62 +4,121 @@ param(
 )
 
 Write-Host ""
-Write-Host "========================================="
-Write-Host " AI Framework Test Generator"
-Write-Host "========================================="
+Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host " AI Engineering Framework" -ForegroundColor Cyan
+Write-Host " Test Generator" -ForegroundColor Cyan
+Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host ""
 
-$processed = 0
-$generated = 0
-$skipped = 0
+$oldPreference = $ErrorActionPreference
+$ErrorActionPreference = "Stop"
 
-Get-ChildItem -Path $Root -Filter "*.py" -Recurse | ForEach-Object {
+try {
 
-    $processed++
-
-    $file = $_.FullName
-    $content = Get-Content $file -Raw
-
-    # Skip if tests already exist
-    if ($content -match "(?m)^def\s+test_") {
-
-        Write-Host "[SKIP] Tests already exist -> $($_.Name)" -ForegroundColor Yellow
-        $skipped++
-        return
+    if (!(Test-Path $Root)) {
+        throw "Package not found: $Root"
     }
 
-    # Find Demo class
-    $match = [regex]::Match($content, "class\s+(Demo\w+)\s*\(")
+    $src = Join-Path $Root "src"
+    $tests = Join-Path $Root "tests"
 
-    if (!$match.Success) {
-
-        Write-Host "[SKIP] No Demo class -> $($_.Name)" -ForegroundColor DarkYellow
-        $skipped++
-        return
+    if (!(Test-Path $src)) {
+        throw "src directory not found."
     }
 
-    $className = $match.Groups[1].Value
+    if (!(Test-Path $tests)) {
+        New-Item `
+            -ItemType Directory `
+            -Path $tests | Out-Null
+    }
 
-    $test = @"
+    $processed = 0
+    $generated = 0
+    $skipped = 0
+    $directories = 0
 
-def test_${className.ToLower()}_creation():
-    obj = $className()
+    Get-ChildItem `
+        -Path $src `
+        -Filter "*.py" `
+        -Recurse |
+    Where-Object {
 
-    assert obj is not None
+        $_.Name -notin @(
+            "__init__.py"
+        )
 
+    } | ForEach-Object {
+
+        $processed++
+
+        $relative = $_.DirectoryName.Substring($src.Length).TrimStart("\")
+        $targetDirectory = Join-Path $tests $relative
+
+        if (!(Test-Path $targetDirectory)) {
+
+            New-Item `
+                -ItemType Directory `
+                -Path $targetDirectory | Out-Null
+
+            $directories++
+
+            Write-Host "Created directory : tests\$relative" -ForegroundColor Green
+        }
+
+        $testFile = Join-Path $targetDirectory ("test_" + $_.Name)
+
+        if (Test-Path $testFile) {
+
+            Write-Host "Skipped test : $($testFile.Replace($Root + '\',''))" -ForegroundColor Yellow
+            $skipped++
+            return
+        }
+
+        $module = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+
+        $content = @"
+\"\"\"
+Unit tests for $module.
+\"\"\"
+
+def test_placeholder():
+
+    assert True
 "@
 
-    Add-Content $file $test
+        Set-Content `
+            -Path $testFile `
+            -Value $content `
+            -Encoding UTF8
 
-    Write-Host "[OK] Added tests -> $($_.Name)" -ForegroundColor Green
-    $generated++
+        Write-Host "Generated test : $($testFile.Replace($Root + '\',''))" -ForegroundColor Green
+
+        $generated++
+    }
+
+    Write-Host ""
+    Write-Host "=========================================" -ForegroundColor Cyan
+    Write-Host " Test Generation Complete" -ForegroundColor Green
+    Write-Host "=========================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    Write-Host "Modules Processed    : $processed"
+    Write-Host "Directories Created  : $directories"
+    Write-Host "Tests Generated      : $generated"
+    Write-Host "Tests Skipped        : $skipped"
+
+    Write-Host ""
+
 }
+catch {
 
-Write-Host ""
-Write-Host "========================================="
-Write-Host " Summary"
-Write-Host "========================================="
-Write-Host "Processed : $processed"
-Write-Host "Generated : $generated"
-Write-Host "Skipped   : $skipped"
-Write-Host ""
+    Write-Host ""
+    Write-Host "Test generation failed." -ForegroundColor Red
+    Write-Host $_.Exception.Message
+
+    exit 1
+}
+finally {
+
+    $ErrorActionPreference = $oldPreference
+}

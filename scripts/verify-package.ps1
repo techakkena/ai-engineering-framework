@@ -6,7 +6,7 @@ param(
 Write-Host ""
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host " AI Engineering Framework" -ForegroundColor Cyan
-Write-Host " Package Builder" -ForegroundColor Cyan
+Write-Host " Package Verifier" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -30,47 +30,28 @@ try {
 
     $steps = @(
         @{
-            Name = "Clean Build Directory"
-            Command = {
-
-                if (Test-Path "build") {
-                    Remove-Item build -Recurse -Force
-                }
-
-                if (Test-Path "dist") {
-                    Remove-Item dist -Recurse -Force
-                }
-
-                Get-ChildItem `
-                    -Path . `
-                    -Filter "*.egg-info" `
-                    -Directory `
-                    -Recurse |
-                Remove-Item `
-                    -Recurse `
-                    -Force
-            }
+            Name = "Install Package"
+            Command = { pip install -e . }
         },
         @{
-            Name = "Install Build Tools"
-            Command = {
-
-                python -m pip install --upgrade build twine
-            }
+            Name = "Ruff Check"
+            Command = { ruff check --fix . }
         },
         @{
-            Name = "Build Package"
-            Command = {
-
-                python -m build
-            }
+            Name = "Ruff Format"
+            Command = { ruff format . }
         },
         @{
-            Name = "Verify Distribution"
-            Command = {
-
-                python -m twine check dist/*
-            }
+            Name = "Black"
+            Command = { black . }
+        },
+        @{
+            Name = "MyPy"
+            Command = { mypy . }
+        },
+        @{
+            Name = "Pytest"
+            Command = { pytest }
         }
     )
 
@@ -87,25 +68,14 @@ try {
             throw "$($step.Name) failed."
         }
 
+        Write-Host ""
         Write-Host "[PASS] $($step.Name)" -ForegroundColor Green
     }
 
     Write-Host ""
     Write-Host "=========================================" -ForegroundColor Green
-    Write-Host " Package Build Successful" -ForegroundColor Green
+    Write-Host " Package Verification Successful" -ForegroundColor Green
     Write-Host "=========================================" -ForegroundColor Green
-    Write-Host ""
-
-    if (Test-Path "dist") {
-
-        Write-Host "Generated Files:" -ForegroundColor Cyan
-
-        Get-ChildItem dist | ForEach-Object {
-
-            Write-Host "  $($_.Name)"
-        }
-    }
-
     Write-Host ""
 
 }
@@ -113,7 +83,7 @@ catch {
 
     Write-Host ""
     Write-Host "=========================================" -ForegroundColor Red
-    Write-Host " Package Build Failed" -ForegroundColor Red
+    Write-Host " Package Verification Failed" -ForegroundColor Red
     Write-Host "=========================================" -ForegroundColor Red
     Write-Host ""
 
