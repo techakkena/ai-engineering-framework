@@ -50,6 +50,8 @@ tests/loader/test_constants.py
 tests/loader/test_exceptions.py
 tests/loader/test_operations.py
 tests/profiles/__init__.py
+tests/profiles/test_constants.py
+tests/profiles/test_exceptions.py
 tests/profiles/test_operations.py
 tests/settings/__init__.py
 tests/settings/test_constants.py
