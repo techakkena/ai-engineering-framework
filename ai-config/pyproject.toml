@@ -1,0 +1,21 @@
+[project]
+name = "ai-config"
+version = "0.1.0"
+description = "Reusable AI Engineering Framework Package"
+readme = "README.md"
+requires-python = ">=3.14"
+
+[tool.black]
+line-length = 88
+target-version = ["py314"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+exclude = [
+    "^examples/",
+]

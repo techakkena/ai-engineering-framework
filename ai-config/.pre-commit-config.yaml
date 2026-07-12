@@ -5,25 +5,22 @@ repos:
       - id: ruff
         args:
           - --fix
-        files: ^ai-config/
 
       - id: ruff-format
-        files: ^ai-config/
 
   - repo: https://github.com/psf/black
     rev: 26.5.1
     hooks:
       - id: black
-        files: ^ai-config/
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.18.2
+    rev: v1.18.1
     hooks:
       - id: mypy
         pass_filenames: false
         args:
-          - ai-config/src
+          - src
+          - tests
         additional_dependencies:
           - pydantic
           - pydantic-settings
-        files: ^ai-config/

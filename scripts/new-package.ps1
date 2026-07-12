@@ -1,6 +1,18 @@
 param(
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory)]
     [string]$PackageName,
+
+    [ValidateSet(
+        "Basic",
+        "Config",
+        "Storage",
+        "RAG",
+        "Agents",
+        "Workflow",
+        "Service",
+        "Processor"
+    )]
+    [string]$Type = "Basic",
 
     [string]$Description = "Reusable AI Engineering Framework Package"
 )
