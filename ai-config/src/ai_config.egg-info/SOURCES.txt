@@ -46,10 +46,14 @@ tests/environment/test_constants.py
 tests/environment/test_exceptions.py
 tests/environment/test_operations.py
 tests/loader/__init__.py
+tests/loader/test_constants.py
+tests/loader/test_exceptions.py
 tests/loader/test_operations.py
 tests/profiles/__init__.py
 tests/profiles/test_operations.py
 tests/settings/__init__.py
+tests/settings/test_constants.py
+tests/settings/test_exceptions.py
 tests/settings/test_operations.py
 tests/validators/__init__.py
 tests/validators/test_operations.py
