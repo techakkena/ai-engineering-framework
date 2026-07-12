@@ -56,4 +56,6 @@ tests/settings/test_constants.py
 tests/settings/test_exceptions.py
 tests/settings/test_operations.py
 tests/validators/__init__.py
+tests/validators/test_constants.py
+tests/validators/test_exceptions.py
 tests/validators/test_operations.py
