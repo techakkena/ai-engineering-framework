@@ -112,3 +112,15 @@ class Settings:
         key: str,
     ) -> bool:
         return key in self._values
+
+    def keys(self) -> list[str]:
+        """
+        Return all setting keys.
+        """
+        return list(self._values.keys())
+
+    def values(self) -> list[Any]:
+        """
+        Return all setting values.
+        """
+        return list(self._values.values())

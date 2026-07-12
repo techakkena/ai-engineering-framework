@@ -40,6 +40,8 @@ src/ai_config/validators/operations.py
 tests/__init__.py
 tests/test_package.py
 tests/config/__init__.py
+tests/config/test_constants.py
+tests/config/test_exceptions.py
 tests/config/test_operations.py
 tests/environment/__init__.py
 tests/environment/test_constants.py
