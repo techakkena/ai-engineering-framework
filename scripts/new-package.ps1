@@ -1,3 +1,20 @@
+param(
+    [Parameter(Mandatory)]
+    [string]$PackageName,
+
+    [ValidateSet(
+        "Basic",
+        "Config",
+        "Storage",
+        "RAG",
+        "Agents",
+        "Workflow",
+        "Service",
+        "Processor"
+    )]
+    [string]$Type = "Basic"
+)
+
 function Write-Utf8NoBom {
     param(
         [Parameter(Mandatory)]
@@ -17,22 +34,6 @@ function Write-Utf8NoBom {
 }
 
 
-param(
-    [Parameter(Mandatory)]
-    [string]$PackageName,
-
-    [ValidateSet(
-        "Basic",
-        "Config",
-        "Storage",
-        "RAG",
-        "Agents",
-        "Workflow",
-        "Service",
-        "Processor"
-    )]
-    [string]$Type = "Basic"
-)
 
 if ($PackageName -notmatch "^[a-z][a-z0-9-]+$") {
     Write-Host ""
@@ -103,18 +104,14 @@ try {
     }
 
     # -------------------------------------------------
-    # Smoke Test
-    # -------------------------------------------------
+# Smoke Test
+# -------------------------------------------------
 
-    if (!(Test-Path $testPath)) {
+if (!(Test-Path $testPath)) {
 
-        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-
-        [System.IO.File]::WriteAllText(
-            $destination,
-            $content,
-            $utf8NoBom
-        ) @"
+    Write-Utf8NoBom `
+        -Path $testPath `
+        -Content @"
 def test_import():
 
     import $moduleName
@@ -122,14 +119,14 @@ def test_import():
     assert $moduleName is not None
 "@
 
-        Write-Host "Created : tests/test_package.py" -ForegroundColor Green
-        $createdFiles += "tests/test_package.py"
-    }
-    else {
+    Write-Host "Created : tests/test_package.py" -ForegroundColor Green
+    $createdFiles += "tests/test_package.py"
+}
+else {
 
-        Write-Host "Skipped : tests/test_package.py" -ForegroundColor Yellow
-        $skippedFiles += "tests/test_package.py"
-    }
+    Write-Host "Skipped : tests/test_package.py" -ForegroundColor Yellow
+    $skippedFiles += "tests/test_package.py"
+}
 
     # -------------------------------------------------
     # Summary

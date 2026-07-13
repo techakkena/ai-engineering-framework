@@ -1,2 +1,5 @@
 def test_import():
-    assert True
+
+    import ai_rag
+
+    assert ai_rag is not None

@@ -1,0 +1,11 @@
+"""Constants for indexing."""
+
+DEFAULT_INDEX_NAME = "default"
+
+DEFAULT_BATCH_SIZE = 100
+
+MIN_BATCH_SIZE = 1
+
+MAX_BATCH_SIZE = 10000
+
+DEFAULT_OVERWRITE = False

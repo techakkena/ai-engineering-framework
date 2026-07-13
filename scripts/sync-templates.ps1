@@ -1,3 +1,12 @@
+param(
+    [string]$PackageName,
+
+    [switch]$All
+)
+
+Write-Host "PackageName = '$PackageName'"
+Write-Host "All         = $All"
+
 function Write-Utf8NoBom {
     param(
         [Parameter(Mandatory)]
@@ -16,11 +25,6 @@ function Write-Utf8NoBom {
     )
 }
 
-param(
-    [string]$PackageName,
-
-    [switch]$All
-)
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $templatePath = Join-Path $PSScriptRoot "templates"
@@ -79,25 +83,34 @@ try {
                 }
             }
     }
-    # -------------------------------------------------
-    # Packages
-    # -------------------------------------------------
+# -------------------------------------------------
+# Packages
+# -------------------------------------------------
+
+if ($PackageName) {
+
+    $package = Join-Path $root $PackageName
+
+    if (!(Test-Path $package)) {
+        throw "Package not found: $PackageName"
+    }
+
+    $packages = @(
+        Get-Item $package
+    )
+
+}
+else {
 
     $packages = Get-ChildItem `
         -Path $root `
         -Directory `
         -Filter "ai-*"
+}
 
-    if (@($packages).Count -eq 0) {
-        Write-Host ""
-        Write-Host "No packages found." -ForegroundColor Yellow
-        return
-    }
-
-    $updatedPackages = 0
-    $copiedFiles = 0
-    $failedFiles = 0
-
+if ($packages.Count -eq 0) {
+    throw "No packages found."
+}
     # -------------------------------------------------
     # Synchronize
     # -------------------------------------------------
