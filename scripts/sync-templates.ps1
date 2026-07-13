@@ -1,4 +1,24 @@
+function Write-Utf8NoBom {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path,
+
+        [Parameter(Mandatory)]
+        [string]$Content
+    )
+
+    $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $Content,
+        $utf8NoBom
+    )
+}
+
 param(
+    [string]$PackageName,
+
     [switch]$All
 )
 
@@ -46,7 +66,7 @@ try {
                 "pyproject.toml",
                 "pytest.ini",
                 "MANIFEST.in",
-                "LICENSE",
+                "LICENSE"
             )) {
 
                 $path = Join-Path $templatePath $name
@@ -118,20 +138,34 @@ try {
                 -Path $template.FullName `
                 -Destination $destination `
                 -Force
-            if ($template.Extension -in @(".toml", ".md", ".ini", ".txt") -or
-                $template.Name -eq ".gitignore" -or
-                $template.Name -eq "LICENSE") {
+            if (
+                $template.Extension -in @(".toml", ".md", ".ini", ".txt") -or
+                $template.Name -eq "LICENSE"
+            ) {
 
-                $content = Get-Content $destination -Raw
+                $content = Get-Content `
+                    -Path $destination `
+                    -Raw `
+                    -Encoding UTF8
 
-                foreach ($key in $replacements.Keys) {
-                    $content = $content.Replace($key, $replacements[$key])
+                if ($null -eq $content) {
+                    $content = ""
                 }
 
-                $content | Set-Content `
-                    -Path $destination `
-                    -Encoding UTF8 `
-                    -NoNewline
+                if ($content -match "__PACKAGE_|__AUTHOR__|__YEAR__") {
+
+                    foreach ($key in $replacements.Keys) {
+                        $content = $content.Replace($key, $replacements[$key])
+                    }
+
+                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+                    [System.IO.File]::WriteAllText(
+                        $destination,
+                        $content,
+                        $utf8NoBom
+                    )
+                }
             }
 
             Write-Host "  Updated : $($template.Name)" -ForegroundColor Green

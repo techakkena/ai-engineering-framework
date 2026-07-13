@@ -1,0 +1,13 @@
+"""Configuration constants."""
+
+DEFAULT_PROMPT_DIRECTORY = "prompts"
+
+DEFAULT_PROMPT_EXTENSION = ".txt"
+
+DEFAULT_TEMPLATE_ENCODING = "utf-8"
+
+__all__ = [
+    "DEFAULT_PROMPT_DIRECTORY",
+    "DEFAULT_PROMPT_EXTENSION",
+    "DEFAULT_TEMPLATE_ENCODING",
+]

@@ -1,9 +1,6 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$PackageName
-
-    [Parameter(Mandatory=$true)]
-    [string[]]$Modules
 )
 
 
