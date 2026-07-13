@@ -1,6 +1,0 @@
-# Google Cloud credentials
-ai-customer-agent/backend/credentials/
-*.json
-!package.json
-!tsconfig.json
-!composer.json

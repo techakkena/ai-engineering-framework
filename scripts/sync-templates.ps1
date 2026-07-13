@@ -39,20 +39,26 @@ try {
     }
     else {
 
-        $templateFiles = @(
-            ".gitignore",
-            "pyproject.toml",
-            "pytest.ini",
-            "MANIFEST.in",
-            "LICENSE"
-        ) | ForEach-Object {
+            $templateFiles = @()
 
-            Get-Item (Join-Path $templatePath $_)
-        }
+            foreach ($name in @(
+                ".gitignore",
+                "pyproject.toml",
+                "pytest.ini",
+                "MANIFEST.in",
+                "LICENSE",
+            )) {
 
-        Write-Host "Mode : Infrastructure Files Only" -ForegroundColor Green
+                $path = Join-Path $templatePath $name
+
+                if (Test-Path $path) {
+                    $templateFiles += Get-Item $path
+                }
+                else {
+                    Write-Host "Skipping missing template : $name" -ForegroundColor Yellow
+                }
+            }
     }
-
     # -------------------------------------------------
     # Packages
     # -------------------------------------------------
@@ -62,10 +68,10 @@ try {
         -Directory `
         -Filter "ai-*"
 
-    if ($packages.Count -eq 0) {
+    if (@($packages).Count -eq 0) {
         Write-Host ""
         Write-Host "No packages found." -ForegroundColor Yellow
-        exit 0
+        return
     }
 
     $updatedPackages = 0
@@ -77,33 +83,73 @@ try {
     # -------------------------------------------------
 
     foreach ($package in $packages) {
+        $moduleName = $package.Name.Replace("-", "_")
 
+        $descriptions = @{
+                "ai-core"   = "Core abstractions for the AI Engineering Framework."
+                "ai-utils"  = "Common utilities for the AI Engineering Framework."
+                "ai-config" = "Configuration management for the AI Engineering Framework."
+                "ai-memory" = "Memory management for AI applications."
+            }
+
+            $description = $descriptions[$package.Name]
+
+            if ([string]::IsNullOrWhiteSpace($description)) {
+                $description = "Enterprise $($package.Name) package."
+            }
+
+            $replacements = @{
+                "__PACKAGE_NAME__"        = $package.Name
+                "__PACKAGE_MODULE__"      = $moduleName
+                "__PACKAGE_DESCRIPTION__" = $description
+                "__YEAR__"                = (Get-Date).Year
+                "__AUTHOR__"              = "AI Engineering Framework"
+            }
         Write-Host ""
         Write-Host "Package : $($package.Name)" -ForegroundColor Cyan
 
         foreach ($template in $templateFiles) {
 
-            try {
+        try {
 
-                Copy-Item `
-                    -Path $template.FullName `
-                    -Destination (Join-Path $package.FullName $template.Name) `
-                    -Force
+            $destination = Join-Path $package.FullName $template.Name
 
-                Write-Host "  Copied  : $($template.Name)" -ForegroundColor Green
-                $copiedFiles++
+            Copy-Item `
+                -Path $template.FullName `
+                -Destination $destination `
+                -Force
+            if ($template.Extension -in @(".toml", ".md", ".ini", ".txt") -or
+                $template.Name -eq ".gitignore" -or
+                $template.Name -eq "LICENSE") {
+
+                $content = Get-Content $destination -Raw
+
+                foreach ($key in $replacements.Keys) {
+                    $content = $content.Replace($key, $replacements[$key])
+                }
+
+                $content | Set-Content `
+                    -Path $destination `
+                    -Encoding UTF8 `
+                    -NoNewline
             }
-            catch {
 
-                Write-Host "  Failed  : $($template.Name)" -ForegroundColor Red
-                Write-Host "            $($_.Exception.Message)"
+            Write-Host "  Updated : $($template.Name)" -ForegroundColor Green
 
-                $failedFiles++
-            }
+            $copiedFiles++
+
         }
+        catch {
 
-        $updatedPackages++
-    }
+            Write-Host "  Failed : $($template.Name)" -ForegroundColor Red
+            Write-Host "          $($_.Exception.Message)"
+
+            $failedFiles++
+        }
+            }   # foreach ($template in $templateFiles)
+
+                $updatedPackages++
+            }       # foreach ($package in $packages)
 
     # -------------------------------------------------
     # Summary
@@ -116,17 +162,21 @@ try {
     Write-Host ""
 
     Write-Host "Packages Updated : $updatedPackages"
-    Write-Host "Files Copied     : $copiedFiles"
+    Write-Host "Files Updated    : $copiedFiles"
     Write-Host "Files Failed     : $failedFiles"
-
     Write-Host ""
 
 }
 catch {
 
     Write-Host ""
-    Write-Host "Template synchronization failed." -ForegroundColor Red
-    Write-Host $_.Exception.Message
+    Write-Host "===================================" -ForegroundColor Red
+    Write-Host " Template Synchronization Failed" -ForegroundColor Red
+    Write-Host "===================================" -ForegroundColor Red
+    Write-Host ""
+
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Write-Host ""
 
     exit 1
 }

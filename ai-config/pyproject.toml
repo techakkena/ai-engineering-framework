@@ -1,7 +1,7 @@
 [project]
-name = "ai-config"
+name = "__PACKAGE_NAME__"
 version = "0.1.0"
-description = "Reusable AI Engineering Framework Package"
+description = "__PACKAGE_DESCRIPTION__"
 readme = "README.md"
 requires-python = ">=3.14"
 

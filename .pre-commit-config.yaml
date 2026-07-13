@@ -22,8 +22,8 @@ repos:
       - id: mypy
         pass_filenames: false
         args:
-          - ai-config/src
+          - ai-memory/src
         additional_dependencies:
           - pydantic
           - pydantic-settings
-        files: ^ai-config/
+        files: ^ai-memory/

@@ -1,7 +1,11 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$PackageName
+
+    [Parameter(Mandatory=$true)]
+    [string[]]$Modules
 )
+
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $packagePath = Join-Path $root $PackageName
