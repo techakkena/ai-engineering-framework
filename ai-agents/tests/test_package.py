@@ -1,2 +1,5 @@
 def test_import():
-    assert True
+
+    import ai_agents
+
+    assert ai_agents is not None
