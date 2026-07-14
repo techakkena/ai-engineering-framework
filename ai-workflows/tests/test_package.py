@@ -1,2 +1,5 @@
 def test_import():
-    assert True
+
+    import ai_workflows
+
+    assert ai_workflows is not None
