@@ -1,2 +1,5 @@
 def test_import():
-    assert True
+
+    import ai_deployment
+
+    assert ai_deployment is not None
