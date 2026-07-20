@@ -11,10 +11,9 @@ from app.common.exceptions import register_exception_handlers
 from app.config.logging import configure_logging
 from app.config.settings import settings
 from app.core.lifespan import shutdown, startup
+from collections.abc import AsyncIterator
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
     """Manage application startup and shutdown lifecycle.
 
     Args:
@@ -59,3 +58,8 @@ async def root() -> dict[str, str]:
         "version": settings.APP_VERSION,
         "status": "running",
     }
+
+@asynccontextmanager
+async def lifespan(
+    app: FastAPI,
+)-> AsyncIterator[None]:

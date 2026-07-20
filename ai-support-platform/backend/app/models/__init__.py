@@ -1,14 +1,17 @@
 from app.models.organization import Organization
+from app.models.permission import Permission
+from app.models.role import Role
+from app.models.role_permission import RolePermission
 from app.models.ticket import Ticket
 from app.models.user import User
-
-# Add the others if they exist as separate modules:
-# from app.models.category import Category
-# from app.models.priority import Priority
-# from app.models.status import Status
+from app.models.user_role import UserRole
 
 __all__ = [
-    "User",
     "Organization",
+    "Permission",
+    "Role",
+    "RolePermission",
     "Ticket",
+    "User",
+    "UserRole",
 ]

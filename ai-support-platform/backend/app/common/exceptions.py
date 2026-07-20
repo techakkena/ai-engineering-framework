@@ -3,6 +3,7 @@ from __future__ import annotations
 """Application exception handlers."""
 
 import logging
+from typing import cast
 
 from app.common.responses import ErrorResponse
 from app.core.exceptions import AppException
@@ -13,10 +14,9 @@ from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 logger = logging.getLogger(__name__)
 
-
 async def app_exception_handler(
     request: Request,
-    exc: AppException,
+    exc: Exception,
 ) -> JSONResponse:
     """Handle application exceptions.
 
@@ -27,6 +27,8 @@ async def app_exception_handler(
     Returns:
         JSON error response.
     """
+    app_exc = cast(AppException, exc)
+    
     logger.warning(
         "%s %s - %s",
         request.method,
@@ -46,9 +48,9 @@ async def app_exception_handler(
 
 
 async def validation_exception_handler(
-    request: Request,
-    exc: RequestValidationError,
-) -> JSONResponse:
+    RequestValidationError,
+    exc,
+    ) -> JSONResponse:
     """Handle request validation errors.
 
     Args:

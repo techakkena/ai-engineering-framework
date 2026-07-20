@@ -1,13 +1,23 @@
 from __future__ import annotations
 
-"""Password utilities."""
+"""Password hashing utilities."""
 
-from app.config.security import (
-    hash_password,
-    verify_password,
-)
+from pwdlib import PasswordHash
 
-__all__ = [
-    "hash_password",
-    "verify_password",
-]
+_password_hash = PasswordHash.recommended()
+
+
+def hash_password(password: str) -> str:
+    """Hash a password."""
+    return _password_hash.hash(password)
+
+
+def verify_password(
+    plain_password: str,
+    hashed_password: str,
+) -> bool:
+    """Verify a password."""
+    return _password_hash.verify(
+        plain_password,
+        hashed_password,
+    )

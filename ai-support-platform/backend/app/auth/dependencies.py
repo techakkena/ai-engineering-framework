@@ -2,90 +2,50 @@ from __future__ import annotations
 
 """Authentication dependencies."""
 
-from typing import Annotated
+from uuid import UUID
 
-from app.auth.service import AuthenticationService
-from app.core.dependencies import DatabaseDependency
-from app.core.exceptions import AuthenticationException
-from app.models.user import User
-from app.repositories.user import UserRepository
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/v1/auth/login",
-)
+from app.auth.jwt import decode_access_token
+from app.auth.service import AuthenticationService
+from app.database import get_db
+from app.repositories.user import UserRepository
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
+    """Return the authenticated user."""
+    try:
+        payload = decode_access_token(token)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials.",
+        ) from exc
+
+    user_id = UUID(payload["sub"])
+
+    repository = UserRepository(db)
+
+    user = repository.get_by_id(user_id)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found.",
+        )
+
+    return user
 
 def get_authentication_service(
-    db: DatabaseDependency,
+    db: Session = Depends(get_db),
 ) -> AuthenticationService:
-    """Return the authentication service.
-
-    Args:
-        db: Database session.
-
-    Returns:
-        Authentication service instance.
-    """
+    """Return the authentication service."""
     repository = UserRepository(db)
 
     return AuthenticationService(repository)
-
-
-AuthenticationServiceDependency = Annotated[
-    AuthenticationService,
-    Depends(get_authentication_service),
-]
-
-async def get_current_active_user(
-    current_user: CurrentUserDependency,
-) -> User:
-    """Return the current active user.
-
-    Args:
-        current_user: Authenticated user.
-
-    Returns:
-        Active user.
-
-    Raises:
-        AuthenticationException: If the user is inactive.
-    """
-    if not current_user.is_active:
-        raise AuthenticationException(
-            "User account is inactive.",
-        )
-
-    return current_user
-
-
-CurrentActiveUserDependency = Annotated[
-    User,
-    Depends(get_current_active_user),
-]
-
-
-async def get_current_superuser(
-    current_user: CurrentActiveUserDependency,
-) -> User:
-    """Return the current superuser.
-
-    Args:
-        current_user: Authenticated active user.
-
-    Returns:
-        Superuser.
-
-    Raises:
-        AuthenticationException: If the user is not a superuser.
-    """
-    if not current_user.is_superuser:
-        raise AuthenticationException(
-            "Superuser privileges are required.",
-        )
-
-    return current_user
-
-
-CurrentUserDependency = CurrentActiveUserDependency

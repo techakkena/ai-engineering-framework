@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from app.config.logging import get_logger
 from app.config.settings import settings
+from app.database.engine import engine
 
 logger = get_logger(__name__)
 

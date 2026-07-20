@@ -2,8 +2,8 @@ from __future__ import annotations
 
 """Generic repository implementation."""
 
-from uuid import UUID
 from typing import Any, Generic, TypeVar, cast
+from uuid import UUID
 
 from app.database.base import Base
 from sqlalchemy import Select, select

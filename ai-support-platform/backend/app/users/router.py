@@ -1,6 +1,6 @@
-"""Ticket API router."""
-
 from __future__ import annotations
+
+"""User API router."""
 
 from typing import Annotated
 from uuid import UUID
@@ -9,146 +9,153 @@ from fastapi import APIRouter, Depends, Response, status
 
 from app.core.dependencies import DatabaseDependency
 from app.models.user import User
+from app.organizations.repository import OrganizationRepository
 from app.rbac.dependencies import require_permission
-from app.tickets.schemas import (
-    CreateTicketRequest,
-    TicketListResponse,
-    TicketResponse,
-    UpdateTicketRequest,
+from app.repositories.user import UserRepository
+from app.users.schemas import (
+    CreateUserRequest,
+    UpdateUserRequest,
+    UserListResponse,
+    UserResponse,
 )
-from app.tickets.service import TicketService
+from app.users.service import UserService
 
 router = APIRouter(
-    prefix="/tickets",
-    tags=["Tickets"],
+    prefix="/users",
+    tags=["Users"],
 )
 
 
-def get_ticket_service(
+def get_user_service(
     db: DatabaseDependency,
-) -> TicketService:
-    """Return a ticket service."""
-    return TicketService(db)
+) -> UserService:
+    """Return a user service."""
+    user_repository = UserRepository(db)
+    organization_repository = OrganizationRepository(db)
+
+    return UserService(
+        user_repository=user_repository,
+        organization_repository=organization_repository,
+    )
 
 
-TicketServiceDependency = Annotated[
-    TicketService,
-    Depends(get_ticket_service),
+UserServiceDependency = Annotated[
+    UserService,
+    Depends(get_user_service),
 ]
 
-CreateTicketUser = Annotated[
+CreateUserPermission = Annotated[
     User,
-    Depends(require_permission("ticket", "create")),
+    Depends(require_permission("user", "create")),
 ]
 
-ViewTicketUser = Annotated[
+ViewUserPermission = Annotated[
     User,
-    Depends(require_permission("ticket", "view")),
+    Depends(require_permission("user", "view")),
 ]
 
-UpdateTicketUser = Annotated[
+UpdateUserPermission = Annotated[
     User,
-    Depends(require_permission("ticket", "update")),
+    Depends(require_permission("user", "update")),
 ]
 
-DeleteTicketUser = Annotated[
+DeleteUserPermission = Annotated[
     User,
-    Depends(require_permission("ticket", "delete")),
+    Depends(require_permission("user", "delete")),
 ]
 
 
 @router.post(
     "",
-    response_model=TicketResponse,
+    response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Create ticket",
+    summary="Create user",
 )
-async def create_ticket(
-    request: CreateTicketRequest,
-    current_user: CreateTicketUser,
-    service: TicketServiceDependency,
-) -> TicketResponse:
-    """Create a ticket."""
-    ticket = service.create_ticket(
-        organization_id=current_user.organization_id,
-        created_by_id=current_user.id,
-        request=request,
-    )
+async def create_user(
+    request: CreateUserRequest,
+    _: CreateUserPermission,
+    service: UserServiceDependency,
+) -> UserResponse:
+    """Create a new user."""
+    user = service.create_user(request)
 
-    return TicketResponse.model_validate(ticket)
+    return UserResponse.model_validate(user)
 
 
 @router.get(
     "",
-    response_model=TicketListResponse,
-    summary="List tickets",
+    response_model=UserListResponse,
+    summary="List users",
 )
-async def list_tickets(
-    current_user: ViewTicketUser,
-    service: TicketServiceDependency,
-) -> TicketListResponse:
-    """Return all tickets."""
-    tickets = service.list_tickets(
-        organization_id=current_user.organization_id,
+async def list_users(
+    _: ViewUserPermission,
+    service: UserServiceDependency,
+    offset: int = 0,
+    limit: int = 100,
+) -> UserListResponse:
+    """Return all users."""
+    users = service.list_users(
+        offset=offset,
+        limit=limit,
     )
 
-    return TicketListResponse(
-        tickets=[
-            TicketResponse.model_validate(ticket)
-            for ticket in tickets
+    return UserListResponse(
+        users=[
+            UserResponse.model_validate(user)
+            for user in users
         ],
-        total=len(tickets), 
+        total=len(users),
     )
 
 
 @router.get(
-    "/{ticket_id}",
-    response_model=TicketResponse,
-    summary="Get ticket",
+    "/{user_id}",
+    response_model=UserResponse,
+    summary="Get user",
 )
-async def get_ticket(
-    ticket_id: UUID,
-    _: ViewTicketUser,
-    service: TicketServiceDependency,
-) -> TicketResponse:
-    """Return a ticket."""
-    ticket = service.get_ticket(ticket_id)
+async def get_user(
+    user_id: UUID,
+    _: ViewUserPermission,
+    service: UserServiceDependency,
+) -> UserResponse:
+    """Return a user."""
+    user = service.get_user(user_id)
 
-    return TicketResponse.model_validate(ticket)
+    return UserResponse.model_validate(user)
 
 
 @router.patch(
-    "/{ticket_id}",
-    response_model=TicketResponse,
-    summary="Update ticket",
+    "/{user_id}",
+    response_model=UserResponse,
+    summary="Update user",
 )
-async def update_ticket(
-    ticket_id: UUID,
-    request: UpdateTicketRequest,
-    _: UpdateTicketUser,
-    service: TicketServiceDependency,
-) -> TicketResponse:
-    """Update a ticket."""
-    ticket = service.update_ticket(
-        ticket_id,
-        request,
+async def update_user(
+    user_id: UUID,
+    request: UpdateUserRequest,
+    _: UpdateUserPermission,
+    service: UserServiceDependency,
+) -> UserResponse:
+    """Update an existing user."""
+    user = service.update_user(
+        user_id=user_id,
+        request=request,
     )
 
-    return TicketResponse.model_validate(ticket)
+    return UserResponse.model_validate(user)
 
 
 @router.delete(
-    "/{ticket_id}",
+    "/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="Delete ticket",
+    summary="Delete user",
 )
-async def delete_ticket(
-    ticket_id: UUID,
-    _: DeleteTicketUser,
-    service: TicketServiceDependency,
+async def delete_user(
+    user_id: UUID,
+    _: DeleteUserPermission,
+    service: UserServiceDependency,
 ) -> Response:
-    """Delete a ticket."""
-    service.delete_ticket(ticket_id)
+    """Delete a user."""
+    service.delete_user(user_id)
 
     return Response(
         status_code=status.HTTP_204_NO_CONTENT,

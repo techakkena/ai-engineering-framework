@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import Final
 
-from app.config.constants import HEALTH_STATUS
-
 ###############################################################################
 # API
 ###############################################################################

@@ -4,108 +4,90 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from app.auth.jwt import (
-    create_access_token,
-    decode_access_token,
-)
-from app.auth.password import verify_password
-from app.core.exceptions import (
-    AuthenticationException,
-    ResourceNotFoundException,
-)
+from app.auth.jwt import create_access_token
+from app.auth.password import hash_password, verify_password
 from app.models.user import User
 from app.repositories.user import UserRepository
-from jwt import InvalidTokenError
+
+
+class AuthenticationError(Exception):
+    """Raised when authentication fails."""
+
+
+class EmailAlreadyExistsError(AuthenticationError):
+    """Raised when an email is already registered."""
+
+
+class UsernameAlreadyExistsError(AuthenticationError):
+    """Raised when a username is already taken."""
 
 
 class AuthenticationService:
-    """Authentication business logic."""
+    """Authentication service."""
 
     def __init__(
         self,
         repository: UserRepository,
     ) -> None:
-        """Initialize the authentication service.
-
-        Args:
-            repository: User repository.
-        """
         self._repository = repository
 
     def authenticate(
         self,
         email: str,
         password: str,
-    ) -> User:
-        """Authenticate a user.
-
-        Args:
-            email: User email.
-            password: Plain-text password.
-
-        Returns:
-            Authenticated user.
-
-        Raises:
-            AuthenticationException: If credentials are invalid.
-        """
+    ) -> str:
+        """Authenticate a user and return an access token."""
         user = self._repository.get_by_email(email)
 
         if user is None:
-            raise AuthenticationException("Invalid email or password.")
+            raise AuthenticationError("Invalid credentials.")
 
-        if not user.is_active:
-            raise AuthenticationException("User account is inactive.")
+        if not verify_password(
+            password,
+            user.password_hash,
+        ):
+            raise AuthenticationError("Invalid credentials.")
 
-        if not verify_password(password, user.password_hash):
-            raise AuthenticationException("Invalid email or password.")
-
-        return user
-
-    def create_token(self, user: User) -> str:
-        """Create an access token.
-
-        Args:
-            user: Authenticated user.
-
-        Returns:
-            JWT access token.
-        """
         return create_access_token(
             subject=str(user.id),
-            additional_claims={
-                "email": user.email,
-                "username": user.username,
-                "is_superuser": user.is_superuser,
-            },
         )
 
-    def get_current_user(
+    def get_user(
         self,
-        token: str,
+        email: str,
+    ) -> User | None:
+        """Return a user by email."""
+        return self._repository.get_by_email(email)
+
+    def register(
+        self,
+        *,
+        email: str,
+        username: str,
+        password: str,
+        organization_id: UUID,
+        full_name: str | None = None,
     ) -> User:
-        """Retrieve the authenticated user.
+        """Register a new user."""
+        if self._repository.exists_by_email(email):
+            raise EmailAlreadyExistsError(
+                "Email is already registered.",
+            )
 
-        Args:
-            token: JWT access token.
+        if self._repository.exists_by_username(username):
+            raise UsernameAlreadyExistsError(
+                "Username is already taken.",
+            )
 
-        Returns:
-            Authenticated user.
+        password_hash = hash_password(password)
+        print(f"register() organization_id = {organization_id!r}")
 
-        Raises:
-            AuthenticationException: If the token is invalid.
-            ResourceNotFoundException: If the user no longer exists.
-        """
-        try:
-            payload = decode_access_token(token)
-        except InvalidTokenError as exc:
-            raise AuthenticationException("Invalid access token.") from exc
+        return self._repository.create(
+            email=email,
+            username=username,
+            full_name=full_name,
+            password_hash=password_hash,
+            organization_id=organization_id,
+        )
 
-        user_id = UUID(payload["sub"])
-
-        user = self._repository.get_by_id(user_id)
-
-        if user is None:
-            raise ResourceNotFoundException("User")
-
-        return user
+    

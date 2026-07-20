@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 class ErrorMessage:
     UNKNOWN = "An unexpected error occurred."
     INVALID_REQUEST = "Invalid request."

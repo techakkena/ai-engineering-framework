@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """User repository."""
 
+from uuid import UUID
+
 from app.models.user import User
 from app.repositories.base import BaseRepository
 from sqlalchemy import select
@@ -96,3 +98,30 @@ class UserRepository(BaseRepository[User]):
             True if the user exists; otherwise False.
         """
         return self.get_by_username(username) is not None
+
+    def create(
+        self,
+        email: str,
+        username: str,
+        full_name: str | None,
+        password_hash: str,
+        organization_id: UUID,
+    ) -> User:
+        print(f"repository.create() organization_id = {organization_id!r}")
+        """Create a new user."""
+
+        user = User(
+            email=email,
+            username=username,
+            full_name=full_name,
+            password_hash=password_hash,
+            organization_id=organization_id,
+        )
+
+        self.session.add(user)
+        self.session.commit()
+        self.session.refresh(user)
+
+        return user
+
+    

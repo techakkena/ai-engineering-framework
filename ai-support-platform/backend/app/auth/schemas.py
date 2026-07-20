@@ -2,57 +2,46 @@ from __future__ import annotations
 
 """Authentication schemas."""
 
-from datetime import UTC, datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class LoginRequest(BaseModel):
-    """Login request schema."""
+    """Login request."""
 
     email: EmailStr
-    password: str = Field(
-        min_length=8,
-        max_length=128,
-    )
+    password: str
 
 
 class TokenResponse(BaseModel):
-    """JWT token response schema."""
+    """JWT token response."""
 
     access_token: str
-    token_type: str = "Bearer"
-    expires_in: int
-
-
-class RefreshTokenRequest(BaseModel):
-    """Refresh token request schema."""
-
-    refresh_token: str
-
-
-class UserResponse(BaseModel):
-    """Authenticated user response."""
+    token_type: str = "bearer"
 
     model_config = ConfigDict(
         from_attributes=True,
     )
 
-    
+class RegisterRequest(BaseModel):
+    """User registration request."""
+
+    email: EmailStr
+    username: str
+    full_name: str | None = None
+    password: str
+    organization_id: UUID
+
+
+class UserResponse(BaseModel):
+    """User response."""
+
     id: UUID
     email: EmailStr
     username: str
-    full_name: str
-    is_active: bool
-    is_superuser: bool
-    created_at: datetime
+    full_name: str | None = None
 
-
-class CurrentUserResponse(BaseModel):
-    """Current user response."""
-
-    user: UserResponse
-    timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+    model_config = ConfigDict(
+        from_attributes=True,
     )

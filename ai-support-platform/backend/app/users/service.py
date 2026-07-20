@@ -17,7 +17,6 @@ from app.users.schemas import (
     UpdateUserRequest,
 )
 
-
 class UserService:
     """Service for user management."""
 
@@ -72,20 +71,15 @@ class UserService:
                 "Organization not found.",
             )
 
-        user = self.user_repository.create(
-            User(
-                organization_id=request.organization_id,
-                email=request.email,
-                username=request.username,
-                full_name=request.full_name,
-                password_hash=hash_password(request.password),
-                is_active=request.is_active,
-                is_superuser=request.is_superuser,
-            )
-        )
+        password_hash = hash_password(request.password)
 
-        self.user_repository.session.commit()
-        self.user_repository.session.refresh(user)
+        user = self.user_repository.create(
+            email=request.email,
+            username=request.username,
+            full_name=request.full_name,
+            password_hash=password_hash,
+            organization_id=request.organization_id,
+        )
 
         return user
 
@@ -94,7 +88,7 @@ class UserService:
         user_id: UUID,
     ) -> User:
         """Return a user by ID."""
-        user = self.user_repository.get_by_id(user_id)
+        user = self.user_repository.get(user_id)
 
         if user is None:
             raise ResourceNotFoundException(
@@ -105,9 +99,13 @@ class UserService:
 
     def list_users(
         self,
+        offset: int = 0,
+        limit: int = 100,
     ) -> list[User]:
-        """Return all users."""
-        return self.user_repository.list()
+        return self.user_repository.list(
+            offset=offset,
+            limit=limit,
+        )
 
     def update_user(
         self,
@@ -143,13 +141,20 @@ class UserService:
             exclude_unset=True,
         )
 
+        IMMUTABLE_FIELDS = frozenset(
+            {
+                "id",
+                "organization_id",
+            }
+        )
+
         for field, value in updates.items():
+            if field in IMMUTABLE_FIELDS:
+                continue
+
             setattr(user, field, value)
 
-        self.user_repository.session.commit()
-        self.user_repository.session.refresh(user)
-
-        return user
+        return self.user_repository.update(user)
 
     def delete_user(
         self,
@@ -157,5 +162,5 @@ class UserService:
     ) -> None:
         """Soft-delete a user."""
         user = self.get_user(user_id)
-        user.soft_delete()
-        self.user_repository.session.commit()
+        self.user_repository.delete(user)
+        

@@ -1,20 +1,25 @@
 from __future__ import annotations
 
-"""Authentication API router."""
+"""Authentication router."""
+
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth.dependencies import (
-    AuthenticationServiceDependency,
-    CurrentActiveUserDependency,
+    get_authentication_service,
+    get_current_user,
 )
 from app.auth.schemas import (
-    CurrentUserResponse,
     LoginRequest,
+    RegisterRequest,
     TokenResponse,
     UserResponse,
 )
-from app.config.constants import BEARER_TOKEN_TYPE
-from app.config.settings import settings
-from fastapi import APIRouter, status
+from app.auth.service import (
+    AuthenticationError,
+    AuthenticationService,
+    EmailAlreadyExistsError,
+    UsernameAlreadyExistsError,
+)
 
 router = APIRouter(
     prefix="/auth",
@@ -25,66 +30,75 @@ router = APIRouter(
 @router.post(
     "/login",
     response_model=TokenResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Authenticate user",
 )
-async def login(
+def login(
     request: LoginRequest,
-    auth_service: AuthenticationServiceDependency,
-) -> TokenResponse:
-    """Authenticate a user and issue an access token.
-
-    Args:
-        request: Login request.
-        auth_service: Authentication service.
-
-    Returns:
-        JWT access token response.
-    """
-    user = auth_service.authenticate(
-        email=request.email,
-        password=request.password,
-    )
-
-    access_token = auth_service.create_token(user)
+    service: AuthenticationService = Depends(get_authentication_service),
+):
+    """Authenticate a user."""
+    try:
+        token = service.authenticate(
+            request.email,
+            request.password,
+        )
+    except AuthenticationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials.",
+        ) from exc
 
     return TokenResponse(
-        access_token=access_token,
-        token_type=BEARER_TOKEN_TYPE,
-        expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        access_token=token,
     )
-
 
 @router.get(
     "/me",
-    response_model=CurrentUserResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Current authenticated user",
+    response_model=UserResponse,
 )
-async def me(
-    current_user: CurrentActiveUserDependency,
-) -> CurrentUserResponse:
-    """Return the authenticated user.
-
-    Args:
-        current_user: Authenticated active user.
-
-    Returns:
-        Current authenticated user.
-    """
-    return CurrentUserResponse(
-        user=UserResponse.model_validate(current_user),
+def me(
+    current_user=Depends(get_current_user),
+):
+    """Return the authenticated user."""
+    return UserResponse.model_validate(
+        current_user,
     )
 
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def register(
+    request: RegisterRequest,
+    service: AuthenticationService = Depends(
+        get_authentication_service,
+    ),
+) -> UserResponse:
+    """Register a new user."""
+    try:
+        user = service.register(
+            email=request.email,
+            username=request.username,
+            password=request.password,
+            full_name=request.full_name,
+            organization_id=request.organization_id,
+        )
+
+        return UserResponse.model_validate(user)
+
+    except (
+        EmailAlreadyExistsError,
+        UsernameAlreadyExistsError,
+    ) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        ) from exc
 
 @router.post(
     "/logout",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="Logout",
 )
-async def logout() -> None:
-    """Logout the current user.
-
-    Token revocation will be implemented in a future sprint.
-    """
+def logout() -> None:
+    """Logout the current user."""
     return None
