@@ -1,0 +1,25 @@
+from __future__ import annotations
+
+from enum import Enum
+
+
+class ErrorCode(str, Enum):
+    VALIDATION_ERROR = "VAL001"
+
+    AUTHENTICATION_ERROR = "AUTH001"
+
+    AUTHORIZATION_ERROR = "AUTHZ001"
+
+    DATABASE_ERROR = "DB001"
+
+    AI_ERROR = "AI001"
+
+    INTEGRATION_ERROR = "INT001"
+
+    FILE_ERROR = "FILE001"
+
+    NETWORK_ERROR = "NET001"
+
+    CONFIGURATION_ERROR = "CFG001"
+
+    NOT_FOUND_ERROR = "NF001"

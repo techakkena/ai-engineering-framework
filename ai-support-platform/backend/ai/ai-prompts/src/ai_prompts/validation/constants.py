@@ -1,0 +1,15 @@
+from __future__ import annotations
+
+"""Constants for prompt validation."""
+
+MIN_TEMPLATE_LENGTH = 1
+
+MAX_TEMPLATE_LENGTH = 100_000
+
+MAX_VARIABLE_COUNT = 100
+
+__all__ = [
+    "MIN_TEMPLATE_LENGTH",
+    "MAX_TEMPLATE_LENGTH",
+    "MAX_VARIABLE_COUNT",
+]

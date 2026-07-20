@@ -1,0 +1,11 @@
+from __future__ import annotations
+
+"""Constants for text chunking."""
+
+DEFAULT_CHUNK_SIZE = 1000
+
+DEFAULT_CHUNK_OVERLAP = 200
+
+MIN_CHUNK_SIZE = 1
+
+MAX_CHUNK_SIZE = 10000

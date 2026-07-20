@@ -1,0 +1,98 @@
+from __future__ import annotations
+
+"""User repository."""
+
+from app.models.user import User
+from app.repositories.base import BaseRepository
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+
+class UserRepository(BaseRepository[User]):
+    """Repository for user entities."""
+
+    def __init__(
+        self,
+        session: Session,
+    ) -> None:
+        """Initialize the repository.
+
+        Args:
+            session: Active database session.
+        """
+        super().__init__(
+            session=session,
+            model=User,
+        )
+
+    def get_by_email(
+        self,
+        email: str,
+    ) -> User | None:
+        """Return a user by email.
+
+        Args:
+            email: User email address.
+
+        Returns:
+            User if found; otherwise None.
+        """
+        statement = (
+            select(User)
+            .where(
+                User.email == email,
+                User.is_deleted.is_(False),
+            )
+        )
+
+        return self.session.scalar(statement)
+
+    def get_by_username(
+        self,
+        username: str,
+    ) -> User | None:
+        """Return a user by username.
+
+        Args:
+            username: Username.
+
+        Returns:
+            User if found; otherwise None.
+        """
+        statement = (
+            select(User)
+            .where(
+                User.username == username,
+                User.is_deleted.is_(False),
+            )
+        )
+
+        return self.session.scalar(statement)
+
+    def exists_by_email(
+        self,
+        email: str,
+    ) -> bool:
+        """Return whether a user exists for the given email.
+
+        Args:
+            email: User email.
+
+        Returns:
+            True if the user exists; otherwise False.
+        """
+        return self.get_by_email(email) is not None
+
+    def exists_by_username(
+        self,
+        username: str,
+    ) -> bool:
+        """Return whether a user exists for the given username.
+
+        Args:
+            username: Username.
+
+        Returns:
+            True if the user exists; otherwise False.
+        """
+        return self.get_by_username(username) is not None

@@ -1,0 +1,75 @@
+from __future__ import annotations
+
+"""User ORM model."""
+
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import BaseModel
+from app.models.mixins import OrganizationMixin
+
+if TYPE_CHECKING:
+    from app.models.organization import Organization
+    from app.models.user_role import UserRole
+    # Removed: from app.models.user import User
+
+# Add this to explicitly allow other modules (like user_role.py) to import User without mypy complaints
+__all__ = ["User"]
+
+class User(OrganizationMixin, BaseModel):
+    """Application user."""
+
+    __tablename__ = "users"
+
+    email: Mapped[str] = mapped_column(
+        String(255),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
+
+    username: Mapped[str] = mapped_column(
+        String(100),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
+
+    full_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    password_hash: Mapped[str] = mapped_column(
+    String(512),
+    nullable=False,
+    )
+
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        server_default="true",
+        nullable=False,
+    )
+
+    is_superuser: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default="false",
+        nullable=False,
+    )
+
+    organization: Mapped[Organization] = relationship(
+    "Organization",
+    back_populates="users",
+    lazy="select",
+)
+    user_roles: Mapped[list[UserRole]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+# Place this at the very bottom of the file
+__all__ = ["User"]
