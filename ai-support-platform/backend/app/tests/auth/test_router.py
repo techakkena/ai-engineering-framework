@@ -61,9 +61,7 @@ class TestAuthenticationRouter:
         """Authenticate successfully."""
         auth_service.authenticate.return_value = "jwt-token"
 
-        app.dependency_overrides[
-            get_authentication_service
-        ] = lambda: auth_service
+        app.dependency_overrides[get_authentication_service] = lambda: auth_service
 
         try:
             response = client.post(
@@ -102,9 +100,7 @@ class TestAuthenticationRouter:
         user: User,
     ) -> None:
         """Return current authenticated user."""
-        app.dependency_overrides[
-            get_current_user
-        ] = lambda: user
+        app.dependency_overrides[get_current_user] = lambda: user
 
         try:
             response = client.get("/api/v1/auth/me")
@@ -146,9 +142,7 @@ class TestAuthenticationRouter:
         """Register a new user."""
         auth_service.register.return_value = user
 
-        app.dependency_overrides[
-            get_authentication_service
-        ] = lambda: auth_service
+        app.dependency_overrides[get_authentication_service] = lambda: auth_service
 
         try:
             response = client.post(
@@ -183,9 +177,7 @@ class TestAuthenticationRouter:
             "Email is already registered.",
         )
 
-        app.dependency_overrides[
-            get_authentication_service
-        ] = lambda: auth_service
+        app.dependency_overrides[get_authentication_service] = lambda: auth_service
 
         try:
             response = client.post(
@@ -213,9 +205,7 @@ class TestAuthenticationRouter:
             "Username is already taken.",
         )
 
-        app.dependency_overrides[
-            get_authentication_service
-        ] = lambda: auth_service
+        app.dependency_overrides[get_authentication_service] = lambda: auth_service
 
         try:
             response = client.post(

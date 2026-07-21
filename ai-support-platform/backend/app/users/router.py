@@ -6,7 +6,10 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response, status
-
+from app.users.dependencies import (
+    UserServiceDependency,
+    get_user_service,
+)
 from app.core.dependencies import DatabaseDependency
 from app.models.user import User
 from app.organizations.repository import OrganizationRepository
@@ -37,7 +40,6 @@ def get_user_service(
         user_repository=user_repository,
         organization_repository=organization_repository,
     )
-
 
 UserServiceDependency = Annotated[
     UserService,
@@ -95,7 +97,7 @@ async def list_users(
 ) -> UserListResponse:
     """Return all users."""
     users = service.list_users(
-        offset=offset,
+        skip=skip,
         limit=limit,
     )
 

@@ -45,6 +45,7 @@ def drop_database() -> None:
     if TEST_DB_FILE.exists():
         TEST_DB_FILE.unlink()
 
+
 def get_db_session() -> Generator[Session]:
     """Yield a database session for tests."""
     session = TestingSessionLocal()

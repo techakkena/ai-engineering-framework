@@ -43,7 +43,7 @@ class BaseService(Generic[ModelT]):
     ) -> list[ModelT]:
         """Retrieve entities."""
         return self._repository.list(
-            offset=offset,
+            skip=offset,
             limit=limit,
         )
 

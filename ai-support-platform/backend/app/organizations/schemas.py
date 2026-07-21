@@ -29,6 +29,38 @@ class CreateOrganizationRequest(BaseModel):
 
     website: HttpUrl | None = None
 
+    logo_url: HttpUrl | None = None
+
+    address: str | None = Field(
+        default=None,
+        max_length=500,
+    )
+
+    city: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    state: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    country: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    postal_code: str | None = Field(
+        default=None,
+        max_length=20,
+    )
+
+    timezone: str = Field(
+        default="UTC",
+        max_length=100,
+    )
+
 
 class UpdateOrganizationRequest(BaseModel):
     """Request model for updating an organization."""
@@ -54,6 +86,38 @@ class UpdateOrganizationRequest(BaseModel):
 
     website: HttpUrl | None = None
 
+    logo_url: HttpUrl | None = None
+
+    address: str | None = Field(
+        default=None,
+        max_length=500,
+    )
+
+    city: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    state: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    country: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    postal_code: str | None = Field(
+        default=None,
+        max_length=20,
+    )
+
+    timezone: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
     is_active: bool | None = None
 
 
@@ -65,17 +129,18 @@ class OrganizationResponse(BaseModel):
     )
 
     id: UUID
-
     name: str
-
     code: str
-
     email: EmailStr | None
-
     phone: str | None
-
     website: HttpUrl | None
-
+    logo_url: HttpUrl | None
+    address: str | None
+    city: str | None
+    state: str | None
+    country: str | None
+    postal_code: str | None
+    timezone: str
     is_active: bool
 
 

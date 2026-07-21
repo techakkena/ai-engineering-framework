@@ -9,11 +9,11 @@ from app.core.exceptions import (
     ResourceNotFoundException,
 )
 from app.models.organization import Organization
+from app.organizations.repository import OrganizationRepository
 from app.organizations.schemas import (
     CreateOrganizationRequest,
     UpdateOrganizationRequest,
 )
-from app.repositories.organization import OrganizationRepository
 
 
 class OrganizationService:
@@ -23,71 +23,55 @@ class OrganizationService:
         self,
         repository: OrganizationRepository,
     ) -> None:
-        """Initialize the service.
-
-        Args:
-            repository: Organization repository.
-        """
-        self.repository = repository
+        """Initialize the service."""
+        self._repository = repository
 
     def create_organization(
         self,
         request: CreateOrganizationRequest,
     ) -> Organization:
-        """Create a new organization.
+        """Create an organization."""
 
-        Args:
-            request: Organization creation request.
-
-        Returns:
-            Created organization.
-
-        Raises:
-            ConflictException: If the name or code already exists.
-        """
-        if self.repository.exists_by_name(request.name):
+        if self._repository.exists_by_name(request.name):
             raise ConflictException(
                 "Organization name already exists.",
             )
 
-        if self.repository.exists_by_code(request.code):
+        if self._repository.exists_by_code(request.code):
             raise ConflictException(
                 "Organization code already exists.",
             )
 
-        organization = self.repository.create(
-            Organization(
-                name=request.name,
-                code=request.code,
-                email=request.email,
-                phone=request.phone,
-                website=str(request.website)
-                if request.website
-                else None,
-            )
+        organization = Organization(
+            name=request.name,
+            code=request.code,
+            email=request.email,
+            phone=request.phone,
+            website=str(request.website)
+            if request.website
+            else None,
+            logo_url=str(request.logo_url)
+            if request.logo_url
+            else None,
+            address=request.address,
+            city=request.city,
+            state=request.state,
+            country=request.country,
+            postal_code=request.postal_code,
+            timezone=request.timezone,
         )
 
-        self.repository.session.commit()
-        self.repository.session.refresh(organization)
-
-        return organization
+        return self._repository.create(
+            organization,
+        )
 
     def get_organization(
         self,
         organization_id: UUID,
     ) -> Organization:
-        """Return an organization by ID.
+        """Return an organization."""
 
-        Args:
-            organization_id: Organization identifier.
-
-        Returns:
-            Organization instance.
-
-        Raises:
-            ResourceNotFoundException: If the organization does not exist.
-        """
-        organization = self.repository.get_by_id(
+        organization = self._repository.get(
             organization_id,
         )
 
@@ -100,50 +84,52 @@ class OrganizationService:
 
     def list_organizations(
         self,
+        *,
+        skip: int = 0,
+        limit: int = 100,
     ) -> list[Organization]:
-        """Return all organizations.
+        """Return organizations."""
 
-        Returns:
-            List of organizations.
-        """
-        return self.repository.list()
+        return self._repository.list(
+            skip=skip,
+            limit=limit,
+        )
 
     def update_organization(
         self,
         organization_id: UUID,
         request: UpdateOrganizationRequest,
     ) -> Organization:
-        """Update an organization.
+        """Update an organization."""
 
-        Args:
-            organization_id: Organization identifier.
-            request: Update request.
-
-        Returns:
-            Updated organization.
-        """
         organization = self.get_organization(
             organization_id,
         )
 
         if (
-            request.name
+            request.name is not None
             and request.name != organization.name
         ):
-            if self.repository.exists_by_name(request.name):
+            if self._repository.exists_by_name(
+                request.name,
+            ):
                 raise ConflictException(
                     "Organization name already exists.",
                 )
+
             organization.name = request.name
 
         if (
-            request.code
+            request.code is not None
             and request.code != organization.code
         ):
-            if self.repository.exists_by_code(request.code):
+            if self._repository.exists_by_code(
+                request.code,
+            ):
                 raise ConflictException(
                     "Organization code already exists.",
                 )
+
             organization.code = request.code
 
         if request.email is not None:
@@ -153,29 +139,56 @@ class OrganizationService:
             organization.phone = request.phone
 
         if request.website is not None:
-            organization.website = str(request.website)
+            organization.website = str(
+                request.website,
+            )
+
+        if request.logo_url is not None:
+            organization.logo_url = str(
+                request.logo_url,
+            )
+
+        if request.address is not None:
+            organization.address = request.address
+
+        if request.city is not None:
+            organization.city = request.city
+
+        if request.state is not None:
+            organization.state = request.state
+
+        if request.country is not None:
+            organization.country = request.country
+
+        if request.postal_code is not None:
+            organization.postal_code = (
+                request.postal_code
+            )
+
+        if request.timezone is not None:
+            organization.timezone = (
+                request.timezone
+            )
 
         if request.is_active is not None:
-            organization.is_active = request.is_active
+            organization.is_active = (
+                request.is_active
+            )
 
-        self.repository.session.commit()
-        self.repository.session.refresh(organization)
-
-        return organization
+        return self._repository.update(
+            organization,
+        )
 
     def delete_organization(
         self,
         organization_id: UUID,
     ) -> None:
-        """Soft-delete an organization.
+        """Delete an organization."""
 
-        Args:
-            organization_id: Organization identifier.
-        """
         organization = self.get_organization(
             organization_id,
         )
 
-        organization.soft_delete()
-
-        self.repository.session.commit()
+        self._repository.delete(
+            organization,
+        )

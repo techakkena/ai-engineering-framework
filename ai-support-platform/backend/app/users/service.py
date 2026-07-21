@@ -17,6 +17,7 @@ from app.users.schemas import (
     UpdateUserRequest,
 )
 
+
 class UserService:
     """Service for user management."""
 
@@ -103,7 +104,7 @@ class UserService:
         limit: int = 100,
     ) -> list[User]:
         return self.user_repository.list(
-            offset=offset,
+            skip=offset,
             limit=limit,
         )
 

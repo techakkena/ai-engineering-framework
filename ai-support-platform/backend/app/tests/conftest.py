@@ -3,11 +3,13 @@ from __future__ import annotations
 """Global pytest fixtures."""
 
 from collections.abc import Generator
+from datetime import UTC, datetime
 from uuid import uuid4
-
+from app.main import app
 import pytest
 from sqlalchemy.orm import Session
-
+from fastapi.testclient import TestClient   
+from app.organizations.repository import OrganizationRepository
 # Ensure all ORM mappers are registered before tests run.
 from app.models.organization import Organization
 from app.models.user import User
@@ -42,26 +44,33 @@ def db_session() -> Generator[Session]:
 
 
 @pytest.fixture
-def organization(
-    db_session: Session,
-) -> Organization:
-    """Create a test organization."""
-    unique = uuid4().hex[:8]
+def organization(self) -> MagicMock:
+    """Return organization."""
 
-    organization = Organization(
-        name=f"Test Organization {unique}",
-        code=f"ORG-{unique}",
-        email=f"{unique}@example.com",
-        phone="+919999999999",
-        website="https://example.com",
-        is_active=True,
-    )
+    organization = MagicMock(spec=Organization)
 
-    db_session.add(organization)
-    db_session.flush()
-    db_session.refresh(organization)
+    organization.id = uuid4()
+    organization.name = "Test Organization"
+    organization.code = "ORG001"
+    organization.email = "org@example.com"
+    organization.phone = "+919999999999"
+    organization.website = "https://example.com"
+
+    organization.logo_url = "https://example.com/logo.png"
+    organization.address = "123 Test Street"
+    organization.city = "Hyderabad"
+    organization.state = "Telangana"
+    organization.country = "India"
+    organization.postal_code = "500001"
+    organization.timezone = "Asia/Kolkata"
+
+    organization.is_active = True
+
+    organization.created_at = datetime.now(UTC)
+    organization.updated_at = datetime.now(UTC)
 
     return organization
+
 
 @pytest.fixture
 def user(
@@ -86,8 +95,55 @@ def user(
     db_session.refresh(user)
 
     return user
-    
+
+
 @pytest.fixture
 def repository(db_session):
     """Return a UserRepository for tests."""
     return UserRepository(db_session)
+
+@pytest.fixture
+def organization_repository(
+    db_session: Session,
+) -> OrganizationRepository:
+    """Return organization repository."""
+    return OrganizationRepository(db_session)
+
+
+@pytest.fixture
+def client() -> TestClient:
+    """Return FastAPI test client."""
+    return TestClient(app)
+
+@pytest.fixture
+def auth_headers(client: TestClient) -> dict[str, str]:
+    """Return authenticated headers."""
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": "admin@example.com",
+            "password": "Password123!",
+        },
+    )
+
+    token = response.json()["access_token"]
+
+    return {
+        "Authorization": f"Bearer {token}",
+    }
+
+@pytest.fixture
+def created_user(
+    repository: UserRepository,
+    organization: Organization,
+) -> User:
+    """Create a test user."""
+
+    return repository.create(
+        email="john@example.com",
+        username="john",
+        full_name="John Doe",
+        password_hash="hashed",
+        organization_id=organization.id,
+    )

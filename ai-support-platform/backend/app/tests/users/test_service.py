@@ -211,7 +211,7 @@ def test_list_users(
     ]
 
     user_repository.list.assert_called_once_with(
-        offset=0,
+        skip=0,
         limit=100,
     )
 

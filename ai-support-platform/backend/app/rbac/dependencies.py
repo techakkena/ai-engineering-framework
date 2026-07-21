@@ -30,16 +30,23 @@ def require_permission(
     resource: str,
     action: str,
 ) -> Callable[[CurrentActiveUserDependency, RBACService], Coroutine[Any, Any, User]]:
-    """Factory that returns a dependency checking for specific resource permissions."""
+    """Return a dependency that checks a user's permission."""
 
     async def dependency(
         current_user: CurrentActiveUserDependency,
-        rbac_service: Annotated[RBACService, Depends(get_rbac_service)],
+        rbac_service: RBACServiceDependency,
     ) -> User:
-        # Pass current_user.id instead of current_user
-        if not rbac_service.has_permission(current_user.id, resource, action):
-            raise HTTPException(status_code=403, detail="Permission Denied")
+        """Validate that the current user has the required permission."""
+        if not rbac_service.has_permission(
+            current_user.id,
+            resource,
+            action,
+        ):
+            raise HTTPException(
+                status_code=403,
+                detail="Permission denied",
+            )
+
         return current_user
 
-    # Add this line at the outer level to return the inner dependency function
     return dependency

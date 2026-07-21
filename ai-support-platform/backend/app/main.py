@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Application entry point for the Enterprise AI Support Platform."""
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -11,9 +12,12 @@ from app.common.exceptions import register_exception_handlers
 from app.config.logging import configure_logging
 from app.config.settings import settings
 from app.core.lifespan import shutdown, startup
-from collections.abc import AsyncIterator
 
 
+@asynccontextmanager
+async def lifespan(
+    app: FastAPI,
+) -> AsyncIterator[None]:
     """Manage application startup and shutdown lifecycle.
 
     Args:
@@ -41,6 +45,7 @@ app = FastAPI(
     openapi_url="/openapi.json",
     lifespan=lifespan,
 )
+
 register_exception_handlers(app)
 
 app.include_router(api_router)
@@ -58,8 +63,3 @@ async def root() -> dict[str, str]:
         "version": settings.APP_VERSION,
         "status": "running",
     }
-
-@asynccontextmanager
-async def lifespan(
-    app: FastAPI,
-)-> AsyncIterator[None]:

@@ -43,6 +43,42 @@ class Organization(BaseModel):
         nullable=True,
     )
 
+    logo_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    address: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    city: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    state: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    country: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    postal_code: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True,
+    )
+
+    timezone: Mapped[str] = mapped_column(
+        String(100),
+        default="UTC",
+        nullable=False,
+    )
+
     is_active: Mapped[bool] = mapped_column(
         default=True,
         nullable=False,
@@ -50,4 +86,5 @@ class Organization(BaseModel):
 
     users: Mapped[list[User]] = relationship(
         back_populates="organization",
+        cascade="all, delete-orphan",
     )
