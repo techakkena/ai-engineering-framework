@@ -80,7 +80,6 @@ class AuthenticationService:
             )
 
         password_hash = hash_password(password)
-        print(f"register() organization_id = {organization_id!r}")
 
         return self._repository.create(
             email=email,
@@ -89,5 +88,3 @@ class AuthenticationService:
             password_hash=password_hash,
             organization_id=organization_id,
         )
-
-    

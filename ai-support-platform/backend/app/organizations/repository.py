@@ -43,12 +43,9 @@ class OrganizationRepository:
         name: str,
     ) -> Organization | None:
         """Return organization by name."""
-        statement = (
-            select(Organization)
-            .where(
-                Organization.name == name,
-                Organization.deleted_at.is_(None),
-            )
+        statement = select(Organization).where(
+            Organization.name == name,
+            Organization.deleted_at.is_(None),
         )
 
         return self._session.scalar(statement)
@@ -58,12 +55,9 @@ class OrganizationRepository:
         code: str,
     ) -> Organization | None:
         """Return organization by code."""
-        statement = (
-            select(Organization)
-            .where(
-                Organization.code == code,
-                Organization.deleted_at.is_(None),
-            )
+        statement = select(Organization).where(
+            Organization.code == code,
+            Organization.deleted_at.is_(None),
         )
 
         return self._session.scalar(statement)

@@ -1,49 +1,74 @@
 from __future__ import annotations
 
-"""Ticket schemas."""
+"""Pydantic schemas for tickets."""
 
 from datetime import datetime
-from typing import Annotated
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-Title = Annotated[
-    str,
-    Field(
-        min_length=3,
-        max_length=200,
-    ),
-]
-
-Description = Annotated[
-    str,
-    Field(
-        min_length=1,
-        max_length=10000,
-    ),
-]
+from app.tickets.constants import (
+    DESCRIPTION_MAX_LENGTH,
+    DESCRIPTION_MIN_LENGTH,
+    TITLE_MAX_LENGTH,
+    TITLE_MIN_LENGTH,
+    TicketPriority,
+    TicketStatus,
+)
 
 
 class CreateTicketRequest(BaseModel):
     """Request model for creating a ticket."""
 
-    title: Title
-    description: Description
-    priority_id: UUID
-    category_id: UUID | None = None
-    assignee_id: UUID | None = None
+    organization_id: UUID
+
+    created_by: UUID
+
+    assigned_to: UUID | None = None
+
+    title: str = Field(
+        min_length=TITLE_MIN_LENGTH,
+        max_length=TITLE_MAX_LENGTH,
+    )
+
+    description: str = Field(
+        min_length=DESCRIPTION_MIN_LENGTH,
+        max_length=DESCRIPTION_MAX_LENGTH,
+    )
+
+    status: TicketStatus = TicketStatus.OPEN
+
+    priority: TicketPriority = TicketPriority.MEDIUM
 
 
 class UpdateTicketRequest(BaseModel):
     """Request model for updating a ticket."""
 
-    title: Title | None = None
-    description: Description | None = None
-    priority_id: UUID | None = None
-    category_id: UUID | None = None
-    assignee_id: UUID | None = None
-    status_id: UUID | None = None
+    title: str | None = Field(
+        default=None,
+        min_length=TITLE_MIN_LENGTH,
+        max_length=TITLE_MAX_LENGTH,
+    )
+
+    description: str | None = Field(
+        default=None,
+        min_length=DESCRIPTION_MIN_LENGTH,
+        max_length=DESCRIPTION_MAX_LENGTH,
+    )
+
+    priority: TicketPriority | None = None
+
+    status: TicketStatus | None = None
+
+    assigned_to: UUID | None = None
+
+    is_active: bool | None = None
+
+
+class AssignTicketRequest(BaseModel):
+    """Assign a ticket to a user."""
+
+    assignee_id: UUID
 
 
 class TicketResponse(BaseModel):
@@ -54,27 +79,31 @@ class TicketResponse(BaseModel):
     )
 
     id: UUID
+
     organization_id: UUID
 
-    ticket_number: str
+    created_by: UUID
+
+    assigned_to: UUID | None
 
     title: str
+
     description: str
 
-    priority_id: UUID
-    category_id: UUID | None
-    status_id: UUID
-    assignee_id: UUID | None
+    status: TicketStatus
 
-    created_by_id: UUID
+    priority: TicketPriority
+
+    is_active: bool
 
     created_at: datetime
+
     updated_at: datetime
 
 
 class TicketListResponse(BaseModel):
     """Ticket list response."""
 
-    tickets: list[TicketResponse]
-
     total: int
+
+    tickets: list[TicketResponse]

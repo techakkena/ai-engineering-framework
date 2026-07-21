@@ -29,6 +29,7 @@ async def startup(app: FastAPI) -> None:
     logger.info("Debug mode: %s", settings.DEBUG)
     logger.info("Startup completed successfully.")
 
+
 async def shutdown(app: FastAPI) -> None:
     """Execute application shutdown tasks."""
     shutdown_tasks = getattr(app.state, "shutdown_tasks", [])
@@ -76,6 +77,7 @@ def register_shutdown_task(
     )
     tasks.append(task)
     app.state.shutdown_tasks = tasks
+
 
 def check_database_connection() -> None:
     """Verify database connectivity."""

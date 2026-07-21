@@ -51,6 +51,7 @@ def login(
         access_token=token,
     )
 
+
 @router.get(
     "/me",
     response_model=UserResponse,
@@ -62,6 +63,7 @@ def me(
     return UserResponse.model_validate(
         current_user,
     )
+
 
 @router.post(
     "/register",
@@ -94,6 +96,7 @@ def register(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(exc),
         ) from exc
+
 
 @router.post(
     "/logout",

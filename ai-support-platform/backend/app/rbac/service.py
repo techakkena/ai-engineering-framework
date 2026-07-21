@@ -102,6 +102,7 @@ class RBACService:
         except Exception:
             self.session.rollback()
             raise
+
     def grant_permission(
         self,
         role_id: UUID,
@@ -151,11 +152,9 @@ class RBACService:
         permission_id: UUID,
     ) -> None:
         """Remove a permission from a role."""
-        assignment = (
-            self.role_permission_repository.get_by_role_permission(
-                role_id=role_id,
-                permission_id=permission_id,
-            )
+        assignment = self.role_permission_repository.get_by_role_permission(
+            role_id=role_id,
+            permission_id=permission_id,
         )
 
         if assignment is None:

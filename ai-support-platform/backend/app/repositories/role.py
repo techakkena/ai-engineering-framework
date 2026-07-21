@@ -27,13 +27,10 @@ class RoleRepository(BaseRepository[Role]):
         organization_id: UUID,
         name: str,
     ) -> Role | None:
-        statement = (
-            select(Role)
-            .where(
-                Role.organization_id == organization_id,
-                Role.name == name,
-                Role.is_deleted.is_(False),
-            )
+        statement = select(Role).where(
+            Role.organization_id == organization_id,
+            Role.name == name,
+            Role.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)

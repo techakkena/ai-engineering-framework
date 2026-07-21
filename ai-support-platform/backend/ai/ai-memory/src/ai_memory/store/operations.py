@@ -14,9 +14,7 @@ def validate_store_type(store_type: StoreType | str) -> StoreType:
     try:
         return StoreType(store_type)
     except ValueError as exc:
-        raise StoreValidationError(
-            f"Invalid store type: {store_type!r}."
-        ) from exc
+        raise StoreValidationError(f"Invalid store type: {store_type!r}.") from exc
 
 
 def validate_store_state(state: StoreState | str) -> StoreState:
@@ -24,9 +22,7 @@ def validate_store_state(state: StoreState | str) -> StoreState:
     try:
         return StoreState(state)
     except ValueError as exc:
-        raise StoreValidationError(
-            f"Invalid store state: {state!r}."
-        ) from exc
+        raise StoreValidationError(f"Invalid store state: {state!r}.") from exc
 
 
 def is_valid_store_type(store_type: str) -> bool:

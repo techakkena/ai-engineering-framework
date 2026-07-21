@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 from app.repositories.user import UserRepository
 
+
 @pytest.fixture
 def repository(
     db_session: Session,

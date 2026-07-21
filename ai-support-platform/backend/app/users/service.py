@@ -63,7 +63,7 @@ class UserService:
                 "Username already exists.",
             )
 
-        organization = self.organization_repository.get_by_id(
+        organization = self.organization_repository.get(
             request.organization_id,
         )
 
@@ -164,4 +164,3 @@ class UserService:
         """Soft-delete a user."""
         user = self.get_user(user_id)
         self.user_repository.delete(user)
-        

@@ -5,14 +5,12 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from unittest.mock import MagicMock
 from uuid import uuid4
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from app.api.v1.organizations import router
-from app.organizations.dependencies import (
-    get_organization_service,
-)
 
+from app.api.v1.organizations import router
 from app.auth.dependencies import get_current_user
 from app.core.exceptions import (
     ConflictException,
@@ -20,6 +18,9 @@ from app.core.exceptions import (
 )
 from app.models.organization import Organization
 from app.models.user import User
+from app.organizations.dependencies import (
+    get_organization_service,
+)
 
 app = FastAPI()
 app.include_router(router, prefix="/api/v1")
@@ -51,7 +52,6 @@ class TestOrganizationsRouter:
     @pytest.fixture
     def organization(self) -> MagicMock:
         """Return a mock organization."""
-
         organization = MagicMock(spec=Organization)
 
         organization.id = uuid4()
@@ -90,17 +90,14 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """List organizations."""
-
         organization_service.list_organizations.return_value = [
             organization,
         ]
 
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.get("/api/v1/organizations")
@@ -108,17 +105,14 @@ class TestOrganizationsRouter:
             app.dependency_overrides.clear()
 
         print(response.status_code)
-        print(response.json())   # <-- Add this
+        print(response.json())  # <-- Add this
 
         assert response.status_code == 200
 
         body = response.json()
 
         assert len(body["organizations"]) == 1
-        assert (
-            body["organizations"][0]["name"]
-            == organization.name
-        )
+        assert body["organizations"][0]["name"] == organization.name
 
     def test_get_organization(
         self,
@@ -128,17 +122,12 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Get organization."""
+        organization_service.get_organization.return_value = organization
 
-        organization_service.get_organization.return_value = (
-            organization
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
-        )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.get(
@@ -157,19 +146,14 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Unknown organization."""
-
-        organization_service.get_organization.side_effect = (
-            ResourceNotFoundException(
-                "Organization not found.",
-            )
+        organization_service.get_organization.side_effect = ResourceNotFoundException(
+            "Organization not found.",
         )
 
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.get(
@@ -188,17 +172,12 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Create organization."""
+        organization_service.create_organization.return_value = organization
 
-        organization_service.create_organization.return_value = (
-            organization
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
-        )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.post(
@@ -221,19 +200,14 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Duplicate organization."""
-
-        organization_service.create_organization.side_effect = (
-            ConflictException(
-                "Organization name already exists.",
-            )
+        organization_service.create_organization.side_effect = ConflictException(
+            "Organization name already exists.",
         )
 
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.post(
@@ -259,19 +233,14 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Update organization."""
-
         organization.name = "Updated"
 
-        organization_service.update_organization.return_value = (
-            organization
-        )
+        organization_service.update_organization.return_value = organization
 
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.patch(
@@ -294,13 +263,10 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Delete organization."""
-
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.delete(
@@ -316,7 +282,6 @@ class TestOrganizationsRouter:
         client: TestClient,
     ) -> None:
         """Authentication required."""
-
         response = client.get(
             "/api/v1/organizations",
         )
@@ -333,13 +298,10 @@ class TestOrganizationsRouter:
         organization_service: MagicMock,
     ) -> None:
         """Validation error."""
-
-        app.dependency_overrides[get_current_user] = (
-            lambda: current_user
+        app.dependency_overrides[get_current_user] = lambda: current_user
+        app.dependency_overrides[get_organization_service] = (
+            lambda: organization_service
         )
-        app.dependency_overrides[
-            get_organization_service
-        ] = lambda: organization_service
 
         try:
             response = client.post(

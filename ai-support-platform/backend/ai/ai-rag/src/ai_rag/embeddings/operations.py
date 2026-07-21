@@ -37,7 +37,4 @@ def valid_embedding_vector(vector: list[float]) -> bool:
     if not vector:
         return False
 
-    return all(
-        isinstance(value, float)
-        for value in vector
-    )
+    return all(isinstance(value, float) for value in vector)

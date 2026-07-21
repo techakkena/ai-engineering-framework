@@ -67,7 +67,7 @@ def create_request() -> CreateUserRequest:
 
 @pytest.fixture
 def user(create_request: CreateUserRequest) -> User:
-    """Return a user instance."""
+    """Return a mocked user."""
     user = MagicMock(spec=User)
 
     user.id = uuid4()
@@ -92,9 +92,7 @@ def test_create_user_success(
     """Create user successfully."""
     user_repository.exists_by_email.return_value = False
     user_repository.exists_by_username.return_value = False
-
-    organization_repository.get_by_id.return_value = MagicMock()
-
+    organization_repository.get.return_value = MagicMock()
     user_repository.create.return_value = user
 
     result = service.create_user(create_request)
@@ -104,15 +102,12 @@ def test_create_user_success(
     user_repository.exists_by_email.assert_called_once_with(
         create_request.email,
     )
-
     user_repository.exists_by_username.assert_called_once_with(
         create_request.username,
     )
-
-    organization_repository.get_by_id.assert_called_once_with(
+    organization_repository.get.assert_called_once_with(
         create_request.organization_id,
     )
-
     user_repository.create.assert_called_once()
 
 
@@ -139,8 +134,7 @@ def test_create_user_duplicate_username(
     """Raise if username already exists."""
     user_repository.exists_by_email.return_value = False
     user_repository.exists_by_username.return_value = True
-
-    organization_repository.get_by_id.return_value = MagicMock()
+    organization_repository.get.return_value = MagicMock()
 
     with pytest.raises(ConflictException):
         service.create_user(create_request)
@@ -157,8 +151,7 @@ def test_create_user_organization_not_found(
     """Raise if organization does not exist."""
     user_repository.exists_by_email.return_value = False
     user_repository.exists_by_username.return_value = False
-
-    organization_repository.get_by_id.return_value = None
+    organization_repository.get.return_value = None
 
     with pytest.raises(ResourceNotFoundException):
         service.create_user(create_request)
@@ -177,10 +170,7 @@ def test_get_user_success(
     result = service.get_user(user.id)
 
     assert result is user
-
-    user_repository.get.assert_called_once_with(
-        user.id,
-    )
+    user_repository.get.assert_called_once_with(user.id)
 
 
 def test_get_user_not_found(
@@ -200,15 +190,11 @@ def test_list_users(
     user: User,
 ) -> None:
     """Return a paginated list of users."""
-    user_repository.list.return_value = [
-        user,
-    ]
+    user_repository.list.return_value = [user]
 
     result = service.list_users()
 
-    assert result == [
-        user,
-    ]
+    assert result == [user]
 
     user_repository.list.assert_called_once_with(
         skip=0,
@@ -241,9 +227,7 @@ def test_update_user_success(
     assert user.full_name == "Updated User"
     assert user.email == "updated@example.com"
 
-    user_repository.update.assert_called_once_with(
-        user,
-    )
+    user_repository.update.assert_called_once_with(user)
 
 
 def test_update_user_duplicate_email(
@@ -252,18 +236,13 @@ def test_update_user_duplicate_email(
     user: User,
 ) -> None:
     """Raise when updating to an existing email."""
-    request = UpdateUserRequest(
-        email="duplicate@example.com",
-    )
+    request = UpdateUserRequest(email="duplicate@example.com")
 
     user_repository.get.return_value = user
     user_repository.exists_by_email.return_value = True
 
     with pytest.raises(ConflictException):
-        service.update_user(
-            user.id,
-            request,
-        )
+        service.update_user(user.id, request)
 
     user_repository.update.assert_not_called()
 
@@ -274,19 +253,14 @@ def test_update_user_duplicate_username(
     user: User,
 ) -> None:
     """Raise when updating to an existing username."""
-    request = UpdateUserRequest(
-        username="duplicate-user",
-    )
+    request = UpdateUserRequest(username="duplicate-user")
 
     user_repository.get.return_value = user
     user_repository.exists_by_email.return_value = False
     user_repository.exists_by_username.return_value = True
 
     with pytest.raises(ConflictException):
-        service.update_user(
-            user.id,
-            request,
-        )
+        service.update_user(user.id, request)
 
     user_repository.update.assert_not_called()
 
@@ -299,10 +273,6 @@ def test_delete_user_success(
     """Soft-delete a user."""
     user_repository.get.return_value = user
 
-    service.delete_user(
-        user.id,
-    )
+    service.delete_user(user.id)
 
-    user_repository.delete.assert_called_once_with(
-        user,
-    )
+    user_repository.delete.assert_called_once_with(user)

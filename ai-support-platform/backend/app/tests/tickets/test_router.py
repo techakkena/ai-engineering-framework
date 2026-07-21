@@ -1,0 +1,57 @@
+from __future__ import annotations
+
+"""Router tests for tickets."""
+
+from fastapi.testclient import TestClient
+
+
+def test_list_tickets(
+    client: TestClient,
+) -> None:
+    response = client.get("/api/v1/tickets")
+
+    assert response.status_code == 200
+
+
+def test_create_ticket(
+    client: TestClient,
+    auth_headers: dict[str, str],
+    organization,
+    user,
+) -> None:
+    """Create ticket."""
+    response = client.post(
+        "/api/v1/tickets",
+        headers=auth_headers,
+        json={
+            "organization_id": str(organization.id),
+            "created_by": str(user.id),
+            "assigned_to": str(user.id),
+            "title": "Router Ticket",
+            "description": "Created from router test.",
+            "priority": "medium",
+            "status": "open",
+        },
+    )
+
+    assert response.status_code == 201
+
+    body = response.json()
+
+    assert body["title"] == "Router Ticket"
+
+
+def test_get_missing_ticket(
+    client: TestClient,
+    auth_headers: dict[str, str],
+) -> None:
+    """Missing ticket."""
+    response = client.get(
+        "/api/v1/tickets/00000000-0000-0000-0000-000000000000",
+        headers=auth_headers,
+    )
+
+    assert response.status_code in (
+        404,
+        422,
+    )

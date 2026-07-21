@@ -6,15 +6,16 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response, status
-from app.users.dependencies import (
-    UserServiceDependency,
-    get_user_service,
-)
+
 from app.core.dependencies import DatabaseDependency
 from app.models.user import User
 from app.organizations.repository import OrganizationRepository
 from app.rbac.dependencies import require_permission
 from app.repositories.user import UserRepository
+from app.users.dependencies import (
+    UserServiceDependency,
+    get_user_service,
+)
 from app.users.schemas import (
     CreateUserRequest,
     UpdateUserRequest,
@@ -40,6 +41,7 @@ def get_user_service(
         user_repository=user_repository,
         organization_repository=organization_repository,
     )
+
 
 UserServiceDependency = Annotated[
     UserService,
@@ -102,10 +104,7 @@ async def list_users(
     )
 
     return UserListResponse(
-        users=[
-            UserResponse.model_validate(user)
-            for user in users
-        ],
+        users=[UserResponse.model_validate(user) for user in users],
         total=len(users),
     )
 

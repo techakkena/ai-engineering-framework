@@ -28,9 +28,7 @@ def validate_config_scope(
     try:
         return ConfigScope(scope)
     except ValueError as exc:
-        raise ConfigValidationError(
-            f"Invalid configuration scope: {scope!r}."
-        ) from exc
+        raise ConfigValidationError(f"Invalid configuration scope: {scope!r}.") from exc
 
 
 def is_valid_config_format(config_format: str) -> bool:

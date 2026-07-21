@@ -32,7 +32,4 @@ def document_type(path: str) -> str:
 def supported_document_type(document_type_name: str) -> bool:
     """Return True if the document type is supported."""
 
-    return (
-        document_type_name.lower()
-        in SUPPORTED_DOCUMENT_TYPES
-    )
+    return document_type_name.lower() in SUPPORTED_DOCUMENT_TYPES

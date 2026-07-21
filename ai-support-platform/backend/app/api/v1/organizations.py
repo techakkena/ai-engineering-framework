@@ -5,14 +5,6 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    HTTPException,
-    Response,
-    status,
-)
-
 from app.auth.dependencies import get_current_user
 from app.core.exceptions import (
     ConflictException,
@@ -27,6 +19,13 @@ from app.organizations.schemas import (
     OrganizationListResponse,
     OrganizationResponse,
     UpdateOrganizationRequest,
+)
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Response,
+    status,
 )
 
 router = APIRouter(
@@ -85,8 +84,7 @@ async def list_organizations(
 
     return OrganizationListResponse(
         organizations=[
-            OrganizationResponse.model_validate(org)
-            for org in organizations
+            OrganizationResponse.model_validate(org) for org in organizations
         ],
     )
 

@@ -14,10 +14,7 @@ LOGGING_CONFIG: dict[str, Any] = {
     "disable_existing_loggers": False,
     "formatters": {
         "default": {
-            "format": (
-                "%(asctime)s | %(levelname)-8s | "
-                "%(name)s | %(message)s"
-            ),
+            "format": ("%(asctime)s | %(levelname)-8s | " "%(name)s | %(message)s"),
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },

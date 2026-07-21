@@ -41,9 +41,7 @@ def validate_summary_state(
     try:
         return SummaryState(state)
     except ValueError as exc:
-        raise SummaryValidationError(
-            f"Invalid summary state: {state!r}."
-        ) from exc
+        raise SummaryValidationError(f"Invalid summary state: {state!r}.") from exc
 
 
 def is_valid_summary_type(summary_type: str) -> bool:

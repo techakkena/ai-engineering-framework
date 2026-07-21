@@ -3,27 +3,32 @@ from __future__ import annotations
 """Global pytest fixtures."""
 
 from collections.abc import Generator
-from datetime import UTC, datetime
 from uuid import uuid4
-from app.main import app
+
 import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from fastapi.testclient import TestClient   
-from app.organizations.repository import OrganizationRepository
-# Ensure all ORM mappers are registered before tests run.
+
+from app.auth.password import hash_password
+from app.database.session import get_db
+from app.main import app
 from app.models.organization import Organization
+from app.models.ticket import Ticket
 from app.models.user import User
+from app.organizations.repository import OrganizationRepository
 from app.repositories.user import UserRepository
 from app.tests.database import (
     create_database,
     drop_database,
     get_db_session,
 )
+from app.tickets.repository import TicketRepository
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 def setup_database() -> Generator[None]:
-    """Create the test database before the test session starts."""
+    """Create and destroy the test database."""
     create_database()
 
     yield
@@ -33,41 +38,42 @@ def setup_database() -> Generator[None]:
 
 @pytest.fixture
 def db_session() -> Generator[Session]:
-    """Provide a database session for each test."""
-    db = next(get_db_session())
+    """Provide a database session."""
+    session = next(get_db_session())
 
     try:
-        yield db
+        yield session
     finally:
-        db.rollback()
-        db.close()
+        session.rollback()
+        session.close()
 
 
 @pytest.fixture
-def organization(self) -> MagicMock:
-    """Return organization."""
+def organization(
+    db_session: Session,
+) -> Organization:
+    """Create a test organization."""
+    unique = uuid4().hex[:8]
 
-    organization = MagicMock(spec=Organization)
+    organization = Organization(
+        name=f"Organization {unique}",
+        code=f"ORG-{unique}",
+        email=f"{unique}@example.com",
+        phone="+919999999999",
+        website="https://example.com",
+        logo_url="https://example.com/logo.png",
+        address="123 Test Street",
+        city="Hyderabad",
+        state="Telangana",
+        country="India",
+        postal_code="500001",
+        timezone="Asia/Kolkata",
+        is_active=True,
+    )
 
-    organization.id = uuid4()
-    organization.name = "Test Organization"
-    organization.code = "ORG001"
-    organization.email = "org@example.com"
-    organization.phone = "+919999999999"
-    organization.website = "https://example.com"
-
-    organization.logo_url = "https://example.com/logo.png"
-    organization.address = "123 Test Street"
-    organization.city = "Hyderabad"
-    organization.state = "Telangana"
-    organization.country = "India"
-    organization.postal_code = "500001"
-    organization.timezone = "Asia/Kolkata"
-
-    organization.is_active = True
-
-    organization.created_at = datetime.now(UTC)
-    organization.updated_at = datetime.now(UTC)
+    db_session.add(organization)
+    db_session.commit()
+    db_session.refresh(organization)
 
     return organization
 
@@ -77,30 +83,65 @@ def user(
     db_session: Session,
     organization: Organization,
 ) -> User:
-    """Create a test user."""
-    unique = uuid4().hex[:8]
+    """Return the test admin user."""
+    user = db_session.scalar(
+        select(User).where(
+            User.email == "admin@example.com",
+        )
+    )
+
+    if user is not None:
+        return user
 
     user = User(
         organization_id=organization.id,
-        email=f"{unique}@example.com",
-        username=f"user_{unique}",
-        full_name="John Smith",
-        password_hash="hashed-password",
+        email="admin@example.com",
+        username="admin",
+        full_name="Test Admin",
+        password_hash=hash_password("Password123!"),
         is_active=True,
-        is_superuser=False,
+        is_superuser=True,
     )
 
     db_session.add(user)
-    db_session.flush()
+    db_session.commit()
     db_session.refresh(user)
 
     return user
 
 
 @pytest.fixture
-def repository(db_session):
-    """Return a UserRepository for tests."""
+def ticket(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> Ticket:
+    """Create a test ticket."""
+    ticket = Ticket(
+        organization_id=organization.id,
+        created_by=user.id,
+        assigned_to=user.id,
+        title="Sample Ticket",
+        description="Sample ticket description",
+        status="open",
+        priority="medium",
+        is_active=True,
+    )
+
+    db_session.add(ticket)
+    db_session.commit()
+    db_session.refresh(ticket)
+
+    return ticket
+
+
+@pytest.fixture
+def repository(
+    db_session: Session,
+) -> UserRepository:
+    """Return user repository."""
     return UserRepository(db_session)
+
 
 @pytest.fixture
 def organization_repository(
@@ -111,14 +152,30 @@ def organization_repository(
 
 
 @pytest.fixture
-def client() -> TestClient:
-    """Return FastAPI test client."""
-    return TestClient(app)
+def ticket_repository(
+    db_session: Session,
+) -> TicketRepository:
+    """Return ticket repository."""
+    return TicketRepository(db_session)
+
 
 @pytest.fixture
-def auth_headers(client: TestClient) -> dict[str, str]:
-    """Return authenticated headers."""
+def client():
+    """Return FastAPI test client using the test database."""
+    app.dependency_overrides[get_db] = get_db_session
 
+    with TestClient(app) as client:
+        yield client
+
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def auth_headers(
+    client: TestClient,
+    user: User,
+) -> dict[str, str]:
+    """Return authenticated headers."""
     response = client.post(
         "/api/v1/auth/login",
         json={
@@ -127,19 +184,21 @@ def auth_headers(client: TestClient) -> dict[str, str]:
         },
     )
 
+    assert response.status_code == 200
+
     token = response.json()["access_token"]
 
     return {
         "Authorization": f"Bearer {token}",
     }
 
+
 @pytest.fixture
 def created_user(
     repository: UserRepository,
     organization: Organization,
 ) -> User:
-    """Create a test user."""
-
+    """Create a persisted user."""
     return repository.create(
         email="john@example.com",
         username="john",

@@ -9,12 +9,14 @@ import pytest
 from app.models.organization import Organization
 from app.organizations.repository import OrganizationRepository
 
+pytestmark = pytest.mark.asyncio
 
-def test_create_organization(
+
+@pytest.mark.asyncio
+async def test_create_organization(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Create organization."""
-
     organization = Organization(
         name="OpenAI",
         code="OPENAI",
@@ -32,7 +34,8 @@ def test_create_organization(
     assert created.code == "OPENAI"
 
 
-def test_get_organization(
+@pytest.mark.asyncio
+async def test_get_organization(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Get organization by id."""
@@ -52,11 +55,11 @@ def test_get_organization(
     assert found.id == organization.id
 
 
-def test_get_missing_organization(
+@pytest.mark.asyncio
+async def test_get_missing_organization(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Unknown organization."""
-
     found = organization_repository.get(
         uuid4(),
     )
@@ -64,11 +67,11 @@ def test_get_missing_organization(
     assert found is None
 
 
-def test_get_by_name(
+@pytest.mark.asyncio
+async def test_get_by_name(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Lookup by name."""
-
     organization = organization_repository.create(
         Organization(
             name="Microsoft",
@@ -84,11 +87,11 @@ def test_get_by_name(
     assert found.id == organization.id
 
 
-def test_get_by_code(
+@pytest.mark.asyncio
+async def test_get_by_code(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Lookup by code."""
-
     organization = organization_repository.create(
         Organization(
             name="Google",
@@ -104,11 +107,11 @@ def test_get_by_code(
     assert found.id == organization.id
 
 
-def test_exists_by_name(
+@pytest.mark.asyncio
+async def test_exists_by_name(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Organization name exists."""
-
     organization_repository.create(
         Organization(
             name="Amazon",
@@ -125,11 +128,11 @@ def test_exists_by_name(
     )
 
 
-def test_exists_by_code(
+@pytest.mark.asyncio
+async def test_exists_by_code(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Organization code exists."""
-
     organization_repository.create(
         Organization(
             name="Meta",
@@ -146,11 +149,11 @@ def test_exists_by_code(
     )
 
 
-def test_list_organizations(
+@pytest.mark.asyncio
+async def test_list_organizations(
     organization_repository: OrganizationRepository,
 ) -> None:
     """List organizations."""
-
     organization_repository.create(
         Organization(
             name="Org A",
@@ -170,11 +173,11 @@ def test_list_organizations(
     assert len(organizations) >= 2
 
 
-def test_update_organization(
+@pytest.mark.asyncio
+async def test_update_organization(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Update organization."""
-
     organization = organization_repository.create(
         Organization(
             name="Old Name",
@@ -191,11 +194,11 @@ def test_update_organization(
     assert updated.name == "New Name"
 
 
-def test_delete_organization(
+@pytest.mark.asyncio
+async def test_delete_organization(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Soft delete organization."""
-
     organization = organization_repository.create(
         Organization(
             name="Delete Me",
@@ -207,20 +210,26 @@ def test_delete_organization(
         organization,
     )
 
-    assert organization_repository.get(
-        organization.id,
-    ) is not None
+    assert (
+        organization_repository.get(
+            organization.id,
+        )
+        is not None
+    )
 
-    assert organization_repository.get_by_name(
-        "Delete Me",
-    ) is None
+    assert (
+        organization_repository.get_by_name(
+            "Delete Me",
+        )
+        is None
+    )
 
 
-def test_count_list_pagination(
+@pytest.mark.asyncio
+async def test_count_list_pagination(
     organization_repository: OrganizationRepository,
 ) -> None:
     """Pagination."""
-
     for index in range(5):
         organization_repository.create(
             Organization(

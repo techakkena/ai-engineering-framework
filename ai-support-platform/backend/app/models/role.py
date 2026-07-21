@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 if TYPE_CHECKING:
     from app.models.role_permission import RolePermission
 
+
 class Role(OrganizationMixin, BaseModel):
     """Application role."""
 
@@ -39,11 +40,11 @@ class Role(OrganizationMixin, BaseModel):
     )
 
     user_roles: Mapped[list[UserRole]] = relationship(
-    back_populates="role",
-    cascade="all, delete-orphan",
+        back_populates="role",
+        cascade="all, delete-orphan",
     )
 
     role_permissions: Mapped[list[RolePermission]] = relationship(
-    back_populates="role",
-    cascade="all, delete-orphan",
+        back_populates="role",
+        cascade="all, delete-orphan",
     )

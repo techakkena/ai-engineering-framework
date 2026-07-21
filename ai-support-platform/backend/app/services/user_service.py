@@ -9,6 +9,7 @@ from app.models.user import User
 from app.repositories.user import UserRepository
 from app.schemas.user import UserCreate, UserUpdate
 
+
 class UserService:
     """Service for user management."""
 

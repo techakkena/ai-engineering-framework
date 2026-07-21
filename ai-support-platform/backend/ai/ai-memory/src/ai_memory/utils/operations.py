@@ -16,9 +16,7 @@ def validate_serialization_format(
     try:
         return SerializationFormat(value)
     except ValueError as exc:
-        raise ValidationError(
-            f"Invalid serialization format: {value!r}."
-        ) from exc
+        raise ValidationError(f"Invalid serialization format: {value!r}.") from exc
 
 
 def validate_compression_type(
@@ -28,9 +26,7 @@ def validate_compression_type(
     try:
         return CompressionType(value)
     except ValueError as exc:
-        raise ValidationError(
-            f"Invalid compression type: {value!r}."
-        ) from exc
+        raise ValidationError(f"Invalid compression type: {value!r}.") from exc
 
 
 def is_valid_serialization_format(value: str) -> bool:

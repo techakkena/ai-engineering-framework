@@ -59,7 +59,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Return users."""
-
         user_service.list_users.return_value = [current_user]
 
         app.dependency_overrides[get_current_user] = lambda: current_user
@@ -84,7 +83,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Return a user."""
-
         user_service.get_user.return_value = current_user
 
         app.dependency_overrides[get_current_user] = lambda: current_user
@@ -107,7 +105,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Unknown user."""
-
         user_service.get_user.side_effect = ResourceNotFoundException(
             "User not found.",
         )
@@ -131,7 +128,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Create a user."""
-
         user_service.create_user.return_value = current_user
 
         app.dependency_overrides[get_current_user] = lambda: current_user
@@ -162,7 +158,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Duplicate email."""
-
         user_service.create_user.side_effect = ConflictException(
             "Email already exists.",
         )
@@ -198,7 +193,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Update a user."""
-
         updated = MagicMock(spec=User)
 
         updated.id = current_user.id
@@ -234,7 +228,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Delete a user."""
-
         app.dependency_overrides[get_current_user] = lambda: current_user
         app.dependency_overrides[get_user_service] = lambda: user_service
 
@@ -252,7 +245,6 @@ class TestUsersRouter:
         client: TestClient,
     ) -> None:
         """Authentication required."""
-
         response = client.get("/api/v1/users")
 
         assert response.status_code in (
@@ -267,7 +259,6 @@ class TestUsersRouter:
         user_service: MagicMock,
     ) -> None:
         """Validation error."""
-
         app.dependency_overrides[get_current_user] = lambda: current_user
         app.dependency_overrides[get_user_service] = lambda: user_service
 

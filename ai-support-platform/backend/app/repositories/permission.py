@@ -30,12 +30,9 @@ class PermissionRepository(BaseRepository[Permission]):
         name: str,
     ) -> Permission | None:
         """Return a permission by name."""
-        statement = (
-            select(Permission)
-            .where(
-                Permission.name == name,
-                Permission.is_deleted.is_(False),
-            )
+        statement = select(Permission).where(
+            Permission.name == name,
+            Permission.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
@@ -61,13 +58,10 @@ class PermissionRepository(BaseRepository[Permission]):
         Returns:
             Matching permission if found; otherwise None.
         """
-        statement = (
-            select(Permission)
-            .where(
-                Permission.resource == resource,
-                Permission.action == action,
-                Permission.is_deleted.is_(False),
-            )
+        statement = select(Permission).where(
+            Permission.resource == resource,
+            Permission.action == action,
+            Permission.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)

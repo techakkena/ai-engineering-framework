@@ -31,8 +31,4 @@ def validate_index_name(name: str) -> bool:
 def validate_batch_size(batch_size: int) -> bool:
     """Validate a batch size."""
 
-    return (
-        MIN_BATCH_SIZE
-        <= batch_size
-        <= MAX_BATCH_SIZE
-    )
+    return MIN_BATCH_SIZE <= batch_size <= MAX_BATCH_SIZE

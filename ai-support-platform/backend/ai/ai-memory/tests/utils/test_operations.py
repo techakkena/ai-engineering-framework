@@ -18,17 +18,11 @@ from ai_memory.utils.operations import (
 
 
 def test_validate_serialization_format() -> None:
-    assert (
-        validate_serialization_format("json")
-        is SerializationFormat.JSON
-    )
+    assert validate_serialization_format("json") is SerializationFormat.JSON
 
 
 def test_validate_compression_type() -> None:
-    assert (
-        validate_compression_type("gzip")
-        is CompressionType.GZIP
-    )
+    assert validate_compression_type("gzip") is CompressionType.GZIP
 
 
 @pytest.mark.parametrize(

@@ -6,10 +6,10 @@ from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import Boolean, DateTime
-from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base, TimestampMixin
+from app.database.types import GUID
 
 
 class BaseModel(TimestampMixin, Base):
@@ -18,7 +18,7 @@ class BaseModel(TimestampMixin, Base):
     __abstract__ = True
 
     id: Mapped[UUID] = mapped_column(
-        PostgreSQLUUID(as_uuid=True),
+        GUID(),
         primary_key=True,
         default=uuid4,
     )

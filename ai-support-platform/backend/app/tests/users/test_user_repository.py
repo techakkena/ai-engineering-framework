@@ -3,8 +3,10 @@ from __future__ import annotations
 """Tests for UserRepository."""
 
 from uuid import uuid4
-from app.repositories.user import UserRepository
+
 import pytest
+
+from app.repositories.user import UserRepository
 
 
 @pytest.fixture

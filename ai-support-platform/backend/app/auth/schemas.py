@@ -24,6 +24,7 @@ class TokenResponse(BaseModel):
         from_attributes=True,
     )
 
+
 class RegisterRequest(BaseModel):
     """User registration request."""
 

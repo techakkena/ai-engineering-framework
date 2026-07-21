@@ -15,9 +15,7 @@ def validate_vector_type(vector_type: VectorType | str) -> VectorType:
     try:
         return VectorType(vector_type)
     except ValueError as exc:
-        raise VectorValidationError(
-            f"Invalid vector type: {vector_type!r}."
-        ) from exc
+        raise VectorValidationError(f"Invalid vector type: {vector_type!r}.") from exc
 
 
 def validate_vector_metric(metric: VectorMetric | str) -> VectorMetric:
@@ -25,9 +23,7 @@ def validate_vector_metric(metric: VectorMetric | str) -> VectorMetric:
     try:
         return VectorMetric(metric)
     except ValueError as exc:
-        raise VectorValidationError(
-            f"Invalid vector metric: {metric!r}."
-        ) from exc
+        raise VectorValidationError(f"Invalid vector metric: {metric!r}.") from exc
 
 
 def validate_vector_state(state: VectorState | str) -> VectorState:
@@ -35,9 +31,7 @@ def validate_vector_state(state: VectorState | str) -> VectorState:
     try:
         return VectorState(state)
     except ValueError as exc:
-        raise VectorValidationError(
-            f"Invalid vector state: {state!r}."
-        ) from exc
+        raise VectorValidationError(f"Invalid vector state: {state!r}.") from exc
 
 
 def is_valid_vector_type(vector_type: str) -> bool:

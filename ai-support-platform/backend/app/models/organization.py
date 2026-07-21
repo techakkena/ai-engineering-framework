@@ -2,17 +2,27 @@ from __future__ import annotations
 
 """Organization ORM model."""
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
 from app.models.user import User
 
+if TYPE_CHECKING:
+    from app.models.ticket import Ticket
+
 
 class Organization(BaseModel):
     """Organization entity."""
 
     __tablename__ = "organizations"
+
+    tickets: Mapped[list[Ticket]] = relationship(
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
 
     name: Mapped[str] = mapped_column(
         String(255),

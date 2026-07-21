@@ -71,12 +71,12 @@ class BaseRepository(Generic[ModelT]):
         """Return non-deleted entities."""
         # Fix: Safely reference the 'is_deleted' attribute on the ORM class level dynamically
         is_deleted_attr = getattr(self._model, "is_deleted", None)
-        
+
         statement: Select[tuple[ModelT]] = select(self._model)
-        
+
         if is_deleted_attr is not None:
             statement = statement.where(is_deleted_attr.is_(False))
-            
+
         statement = statement.offset(offset).limit(limit)
 
         return list(self.session.scalars(statement))

@@ -33,13 +33,10 @@ class UserRoleRepository(BaseRepository[UserRole]):
         role_id: UUID,
     ) -> UserRole | None:
         """Return a user-role assignment."""
-        statement = (
-            select(UserRole)
-            .where(
-                UserRole.user_id == user_id,
-                UserRole.role_id == role_id,
-                UserRole.is_deleted.is_(False),
-            )
+        statement = select(UserRole).where(
+            UserRole.user_id == user_id,
+            UserRole.role_id == role_id,
+            UserRole.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
@@ -70,12 +67,9 @@ class UserRoleRepository(BaseRepository[UserRole]):
         Returns:
             List of user-role assignments.
         """
-        statement = (
-            select(UserRole)
-            .where(
-                UserRole.user_id == user_id,
-                UserRole.is_deleted.is_(False),
-            )
+        statement = select(UserRole).where(
+            UserRole.user_id == user_id,
+            UserRole.is_deleted.is_(False),
         )
 
         return list(
@@ -94,12 +88,9 @@ class UserRoleRepository(BaseRepository[UserRole]):
         Returns:
             List of user-role assignments.
         """
-        statement = (
-            select(UserRole)
-            .where(
-                UserRole.role_id == role_id,
-                UserRole.is_deleted.is_(False),
-            )
+        statement = select(UserRole).where(
+            UserRole.role_id == role_id,
+            UserRole.is_deleted.is_(False),
         )
 
         return list(

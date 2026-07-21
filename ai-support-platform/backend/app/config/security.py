@@ -55,8 +55,7 @@ def create_access_token(
         Encoded JWT token.
     """
     expire = datetime.now(UTC) + (
-        expires_delta
-        or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
 
     payload: dict[str, Any] = {

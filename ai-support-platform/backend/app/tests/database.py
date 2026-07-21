@@ -30,6 +30,8 @@ TEST_DB_FILE = Path("test.db")
 
 def create_database() -> None:
     """Create a fresh database."""
+    engine.dispose()
+
     if TEST_DB_FILE.exists():
         TEST_DB_FILE.unlink()
 
@@ -37,7 +39,7 @@ def create_database() -> None:
 
 
 def drop_database() -> None:
-    """Drop database."""
+    """Drop the database."""
     Base.metadata.drop_all(bind=engine)
 
     engine.dispose()

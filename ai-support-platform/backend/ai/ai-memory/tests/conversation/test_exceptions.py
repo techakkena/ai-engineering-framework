@@ -9,6 +9,7 @@ from ai_memory.conversation.exceptions import (
     ConversationValidationError,
 )
 
+
 def test_exception_inheritance() -> None:
     """Test exception inheritance."""
     assert issubclass(ConversationNotFoundError, ConversationError)

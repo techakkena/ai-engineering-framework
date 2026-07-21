@@ -31,7 +31,6 @@ class OrganizationService:
         request: CreateOrganizationRequest,
     ) -> Organization:
         """Create an organization."""
-
         if self._repository.exists_by_name(request.name):
             raise ConflictException(
                 "Organization name already exists.",
@@ -47,12 +46,8 @@ class OrganizationService:
             code=request.code,
             email=request.email,
             phone=request.phone,
-            website=str(request.website)
-            if request.website
-            else None,
-            logo_url=str(request.logo_url)
-            if request.logo_url
-            else None,
+            website=str(request.website) if request.website else None,
+            logo_url=str(request.logo_url) if request.logo_url else None,
             address=request.address,
             city=request.city,
             state=request.state,
@@ -70,7 +65,6 @@ class OrganizationService:
         organization_id: UUID,
     ) -> Organization:
         """Return an organization."""
-
         organization = self._repository.get(
             organization_id,
         )
@@ -89,7 +83,6 @@ class OrganizationService:
         limit: int = 100,
     ) -> list[Organization]:
         """Return organizations."""
-
         return self._repository.list(
             skip=skip,
             limit=limit,
@@ -101,15 +94,11 @@ class OrganizationService:
         request: UpdateOrganizationRequest,
     ) -> Organization:
         """Update an organization."""
-
         organization = self.get_organization(
             organization_id,
         )
 
-        if (
-            request.name is not None
-            and request.name != organization.name
-        ):
+        if request.name is not None and request.name != organization.name:
             if self._repository.exists_by_name(
                 request.name,
             ):
@@ -119,10 +108,7 @@ class OrganizationService:
 
             organization.name = request.name
 
-        if (
-            request.code is not None
-            and request.code != organization.code
-        ):
+        if request.code is not None and request.code != organization.code:
             if self._repository.exists_by_code(
                 request.code,
             ):
@@ -161,19 +147,13 @@ class OrganizationService:
             organization.country = request.country
 
         if request.postal_code is not None:
-            organization.postal_code = (
-                request.postal_code
-            )
+            organization.postal_code = request.postal_code
 
         if request.timezone is not None:
-            organization.timezone = (
-                request.timezone
-            )
+            organization.timezone = request.timezone
 
         if request.is_active is not None:
-            organization.is_active = (
-                request.is_active
-            )
+            organization.is_active = request.is_active
 
         return self._repository.update(
             organization,
@@ -184,7 +164,6 @@ class OrganizationService:
         organization_id: UUID,
     ) -> None:
         """Delete an organization."""
-
         organization = self.get_organization(
             organization_id,
         )

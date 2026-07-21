@@ -6,9 +6,9 @@ from uuid import UUID
 
 from app.models.user import User
 from app.repositories.base import BaseRepository
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 
 class UserRepository(BaseRepository[User]):
     """Repository for user entities."""
@@ -39,12 +39,9 @@ class UserRepository(BaseRepository[User]):
         Returns:
             User if found; otherwise None.
         """
-        statement = (
-            select(User)
-            .where(
-                User.email == email,
-                User.is_deleted.is_(False),
-            )
+        statement = select(User).where(
+            User.email == email,
+            User.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
@@ -61,12 +58,9 @@ class UserRepository(BaseRepository[User]):
         Returns:
             User if found; otherwise None.
         """
-        statement = (
-            select(User)
-            .where(
-                User.username == username,
-                User.is_deleted.is_(False),
-            )
+        statement = select(User).where(
+            User.username == username,
+            User.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
@@ -130,68 +124,51 @@ class UserRepository(BaseRepository[User]):
         limit: int = 100,
     ) -> list[User]:
         """Return users."""
-
         statement = (
-            select(User)
-            .where(User.is_deleted.is_(False))
-            .offset(skip)
-            .limit(limit)
+            select(User).where(User.is_deleted.is_(False)).offset(skip).limit(limit)
         )
 
         return list(self.session.scalars(statement).all())
-
 
     def get(
         self,
         user_id: UUID,
     ) -> User | None:
         """Return user by id."""
-
-        statement = (
-            select(User)
-            .where(
-                User.id == user_id,
-                User.is_deleted.is_(False),
-            )
+        statement = select(User).where(
+            User.id == user_id,
+            User.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
-
 
     def update(
         self,
         user: User,
     ) -> User:
         """Persist user updates."""
-
         self.session.add(user)
         self.session.commit()
         self.session.refresh(user)
 
         return user
 
-
     def delete(
         self,
         user: User,
     ) -> None:
         """Soft delete user."""
-
         user.is_deleted = True
 
         self.session.add(user)
         self.session.commit()
 
-
     def count(
         self,
     ) -> int:
         """Return total active users."""
-
         statement = (
-            select(func.count())
-            .select_from(User)
-            .where(User.is_deleted.is_(False))
+            select(func.count()).select_from(User).where(User.is_deleted.is_(False))
         )
 
         return self.session.scalar(statement) or 0

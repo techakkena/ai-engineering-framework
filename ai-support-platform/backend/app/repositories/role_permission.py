@@ -41,13 +41,10 @@ class RolePermissionRepository(BaseRepository[RolePermission]):
         Returns:
             Matching assignment if found; otherwise None.
         """
-        statement = (
-            select(RolePermission)
-            .where(
-                RolePermission.role_id == role_id,
-                RolePermission.permission_id == permission_id,
-                RolePermission.is_deleted.is_(False),
-            )
+        statement = select(RolePermission).where(
+            RolePermission.role_id == role_id,
+            RolePermission.permission_id == permission_id,
+            RolePermission.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
@@ -86,12 +83,9 @@ class RolePermissionRepository(BaseRepository[RolePermission]):
         Returns:
             List of role-permission assignments.
         """
-        statement = (
-            select(RolePermission)
-            .where(
-                RolePermission.role_id == role_id,
-                RolePermission.is_deleted.is_(False),
-            )
+        statement = select(RolePermission).where(
+            RolePermission.role_id == role_id,
+            RolePermission.is_deleted.is_(False),
         )
 
         return list(
@@ -110,12 +104,9 @@ class RolePermissionRepository(BaseRepository[RolePermission]):
         Returns:
             List of role-permission assignments.
         """
-        statement = (
-            select(RolePermission)
-            .where(
-                RolePermission.permission_id == permission_id,
-                RolePermission.is_deleted.is_(False),
-            )
+        statement = select(RolePermission).where(
+            RolePermission.permission_id == permission_id,
+            RolePermission.is_deleted.is_(False),
         )
 
         return list(
@@ -126,5 +117,3 @@ class RolePermissionRepository(BaseRepository[RolePermission]):
     #     self,
     #     role_id: UUID,
     # ) -> list[RolePermission]:
-
-    

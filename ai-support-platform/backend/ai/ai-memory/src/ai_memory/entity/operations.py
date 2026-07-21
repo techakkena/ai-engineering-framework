@@ -14,9 +14,7 @@ def validate_entity_type(entity_type: EntityType | str) -> EntityType:
     try:
         return EntityType(entity_type)
     except ValueError as exc:
-        raise EntityValidationError(
-            f"Invalid entity type: {entity_type!r}."
-        ) from exc
+        raise EntityValidationError(f"Invalid entity type: {entity_type!r}.") from exc
 
 
 def validate_entity_state(state: EntityState | str) -> EntityState:
@@ -24,9 +22,7 @@ def validate_entity_state(state: EntityState | str) -> EntityState:
     try:
         return EntityState(state)
     except ValueError as exc:
-        raise EntityValidationError(
-            f"Invalid entity state: {state!r}."
-        ) from exc
+        raise EntityValidationError(f"Invalid entity state: {state!r}.") from exc
 
 
 def is_valid_entity_type(entity_type: str) -> bool:

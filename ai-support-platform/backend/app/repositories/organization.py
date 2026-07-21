@@ -37,12 +37,9 @@ class OrganizationRepository(BaseRepository[Organization]):
         Returns:
             Matching organization if found; otherwise None.
         """
-        statement = (
-            select(Organization)
-            .where(
-                Organization.code == code,
-                Organization.is_deleted.is_(False),
-            )
+        statement = select(Organization).where(
+            Organization.code == code,
+            Organization.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)
@@ -59,12 +56,9 @@ class OrganizationRepository(BaseRepository[Organization]):
         Returns:
             Matching organization if found; otherwise None.
         """
-        statement = (
-            select(Organization)
-            .where(
-                Organization.name == name,
-                Organization.is_deleted.is_(False),
-            )
+        statement = select(Organization).where(
+            Organization.name == name,
+            Organization.is_deleted.is_(False),
         )
 
         return self.session.scalar(statement)

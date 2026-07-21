@@ -78,8 +78,7 @@ async def list_organizations(
 
     return OrganizationListResponse(
         organizations=[
-            OrganizationResponse.model_validate(org)
-            for org in organizations
+            OrganizationResponse.model_validate(org) for org in organizations
         ],
     )
 

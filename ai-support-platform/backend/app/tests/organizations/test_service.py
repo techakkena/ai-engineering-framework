@@ -37,7 +37,6 @@ def service(
 @pytest.fixture
 def organization() -> Organization:
     """Return organization."""
-
     organization = MagicMock(spec=Organization)
 
     organization.id = uuid4()
@@ -57,7 +56,6 @@ def test_create_organization_success(
     organization: Organization,
 ) -> None:
     """Create organization."""
-
     repository.exists_by_name.return_value = False
     repository.exists_by_code.return_value = False
     repository.create.return_value = organization
@@ -79,7 +77,6 @@ def test_create_duplicate_name(
     repository: MagicMock,
 ) -> None:
     """Duplicate organization name."""
-
     repository.exists_by_name.return_value = True
 
     request = CreateOrganizationRequest(
@@ -96,7 +93,6 @@ def test_create_duplicate_code(
     repository: MagicMock,
 ) -> None:
     """Duplicate organization code."""
-
     repository.exists_by_name.return_value = False
     repository.exists_by_code.return_value = True
 
@@ -115,7 +111,6 @@ def test_get_organization_success(
     organization: Organization,
 ) -> None:
     """Get organization."""
-
     repository.get.return_value = organization
 
     result = service.get_organization(
@@ -130,7 +125,6 @@ def test_get_organization_not_found(
     repository: MagicMock,
 ) -> None:
     """Organization not found."""
-
     repository.get.return_value = None
 
     with pytest.raises(
@@ -145,7 +139,6 @@ def test_list_organizations(
     organization: Organization,
 ) -> None:
     """List organizations."""
-
     repository.list.return_value = [
         organization,
     ]
@@ -168,7 +161,6 @@ def test_update_organization_success(
     organization: Organization,
 ) -> None:
     """Update organization."""
-
     repository.get.return_value = organization
     repository.exists_by_name.return_value = False
     repository.exists_by_code.return_value = False
@@ -192,7 +184,6 @@ def test_update_duplicate_name(
     organization: Organization,
 ) -> None:
     """Duplicate name."""
-
     repository.get.return_value = organization
     repository.exists_by_name.return_value = True
 
@@ -215,7 +206,6 @@ def test_update_duplicate_code(
     organization: Organization,
 ) -> None:
     """Duplicate code."""
-
     repository.get.return_value = organization
     repository.exists_by_name.return_value = False
     repository.exists_by_code.return_value = True
@@ -239,7 +229,6 @@ def test_delete_organization(
     organization: Organization,
 ) -> None:
     """Delete organization."""
-
     repository.get.return_value = organization
 
     service.delete_organization(
@@ -256,7 +245,6 @@ def test_delete_missing_organization(
     repository: MagicMock,
 ) -> None:
     """Delete missing organization."""
-
     repository.get.return_value = None
 
     with pytest.raises(

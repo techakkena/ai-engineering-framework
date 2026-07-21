@@ -21,12 +21,8 @@ def test_normalize_text():
 
 
 def test_join_lines():
-    assert join_lines(
-        ["a", "b", "c"]
-    ) == "a\nb\nc"
+    assert join_lines(["a", "b", "c"]) == "a\nb\nc"
 
 
 def test_unique_strings():
-    assert unique_strings(
-        ["a", "b", "a", "c"]
-    ) == ["a", "b", "c"]
+    assert unique_strings(["a", "b", "a", "c"]) == ["a", "b", "c"]

@@ -5,8 +5,6 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-
 from app.auth.dependencies import get_current_user
 from app.core.dependencies import DatabaseDependency
 from app.core.exceptions import (
@@ -23,6 +21,7 @@ from app.users.schemas import (
     UserResponse,
 )
 from app.users.service import UserService
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 
 router = APIRouter(
     prefix="/users",
@@ -70,10 +69,7 @@ async def list_users(
 
     return UserListResponse(
         total=len(users),
-        users=[
-            UserResponse.model_validate(user)
-            for user in users
-        ],
+        users=[UserResponse.model_validate(user) for user in users],
     )
 
 
