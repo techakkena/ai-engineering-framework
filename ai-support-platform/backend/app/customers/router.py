@@ -46,12 +46,12 @@ def create_customer(
 def list_customers(
     service: CustomerServiceDependency,
     _: CurrentActiveUserDependency,
-    skip: int = Query(default=0, ge=0),
+    offset: int = Query(default=0, ge=0),
     limit: int = Query(default=100, ge=1, le=500),
 ) -> list[CustomerResponse]:
     """Return customers."""
     customers = service.list_customers(
-        skip=skip,
+        offset=offset,
         limit=limit,
     )
 

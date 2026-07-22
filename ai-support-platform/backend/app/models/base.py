@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Base ORM model definitions."""
+
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
@@ -43,3 +43,9 @@ class BaseModel(TimestampMixin, Base):
         """Restore a soft-deleted entity."""
         self.is_deleted = False
         self.deleted_at = None
+
+__all__ = [
+    "Base",
+    "BaseModel",
+    "TimestampMixin",
+]

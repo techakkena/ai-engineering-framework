@@ -1,3 +1,7 @@
+"""RBAC services provider."""
+
+from __future__ import annotations
+
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -22,6 +26,11 @@ class RBACService:
         self,
         session: Session,
     ) -> None:
+        """Initialize the RBAC service.
+
+        Args:
+            session: Active SQLAlchemy database session.
+        """
         self.session = session
 
         self.user_repository = UserRepository(session)

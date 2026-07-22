@@ -1,12 +1,12 @@
-from __future__ import annotations
-
 """User-role association ORM model."""
+
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
@@ -30,7 +30,7 @@ class UserRole(BaseModel):
     )
 
     user_id: Mapped[UUID] = mapped_column(
-        PostgreSQLUUID(as_uuid=True),
+        PGUUID(as_uuid=True),
         ForeignKey(
             "users.id",
             ondelete="CASCADE",
@@ -40,7 +40,7 @@ class UserRole(BaseModel):
     )
 
     role_id: Mapped[UUID] = mapped_column(
-        PostgreSQLUUID(as_uuid=True),
+        PGUUID(as_uuid=True),
         ForeignKey(
             "roles.id",
             ondelete="CASCADE",

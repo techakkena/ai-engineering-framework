@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Organization repository."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
@@ -79,7 +79,7 @@ class OrganizationRepository:
     def list(
         self,
         *,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
     ) -> list[Organization]:
         """Return organizations."""
@@ -88,7 +88,7 @@ class OrganizationRepository:
             .where(
                 Organization.deleted_at.is_(None),
             )
-            .offset(skip)
+            .offset(offset)
             .limit(limit)
             .order_by(Organization.name)
         )

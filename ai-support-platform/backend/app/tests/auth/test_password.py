@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for password utilities."""
+
+from __future__ import annotations
 
 from app.auth.password import (
     hash_password,

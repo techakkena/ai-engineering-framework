@@ -1,7 +1,7 @@
 Metadata-Version: 2.4
 Name: ai-memory
 Version: 0.1.0
-Summary: Enterprise memory framework for AI applications.
+Summary: Memory management for AI applications.
 Author: AI Engineering Framework
 License: MIT
 Requires-Python: >=3.14

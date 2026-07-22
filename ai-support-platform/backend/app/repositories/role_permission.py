@@ -1,13 +1,14 @@
-from __future__ import annotations
-
 """Role-permission repository."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
-from app.models.role_permission import RolePermission
-from app.repositories.base import BaseRepository
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from app.models.role_permission import RolePermission
+from app.repositories.base import BaseRepository
 
 
 class RolePermissionRepository(BaseRepository[RolePermission]):

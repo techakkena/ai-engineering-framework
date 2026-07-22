@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """User service."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
@@ -26,20 +26,23 @@ class UserService:
 
     def list_users(
         self,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
-    ) -> tuple[int, list[User]]:
-        """Return paginated users.
+    ) -> list[User]:
+        """Return a paginated list of users.
 
         Args:
-            skip: Number of records to skip.
-            limit: Maximum number of records.
+            offset: Number of users to skip before returning results.
+            limit: Maximum number of users to return.
 
         Returns:
-            Total users and user list.
+            A list of users.
         """
         total = self._repository.count()
-        users = self._repository.list(skip=skip, limit=limit)
+        users = self._repository.list(
+            offset=offset,
+            limit=limit,
+        )
 
         return total, users
 
@@ -90,13 +93,18 @@ class UserService:
 
         password_hash = hash_password(data.password)
 
-        return self._repository.create(
+        user = User(
             email=data.email,
             username=data.username,
             full_name=data.full_name,
             password_hash=password_hash,
             organization_id=organization_id,
         )
+        user = self._repository.create(user)
+        self._repository.session.commit()
+        self._repository.session.refresh(user)
+
+        return user
 
     def update_user(
         self,

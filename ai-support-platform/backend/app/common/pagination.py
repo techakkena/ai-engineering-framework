@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Pagination utilities."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from math import ceil

@@ -1,3 +1,7 @@
+"""Debug test file for ticket module"""
+
+from __future__ import annotations
+
 from app.database.engine import SessionLocal, engine
 from sqlalchemy import text
 

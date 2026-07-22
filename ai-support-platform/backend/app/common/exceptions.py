@@ -1,18 +1,17 @@
-from __future__ import annotations
-
 """Application exception handlers."""
+
+from __future__ import annotations
 
 import logging
 from collections.abc import Awaitable, Callable
 from typing import cast
 
+from app.common.responses import ErrorResponse
+from app.core.exceptions import AppException
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
-
-from app.common.responses import ErrorResponse
-from app.core.exceptions import AppException
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,6 @@ async def app_exception_handler(
     exc: AppException,
 ) -> JSONResponse:
     """Handle application exceptions."""
-
     logger.warning(
         "%s %s - %s",
         request.method,
@@ -52,7 +50,6 @@ async def validation_exception_handler(
     exc: RequestValidationError,
 ) -> JSONResponse:
     """Handle request validation errors."""
-
     logger.warning(
         "%s %s - Request validation failed.",
         request.method,
@@ -76,7 +73,6 @@ async def unhandled_exception_handler(
     exc: Exception,
 ) -> JSONResponse:
     """Handle unexpected exceptions."""
-
     logger.exception(
         "%s %s - Unhandled exception.",
         request.method,
@@ -97,7 +93,6 @@ async def unhandled_exception_handler(
 
 def register_exception_handlers(app: FastAPI) -> None:
     """Register all application exception handlers."""
-
     app.add_exception_handler(
         AppException,
         cast(ExceptionHandler, app_exception_handler),

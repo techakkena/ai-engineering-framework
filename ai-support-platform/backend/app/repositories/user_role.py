@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from app.models.user_role import UserRole
-from app.repositories.base import BaseRepository
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from app.models.user_role import UserRole
+from app.repositories.base import BaseRepository
 
 
 class UserRoleRepository(BaseRepository[UserRole]):

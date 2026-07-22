@@ -1,13 +1,14 @@
-from __future__ import annotations
-
 """Role repository."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
-from app.models.role import Role
-from app.repositories.base import BaseRepository
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from app.models.role import Role
+from app.repositories.base import BaseRepository
 
 
 class RoleRepository(BaseRepository[Role]):
@@ -17,6 +18,7 @@ class RoleRepository(BaseRepository[Role]):
         self,
         session: Session,
     ) -> None:
+        """Initialize the role repository."""
         super().__init__(
             session=session,
             model=Role,
@@ -27,12 +29,12 @@ class RoleRepository(BaseRepository[Role]):
         organization_id: UUID,
         name: str,
     ) -> Role | None:
+        """Return a role by its name within an organization."""
         statement = select(Role).where(
             Role.organization_id == organization_id,
             Role.name == name,
             Role.is_deleted.is_(False),
         )
-
         return self.session.scalar(statement)
 
     def exists_by_name(
@@ -40,6 +42,7 @@ class RoleRepository(BaseRepository[Role]):
         organization_id: UUID,
         name: str,
     ) -> bool:
+        """Return whether a role with the given name exists."""
         return (
             self.get_by_name(
                 organization_id,
@@ -52,6 +55,7 @@ class RoleRepository(BaseRepository[Role]):
         self,
         organization_id: UUID,
     ) -> list[Role]:
+        """Return all roles for an organization."""
         statement = (
             select(Role)
             .where(
@@ -60,7 +64,6 @@ class RoleRepository(BaseRepository[Role]):
             )
             .order_by(Role.name.asc())
         )
-
         return list(
             self.session.scalars(statement).all(),
         )

@@ -1,12 +1,12 @@
-from __future__ import annotations
-
 """Role-permission association ORM model."""
+
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
@@ -30,7 +30,7 @@ class RolePermission(BaseModel):
     )
 
     role_id: Mapped[UUID] = mapped_column(
-        PostgreSQLUUID(as_uuid=True),
+        PGUUID(as_uuid=True),
         ForeignKey(
             "roles.id",
             ondelete="CASCADE",
@@ -40,7 +40,7 @@ class RolePermission(BaseModel):
     )
 
     permission_id: Mapped[UUID] = mapped_column(
-        PostgreSQLUUID(as_uuid=True),
+        PGUUID(as_uuid=True),
         ForeignKey(
             "permissions.id",
             ondelete="CASCADE",

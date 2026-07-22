@@ -1,13 +1,14 @@
-from __future__ import annotations
-
 """User repository."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
-from app.models.user import User
-from app.repositories.base import BaseRepository
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+
+from app.models.user import User
+from app.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):
@@ -91,10 +92,7 @@ class UserRepository(BaseRepository[User]):
     ) -> list[User]:
         """Return active users."""
         statement = (
-            select(User)
-            .where(User.is_deleted.is_(False))
-            .offset(offset)
-            .limit(limit)
+            select(User).where(User.is_deleted.is_(False)).offset(offset).limit(limit)
         )
 
         return list(self.session.scalars(statement).all())
@@ -137,9 +135,7 @@ class UserRepository(BaseRepository[User]):
     ) -> int:
         """Return the number of active users."""
         statement = (
-            select(func.count())
-            .select_from(User)
-            .where(User.is_deleted.is_(False))
+            select(func.count()).select_from(User).where(User.is_deleted.is_(False))
         )
 
         result = self.session.scalar(statement)

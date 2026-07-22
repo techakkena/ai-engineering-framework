@@ -1,3 +1,5 @@
+"""User ORM model."""
+
 from app.models.organization import Organization
 from app.models.permission import Permission
 from app.models.role import Role

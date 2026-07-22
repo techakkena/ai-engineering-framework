@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """User schemas."""
+
+from __future__ import annotations
 
 from uuid import UUID
 

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Application logging configuration."""
+
+from __future__ import annotations
 
 import logging
 import logging.config

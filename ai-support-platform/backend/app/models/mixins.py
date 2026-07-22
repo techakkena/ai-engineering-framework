@@ -1,12 +1,12 @@
-from __future__ import annotations
-
 """Reusable ORM mixins."""
+
+from __future__ import annotations
 
 from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import DateTime, ForeignKey, func
-from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -31,7 +31,7 @@ class OrganizationMixin:
     """Mixin providing organization ownership."""
 
     organization_id: Mapped[UUID] = mapped_column(
-        PostgreSQLUUID(as_uuid=True),
+        PGUUID(as_uuid=True),
         ForeignKey("organizations.id", ondelete="RESTRICT"),
         nullable=False,
         index=True,

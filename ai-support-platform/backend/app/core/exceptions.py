@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Application exception hierarchy."""
+
+from __future__ import annotations
 
 from http import HTTPStatus
 
@@ -11,13 +11,13 @@ class AppException(Exception):
     def __init__(
         self,
         message: str,
-        status_code: int = HTTPStatus.BAD_REQUEST,
+        status_code: HTTPStatus = HTTPStatus.INTERNAL_SERVER_ERROR,
     ) -> None:
-        """Initialize the exception.
+        """Initialize the application exception.
 
         Args:
-            message: Error message.
-            status_code: HTTP status code.
+            message: Human-readable error message.
+            status_code: HTTP status code associated with the exception.
         """
         super().__init__(message)
         self.message = message
@@ -27,17 +27,33 @@ class AppException(Exception):
 class ValidationException(AppException):
     """Raised when validation fails."""
 
-    def __init__(self, message: str) -> None:
+    def __init__(
+        self,
+        message: str = "Validation failed.",
+    ) -> None:
+        """Initialize the validation exception.
+
+        Args:
+            message: Validation error message.
+        """
         super().__init__(
             message=message,
-            status_code=HTTPStatus.BAD_REQUEST,
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
         )
 
 
 class AuthenticationException(AppException):
     """Raised when authentication fails."""
 
-    def __init__(self, message: str = "Authentication failed.") -> None:
+    def __init__(
+        self,
+        message: str = "Authentication failed.",
+    ) -> None:
+        """Initialize the authentication exception.
+
+        Args:
+            message: Authentication error message.
+        """
         super().__init__(
             message=message,
             status_code=HTTPStatus.UNAUTHORIZED,
@@ -47,7 +63,15 @@ class AuthenticationException(AppException):
 class AuthorizationException(AppException):
     """Raised when authorization fails."""
 
-    def __init__(self, message: str = "Access denied.") -> None:
+    def __init__(
+        self,
+        message: str = "Access denied.",
+    ) -> None:
+        """Initialize the authorization exception.
+
+        Args:
+            message: Authorization error message.
+        """
         super().__init__(
             message=message,
             status_code=HTTPStatus.FORBIDDEN,
@@ -57,7 +81,15 @@ class AuthorizationException(AppException):
 class ResourceNotFoundException(AppException):
     """Raised when a resource cannot be found."""
 
-    def __init__(self, resource: str) -> None:
+    def __init__(
+        self,
+        resource: str,
+    ) -> None:
+        """Initialize the resource not found exception.
+
+        Args:
+            resource: Name of the missing resource.
+        """
         super().__init__(
             message=f"{resource} not found.",
             status_code=HTTPStatus.NOT_FOUND,
@@ -67,7 +99,15 @@ class ResourceNotFoundException(AppException):
 class ConflictException(AppException):
     """Raised when a resource conflict occurs."""
 
-    def __init__(self, message: str) -> None:
+    def __init__(
+        self,
+        message: str,
+    ) -> None:
+        """Initialize the conflict exception.
+
+        Args:
+            message: Conflict error message.
+        """
         super().__init__(
             message=message,
             status_code=HTTPStatus.CONFLICT,
@@ -81,6 +121,11 @@ class DatabaseException(AppException):
         self,
         message: str = "Database operation failed.",
     ) -> None:
+        """Initialize the database exception.
+
+        Args:
+            message: Database error message.
+        """
         super().__init__(
             message=message,
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
@@ -94,6 +139,11 @@ class AIServiceException(AppException):
         self,
         message: str = "AI service unavailable.",
     ) -> None:
+        """Initialize the AI service exception.
+
+        Args:
+            message: AI service error message.
+        """
         super().__init__(
             message=message,
             status_code=HTTPStatus.SERVICE_UNAVAILABLE,

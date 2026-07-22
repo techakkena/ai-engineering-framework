@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Business logic for Team management."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
@@ -42,24 +42,18 @@ class TeamService:
         )
 
         if organization is None:
-            raise ResourceNotFoundException(
-                "Organization not found."
-            )
+            raise ResourceNotFoundException("Organization not found.")
 
         if self.repository.exists_by_name(
             request.organization_id,
             request.name,
         ):
-            raise ConflictException(
-                "Team name already exists."
-            )
+            raise ConflictException("Team name already exists.")
 
         if self.repository.exists_by_code(
             request.code,
         ):
-            raise ConflictException(
-                "Team code already exists."
-            )
+            raise ConflictException("Team code already exists.")
 
         if request.lead_id is not None:
             lead = self.user_repository.get(
@@ -67,9 +61,7 @@ class TeamService:
             )
 
             if lead is None:
-                raise ResourceNotFoundException(
-                    "Lead user not found."
-                )
+                raise ResourceNotFoundException("Lead user not found.")
 
         team = Team(
             organization_id=request.organization_id,
@@ -89,9 +81,7 @@ class TeamService:
         team = self.repository.get(team_id)
 
         if team is None:
-            raise ResourceNotFoundException(
-                "Team not found."
-            )
+            raise ResourceNotFoundException("Team not found.")
 
         return team
 
@@ -112,30 +102,20 @@ class TeamService:
         """Update a team."""
         team = self.get_team(team_id)
 
-        if (
-            request.name is not None
-            and request.name != team.name
-        ):
+        if request.name is not None and request.name != team.name:
             if self.repository.exists_by_name(
                 team.organization_id,
                 request.name,
             ):
-                raise ConflictException(
-                    "Team name already exists."
-                )
+                raise ConflictException("Team name already exists.")
 
             team.name = request.name
 
-        if (
-            request.code is not None
-            and request.code != team.code
-        ):
+        if request.code is not None and request.code != team.code:
             if self.repository.exists_by_code(
                 request.code,
             ):
-                raise ConflictException(
-                    "Team code already exists."
-                )
+                raise ConflictException("Team code already exists.")
 
             team.code = request.code
 
@@ -148,9 +128,7 @@ class TeamService:
             )
 
             if lead is None:
-                raise ResourceNotFoundException(
-                    "Lead user not found."
-                )
+                raise ResourceNotFoundException("Lead user not found.")
 
             team.lead_id = request.lead_id
 

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Pydantic schemas for Team."""
+
+from __future__ import annotations
 
 from datetime import datetime
 from uuid import UUID

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for the authentication service."""
+
+from __future__ import annotations
 
 import pytest
 
@@ -14,11 +14,13 @@ from app.auth.service import (
     EmailAlreadyExistsError,
     UsernameAlreadyExistsError,
 )
+from app.models.organization import Organization
 from app.models.user import User
+from app.repositories.user import UserRepository
 
 
 def test_authenticate_success(
-    repository,
+    repository: UserRepository,
     user: User,
 ) -> None:
     """Authentication should return a JWT."""
@@ -37,7 +39,7 @@ def test_authenticate_success(
 
 
 def test_authenticate_unknown_email(
-    repository,
+    repository: UserRepository,
 ) -> None:
     """Unknown email should fail."""
     service = AuthenticationService(repository)
@@ -50,7 +52,7 @@ def test_authenticate_unknown_email(
 
 
 def test_authenticate_wrong_password(
-    repository,
+    repository: UserRepository,
     user: User,
 ) -> None:
     """Wrong password should fail."""
@@ -67,8 +69,8 @@ def test_authenticate_wrong_password(
 
 
 def test_register_success(
-    repository,
-    organization,
+    repository: UserRepository,
+    organization: Organization,
 ) -> None:
     """Register a new user."""
     print(f"test organization.id = {organization.id!r}")
@@ -95,8 +97,8 @@ def test_register_success(
 
 
 def test_register_duplicate_email(
-    repository,
-    organization,
+    repository: UserRepository,
+    organization: Organization,
     user: User,
 ) -> None:
     """Duplicate email should fail."""
@@ -112,8 +114,8 @@ def test_register_duplicate_email(
 
 
 def test_register_duplicate_username(
-    repository,
-    organization,
+    repository: UserRepository,
+    organization: Organization,
     user: User,
 ) -> None:
     """Duplicate username should fail."""

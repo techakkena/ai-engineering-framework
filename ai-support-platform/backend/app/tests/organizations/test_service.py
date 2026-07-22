@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for organization service."""
+
+from __future__ import annotations
 
 from unittest.mock import MagicMock
 from uuid import uuid4
@@ -150,7 +150,7 @@ def test_list_organizations(
     ]
 
     repository.list.assert_called_once_with(
-        skip=0,
+        offset=0,
         limit=100,
     )
 

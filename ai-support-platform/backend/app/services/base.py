@@ -1,8 +1,9 @@
-from __future__ import annotations
-
 """Generic service implementation."""
 
-from typing import Any, Generic, TypeVar
+from __future__ import annotations
+
+from typing import TypeVar
+from uuid import UUID
 
 from app.models.base import BaseModel
 from app.repositories.base import BaseRepository
@@ -10,7 +11,7 @@ from app.repositories.base import BaseRepository
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
-class BaseService(Generic[ModelT]):
+class BaseService[ModelT]:
     """Generic service for business operations."""
 
     def __init__(
@@ -31,7 +32,7 @@ class BaseService(Generic[ModelT]):
         self._repository.session.refresh(entity)
         return entity
 
-    def get_by_id(self, entity_id: Any) -> ModelT | None:
+    def get_by_id(self, entity_id: UUID) -> ModelT | None:
         """Retrieve an entity by its identifier."""
         return self._repository.get_by_id(entity_id)
 
@@ -43,7 +44,7 @@ class BaseService(Generic[ModelT]):
     ) -> list[ModelT]:
         """Retrieve entities."""
         return self._repository.list(
-            skip=offset,
+            offset=offset,
             limit=limit,
         )
 
@@ -59,6 +60,6 @@ class BaseService(Generic[ModelT]):
         self._repository.delete(entity)
         self._repository.session.commit()
 
-    def exists(self, entity_id: Any) -> bool:
+    def exists(self, entity_id: UUID) -> bool:
         """Return whether an entity exists."""
         return self._repository.exists(entity_id)

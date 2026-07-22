@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Global pytest fixtures."""
+
+from __future__ import annotations
 
 from collections.abc import Generator
 from uuid import uuid4
@@ -47,6 +47,7 @@ def db_session() -> Generator[Session]:
     finally:
         session.rollback()
         session.close()
+
 
 @pytest.fixture
 def organization(
@@ -160,7 +161,7 @@ def ticket_repository(
 
 
 @pytest.fixture
-def client():
+def client() -> Generator[TestClient]:
     """Return FastAPI test client using the test database."""
     app.dependency_overrides[get_db] = get_db_session
 
@@ -199,13 +200,16 @@ def created_user(
     organization: Organization,
 ) -> User:
     """Create a persisted user."""
-    return repository.create(
+    user = User(
         email="john@example.com",
         username="john",
         full_name="John Doe",
         password_hash="hashed",
         organization_id=organization.id,
     )
+
+    return repository.create(user)
+
 
 @pytest.fixture
 def project_repository(

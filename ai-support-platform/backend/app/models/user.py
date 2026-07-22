@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """User ORM model."""
+
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
@@ -17,8 +17,6 @@ if TYPE_CHECKING:
     from app.models.user_role import UserRole
 
     # Removed: from app.models.user import User
-
-# Add this to explicitly allow other modules (like user_role.py) to import User without mypy complaints
 __all__ = ["User"]
 
 
@@ -88,5 +86,5 @@ class User(OrganizationMixin, BaseModel):
     )
 
 
-# Place this at the very bottom of the file
+# Re-export User for type checking.
 __all__ = ["User"]

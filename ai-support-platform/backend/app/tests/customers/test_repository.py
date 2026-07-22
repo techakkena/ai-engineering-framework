@@ -169,7 +169,7 @@ def test_customer_pagination(
         )
 
     customers = repository.list(
-        skip=0,
+        offset=0,
         limit=3,
     )
 

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Database engine configuration."""
+
+from __future__ import annotations
 
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker

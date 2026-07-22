@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Password hashing utilities."""
+
+from __future__ import annotations
 
 from pwdlib import PasswordHash
 

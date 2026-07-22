@@ -1,11 +1,12 @@
+"""Permission repository."""
+
 from __future__ import annotations
 
-"""Permission repository."""
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models.permission import Permission
 from app.repositories.base import BaseRepository
-from sqlalchemy import select
-from sqlalchemy.orm import Session
 
 
 class PermissionRepository(BaseRepository[Permission]):

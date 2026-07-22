@@ -1,48 +1,57 @@
-from __future__ import annotations
-
 """Tests for the user service."""
 
+from __future__ import annotations
+
+from typing import cast
 from unittest.mock import MagicMock, create_autospec
 from uuid import uuid4
 
 import pytest
 
 from app.core.exceptions import (
-    ConflictException,
-    ResourceNotFoundException,
+        ConflictException,
+        ResourceNotFoundException,
 )
 from app.models.user import User
 from app.organizations.repository import OrganizationRepository
 from app.repositories.user import UserRepository
 from app.users.schemas import (
-    CreateUserRequest,
-    UpdateUserRequest,
+        CreateUserRequest,
+        UpdateUserRequest,
 )
 from app.users.service import UserService
 
 
 @pytest.fixture
-def user_repository() -> UserRepository:
-    """Return a mocked user repository."""
-    return create_autospec(
-        UserRepository,
-        instance=True,
-    )
+def user_repository() -> MagicMock:
+        """Return a mocked user repository."""
+        return cast(
+            MagicMock,
+            create_autospec(
+                UserRepository,
+                instance=True,
+                spec_set=True,
+            ),
+        )
 
 
 @pytest.fixture
-def organization_repository() -> OrganizationRepository:
-    """Return a mocked organization repository."""
-    return create_autospec(
-        OrganizationRepository,
-        instance=True,
-    )
+def organization_repository() -> MagicMock:
+        """Return a mocked organization repository."""
+        return cast(
+            MagicMock,
+            create_autospec(
+                OrganizationRepository,
+                instance=True,
+                spec_set=True,
+            ),
+        )
 
 
 @pytest.fixture
 def service(
-    user_repository: UserRepository,
-    organization_repository: OrganizationRepository,
+    user_repository: MagicMock,
+    organization_repository: MagicMock,
 ) -> UserService:
     """Return a user service."""
     return UserService(
@@ -84,8 +93,8 @@ def user(create_request: CreateUserRequest) -> User:
 
 def test_create_user_success(
     service: UserService,
-    user_repository: UserRepository,
-    organization_repository: OrganizationRepository,
+    user_repository: MagicMock,
+    organization_repository: MagicMock,
     create_request: CreateUserRequest,
     user: User,
 ) -> None:
@@ -113,7 +122,7 @@ def test_create_user_success(
 
 def test_create_user_duplicate_email(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     create_request: CreateUserRequest,
 ) -> None:
     """Raise if email already exists."""
@@ -127,8 +136,8 @@ def test_create_user_duplicate_email(
 
 def test_create_user_duplicate_username(
     service: UserService,
-    user_repository: UserRepository,
-    organization_repository: OrganizationRepository,
+    user_repository: MagicMock,
+    organization_repository: MagicMock,
     create_request: CreateUserRequest,
 ) -> None:
     """Raise if username already exists."""
@@ -144,8 +153,8 @@ def test_create_user_duplicate_username(
 
 def test_create_user_organization_not_found(
     service: UserService,
-    user_repository: UserRepository,
-    organization_repository: OrganizationRepository,
+    user_repository: MagicMock,
+    organization_repository: MagicMock,
     create_request: CreateUserRequest,
 ) -> None:
     """Raise if organization does not exist."""
@@ -161,7 +170,7 @@ def test_create_user_organization_not_found(
 
 def test_get_user_success(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     user: User,
 ) -> None:
     """Return a user by identifier."""
@@ -175,7 +184,7 @@ def test_get_user_success(
 
 def test_get_user_not_found(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
 ) -> None:
     """Raise when the user does not exist."""
     user_repository.get.return_value = None
@@ -186,7 +195,7 @@ def test_get_user_not_found(
 
 def test_list_users(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     user: User,
 ) -> None:
     """Return a paginated list of users."""
@@ -197,14 +206,14 @@ def test_list_users(
     assert result == [user]
 
     user_repository.list.assert_called_once_with(
-        skip=0,
+        offset=0,
         limit=100,
     )
 
 
 def test_update_user_success(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     user: User,
 ) -> None:
     """Update a user successfully."""
@@ -232,7 +241,7 @@ def test_update_user_success(
 
 def test_update_user_duplicate_email(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     user: User,
 ) -> None:
     """Raise when updating to an existing email."""
@@ -249,7 +258,7 @@ def test_update_user_duplicate_email(
 
 def test_update_user_duplicate_username(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     user: User,
 ) -> None:
     """Raise when updating to an existing username."""
@@ -267,7 +276,7 @@ def test_update_user_duplicate_username(
 
 def test_delete_user_success(
     service: UserService,
-    user_repository: UserRepository,
+    user_repository: MagicMock,
     user: User,
 ) -> None:
     """Soft-delete a user."""

@@ -1,18 +1,15 @@
-from __future__ import annotations
-
 """Generic repository implementation."""
 
-from typing import Any, Generic, TypeVar, cast
+from __future__ import annotations
+
+from typing import Any, cast
 from uuid import UUID
 
-from app.database.base import Base
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
 
-ModelT = TypeVar("ModelT", bound=Base)
 
-
-class BaseRepository(Generic[ModelT]):
+class BaseRepository[ModelT]:
     """Generic repository for CRUD operations."""
 
     def __init__(
@@ -46,7 +43,7 @@ class BaseRepository(Generic[ModelT]):
             identifier,
         )
 
-        # Fix: Safely read 'is_deleted' dynamically using getattr
+        # Safely access the ORM class-level `is_deleted` attribute.
         if entity is None or getattr(entity, "is_deleted", False):
             return None
 
@@ -69,7 +66,7 @@ class BaseRepository(Generic[ModelT]):
         limit: int = 100,
     ) -> list[ModelT]:
         """Return non-deleted entities."""
-        # Fix: Safely reference the 'is_deleted' attribute on the ORM class level dynamically
+        # Safely access the class-level `is_deleted` attribute.
         is_deleted_attr = getattr(self._model, "is_deleted", None)
 
         statement: Select[tuple[ModelT]] = select(self._model)
@@ -93,6 +90,6 @@ class BaseRepository(Generic[ModelT]):
         cast(Any, entity).soft_delete()
         self.session.commit()
 
-    def exists(self, entity_id: Any) -> bool:
+    def exists(self, entity_id: UUID) -> bool:
         """Return whether an entity exists."""
         return self.get_by_id(entity_id) is not None

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Application configuration settings."""
+
+from __future__ import annotations
 
 from functools import lru_cache
 

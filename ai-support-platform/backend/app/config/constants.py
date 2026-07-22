@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Application-wide constants."""
+
+from __future__ import annotations
 
 from typing import Final
 

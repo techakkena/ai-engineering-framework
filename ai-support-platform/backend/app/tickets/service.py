@@ -69,12 +69,12 @@ class TicketService:
     def list_tickets(
         self,
         *,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
     ) -> list[Ticket]:
         """Return a paginated list of tickets."""
         return self._repository.list(
-            skip=skip,
+            offset=offset,
             limit=limit,
         )
 

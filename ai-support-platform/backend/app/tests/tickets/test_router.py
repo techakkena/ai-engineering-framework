@@ -10,11 +10,20 @@ from app.models.user import User
 
 def test_list_tickets(
     client: TestClient,
+    auth_headers: dict[str, str],
 ) -> None:
     """List tickets."""
-    response = client.get("/api/v1/tickets")
+    response = client.get(
+        "/api/v1/tickets",
+        headers=auth_headers,
+    )
 
     assert response.status_code == 200
+
+    body = response.json()
+
+    assert "tickets" in body
+    assert "total" in body
 
 
 def test_create_ticket(

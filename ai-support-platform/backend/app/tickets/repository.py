@@ -65,15 +65,12 @@ class TicketRepository:
     def list(
         self,
         *,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
     ) -> list[Ticket]:
         """Return a paginated list of tickets."""
         statement = (
-            select(Ticket)
-            .where(Ticket.is_deleted.is_(False))
-            .offset(skip)
-            .limit(limit)
+            select(Ticket).where(Ticket.is_deleted.is_(False)).offset(offset).limit(limit)
         )
 
         return list(self._session.scalars(statement).all())

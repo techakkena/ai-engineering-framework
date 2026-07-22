@@ -1,0 +1,19 @@
+NotoSansIndic-Regular.ttf is built from six SIL Open Font License (OFL) sources,
+merged into a single file with fontTools so it covers Latin text plus all five
+supported Indic scripts:
+
+- Noto Sans (Latin subset) — Copyright Google Inc.
+- Noto Sans Devanagari / Telugu / Tamil / Malayalam / Kannada — Copyright The Noto
+  Project Authors (https://github.com/notofonts)
+
+They are merged into one file, rather than kept as five separate per-script
+fonts, because ReportLab's font-embedding cache corrupts glyph rendering once
+more than one font sharing duplicate glyph names (as these all do, from the
+common Latin source) is registered in the same process.
+
+Source: https://fontsource.org (@fontsource/noto-sans, @fontsource/noto-sans-*),
+originally from Google Fonts / the Noto Fonts project.
+
+Full license terms are in OFL-LICENSE.txt. The OFL permits merging, modifying,
+and embedding these fonts in documents without royalty, provided they are not
+sold on their own.

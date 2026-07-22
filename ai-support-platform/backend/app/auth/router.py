@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Authentication router."""
+
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -12,7 +12,6 @@ from app.auth.schemas import (
     LoginRequest,
     RegisterRequest,
     TokenResponse,
-    UserResponse,
 )
 from app.auth.service import (
     AuthenticationError,
@@ -20,6 +19,8 @@ from app.auth.service import (
     EmailAlreadyExistsError,
     UsernameAlreadyExistsError,
 )
+from app.models.user import User
+from app.schemas.user import UserResponse
 
 router = APIRouter(
     prefix="/auth",
@@ -34,7 +35,7 @@ router = APIRouter(
 def login(
     request: LoginRequest,
     service: AuthenticationService = Depends(get_authentication_service),
-):
+) -> TokenResponse:
     """Authenticate a user."""
     try:
         token = service.authenticate(
@@ -57,8 +58,8 @@ def login(
     response_model=UserResponse,
 )
 def me(
-    current_user=Depends(get_current_user),
-):
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
     """Return the authenticated user."""
     return UserResponse.model_validate(
         current_user,

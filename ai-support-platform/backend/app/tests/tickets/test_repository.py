@@ -172,7 +172,7 @@ def test_ticket_pagination(
         )
 
     tickets = ticket_repository.list(
-        skip=0,
+        offset=0,
         limit=2,
     )
 

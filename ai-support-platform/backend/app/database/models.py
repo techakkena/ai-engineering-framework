@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Register all SQLAlchemy ORM models."""
+
+from __future__ import annotations
 
 from app.models.organization import Organization
 from app.models.permission import Permission

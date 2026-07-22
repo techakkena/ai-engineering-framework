@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Organization service."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
@@ -79,12 +79,12 @@ class OrganizationService:
     def list_organizations(
         self,
         *,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
     ) -> list[Organization]:
         """Return organizations."""
         return self._repository.list(
-            skip=skip,
+            offset=offset,
             limit=limit,
         )
 

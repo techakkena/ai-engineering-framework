@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Data Extractor</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+  h1 { font-size: 1.4rem; }
+  #dropzone { border: 2px dashed #999; border-radius: 8px; padding: 32px; text-align: center; cursor: pointer; }
+  #dropzone.dragover { background: #f0f6ff; border-color: #3b82f6; }
+  button { margin-top: 16px; padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: 0.6; }
+  #language { margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+  #language select { padding: 6px 10px; font-size: 1rem; }
+  #status { margin-top: 12px; color: #555; }
+  #error { margin-top: 12px; color: #b91c1c; }
+  pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Document Data Extractor</h1>
+  <p>Upload a PDF, image, spreadsheet, or text file, receipt, or any other document. We'll extract and structure the data.</p>
+
+  <div id="dropzone">
+    <p>Drop a file here or click to choose</p>
+    <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.webp,.xlsx,.xls,.csv,.txt" hidden>
+  </div>
+
+  <div id="language">
+    <label for="languageSelect">Translate output to:</label>
+    <select id="languageSelect">
+      <option value="English" selected>English</option>
+      <option value="Telugu">Telugu</option>
+      <option value="Hindi">Hindi</option>
+      <option value="Tamil">Tamil</option>
+      <option value="Malayalam">Malayalam</option>
+      <option value="Kannada">Kannada</option>
+    </select>
+  </div>
+
+  <div id="buttons"></div>
+
+  <div id="status"></div>
+  <div id="error"></div>
+  <pre id="result" hidden></pre>
+
+<script>
+  const OUTPUT_FORMATS = [
+    { output: "json", label: "Extract as JSON", filename: null },
+    { output: "xlsx", label: "Download as Excel", filename: "extracted.xlsx" },
+    { output: "pdf", label: "Download as PDF", filename: "extracted.pdf" },
+    { output: "image", label: "Download as Image", filename: "extracted.png" },
+    { output: "docx", label: "Download as Word", filename: "extracted.docx" },
+  ];
+
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("fileInput");
+  const languageSelect = document.getElementById("languageSelect");
+  const buttonsEl = document.getElementById("buttons");
+  const statusEl = document.getElementById("status");
+  const errorEl = document.getElementById("error");
+  const resultEl = document.getElementById("result");
+
+  let selectedFile = null;
+
+  const buttons = OUTPUT_FORMATS.map((format) => {
+    const button = document.createElement("button");
+    button.textContent = format.label;
+    button.disabled = true;
+    button.addEventListener("click", () => extract(format.output, format.filename));
+    buttonsEl.appendChild(button);
+    return button;
+  });
+
+  function setButtonsDisabled(disabled) {
+    buttons.forEach((button) => { button.disabled = disabled || !selectedFile; });
+  }
+
+  function setFile(file) {
+    selectedFile = file;
+    statusEl.textContent = file ? `Selected: ${file.name}` : "";
+    setButtonsDisabled(false);
+  }
+
+  dropzone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => setFile(fileInput.files[0] || null));
+
+  dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("dragover"); });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+    setFile(e.dataTransfer.files[0] || null);
+  });
+
+  async function extract(output, filename) {
+    if (!selectedFile) return;
+
+    errorEl.textContent = "";
+    resultEl.hidden = true;
+    statusEl.textContent = "Extracting...";
+    setButtonsDisabled(true);
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    const targetLanguage = encodeURIComponent(languageSelect.value);
+
+    try {
+      const response = await fetch(`/extract?output=${output}&target_language=${targetLanguage}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail || `Request failed with status ${response.status}`);
+      }
+
+      if (filename) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        statusEl.textContent = `Downloaded ${filename}`;
+      } else {
+        const json = await response.json();
+        resultEl.textContent = JSON.stringify(json, null, 2);
+        resultEl.hidden = false;
+        statusEl.textContent = "Done";
+      }
+    } catch (err) {
+      errorEl.textContent = err.message;
+      statusEl.textContent = "";
+    } finally {
+      setButtonsDisabled(false);
+    }
+  }
+</script>
+</body>
+</html>

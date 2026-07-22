@@ -1,6 +1,8 @@
+"""Tests for Team router."""
+
 from __future__ import annotations
 
-"""Tests for Team router."""
+from collections.abc import Generator
 from datetime import UTC, datetime
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -24,7 +26,7 @@ def service() -> Mock:
 
 
 @pytest.fixture
-def current_user():
+def current_user() -> SimpleNamespace:
     """Return authenticated test user."""
     return SimpleNamespace(
         id=uuid4(),
@@ -36,16 +38,12 @@ def current_user():
 @pytest.fixture
 def client(
     service: Mock,
-    current_user,
-):
+    current_user: SimpleNamespace,
+)-> Generator[TestClient]:
     """Create API client."""
-    app.dependency_overrides[get_team_service] = (
-        lambda: service
-    )
+    app.dependency_overrides[get_team_service] = lambda: service
 
-    app.dependency_overrides[get_current_user] = (
-        lambda: current_user
-    )
+    app.dependency_overrides[get_current_user] = lambda: current_user
 
     with TestClient(app) as client:
         yield client
@@ -71,6 +69,7 @@ def team() -> Team:
 
     return team
 
+
 def test_get_team(
     client: TestClient,
     service: Mock,
@@ -91,6 +90,7 @@ def test_get_team(
 
     assert result.id == team.id
     service.get_team.assert_called_once_with(team.id)
+
 
 def test_list_teams(
     client: TestClient,
@@ -114,6 +114,7 @@ def test_list_teams(
     service.list_teams.assert_called_once_with(
         team.organization_id,
     )
+
 
 def test_create_team(
     client: TestClient,
@@ -145,6 +146,7 @@ def test_create_team(
     assert result.name == team.name
 
     service.create_team.assert_called_once()
+
 
 def test_delete_team(
     client: TestClient,

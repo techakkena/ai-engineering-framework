@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Team API router."""
+
+from __future__ import annotations
 
 from typing import Annotated
 from uuid import UUID
@@ -92,10 +92,7 @@ async def list_teams(
     )
 
     return TeamListResponse(
-        items=[
-            TeamResponse.model_validate(team)
-            for team in teams
-        ],
+        items=[TeamResponse.model_validate(team) for team in teams],
         total=len(teams),
     )
 

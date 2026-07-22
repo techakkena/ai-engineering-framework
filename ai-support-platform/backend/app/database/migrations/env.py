@@ -1,8 +1,9 @@
-from __future__ import annotations
-
 """Alembic environment configuration."""
 
+from __future__ import annotations
+
 from logging.config import fileConfig
+from typing import Any, cast
 
 from alembic import context
 from app.config.settings import settings
@@ -21,7 +22,6 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-
 def run_migrations_offline() -> None:
     """Run migrations in offline mode."""
     context.configure(
@@ -35,10 +35,17 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+
+
 def run_migrations_online() -> None:
     """Run migrations in online mode."""
+    section = cast(
+        dict[str, Any],
+        config.get_section(config.config_ini_section) or {},
+    )
+
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        section,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

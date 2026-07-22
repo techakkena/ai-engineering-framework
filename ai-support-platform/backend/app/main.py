@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Application entry point for the Enterprise AI Support Platform."""
+
+from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager

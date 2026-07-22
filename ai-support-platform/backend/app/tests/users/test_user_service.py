@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for UserService."""
+
+from __future__ import annotations
 
 from unittest.mock import MagicMock
 from uuid import uuid4

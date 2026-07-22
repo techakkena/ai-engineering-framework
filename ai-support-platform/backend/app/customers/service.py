@@ -70,12 +70,12 @@ class CustomerService:
     def list_customers(
         self,
         *,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
     ) -> list[Customer]:
         """Return customers."""
         return self._repository.list(
-            skip=skip,
+            offset=offset,
             limit=limit,
         )
 

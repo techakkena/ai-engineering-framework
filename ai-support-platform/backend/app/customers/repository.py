@@ -65,14 +65,14 @@ class CustomerRepository:
     def list(
         self,
         *,
-        skip: int = 0,
+        offset: int = 0,
         limit: int = 100,
     ) -> list[Customer]:
         """Return a paginated list of customers."""
         statement = (
             select(Customer)
             .where(Customer.is_deleted.is_(False))
-            .offset(skip)
+            .offset(offset)
             .limit(limit)
         )
 

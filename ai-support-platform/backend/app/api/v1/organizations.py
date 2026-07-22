@@ -47,8 +47,8 @@ CurrentUserDependency = Annotated[
 )
 async def create_organization(
     request: CreateOrganizationRequest,
-    _: CurrentUserDependency = None,
-    service: OrganizationServiceDependency = None,
+    _: CurrentUserDependency,
+    service: OrganizationServiceDependency,
 ) -> OrganizationResponse:
     """Create an organization."""
     try:
@@ -71,14 +71,14 @@ async def create_organization(
     summary="List organizations",
 )
 async def list_organizations(
-    skip: int = 0,
+    _: CurrentUserDependency,
+    service: OrganizationServiceDependency,
+    offset: int = 0,
     limit: int = 100,
-    _: CurrentUserDependency = None,
-    service: OrganizationServiceDependency = None,
 ) -> OrganizationListResponse:
     """Return organizations."""
     organizations = service.list_organizations(
-        skip=skip,
+        offset=offset,
         limit=limit,
     )
 
@@ -96,8 +96,8 @@ async def list_organizations(
 )
 async def get_organization(
     organization_id: UUID,
-    _: CurrentUserDependency = None,
-    service: OrganizationServiceDependency = None,
+    _: CurrentUserDependency,
+    service: OrganizationServiceDependency,
 ) -> OrganizationResponse:
     """Return an organization."""
     try:
@@ -124,8 +124,8 @@ async def get_organization(
 async def update_organization(
     organization_id: UUID,
     request: UpdateOrganizationRequest,
-    _: CurrentUserDependency = None,
-    service: OrganizationServiceDependency = None,
+    _: CurrentUserDependency,
+    service: OrganizationServiceDependency,
 ) -> OrganizationResponse:
     """Update an organization."""
     try:
@@ -158,8 +158,8 @@ async def update_organization(
 )
 async def delete_organization(
     organization_id: UUID,
-    _: CurrentUserDependency = None,
-    service: OrganizationServiceDependency = None,
+    _: CurrentUserDependency,
+    service: OrganizationServiceDependency,
 ) -> Response:
     """Delete an organization."""
     try:

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for JWT utilities."""
+
+from __future__ import annotations
 
 import pytest
 from jwt import InvalidTokenError

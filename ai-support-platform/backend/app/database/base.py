@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Database declarative base."""
+
+from __future__ import annotations
 
 from datetime import datetime
 

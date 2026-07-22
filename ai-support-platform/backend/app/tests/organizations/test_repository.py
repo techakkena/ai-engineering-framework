@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for organization repository."""
+
+from __future__ import annotations
 
 from uuid import uuid4
 
@@ -239,7 +239,7 @@ async def test_count_list_pagination(
         )
 
     organizations = organization_repository.list(
-        skip=0,
+        offset=0,
         limit=2,
     )
 

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Organization API router."""
+
+from __future__ import annotations
 
 from typing import Annotated
 from uuid import UUID
@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Response, status
 
 from app.auth.dependencies import CurrentSuperuserDependency
 from app.core.dependencies import DatabaseDependency
+from app.organizations.repository import OrganizationRepository
 from app.organizations.schemas import (
     CreateOrganizationRequest,
     OrganizationListResponse,
@@ -16,7 +17,6 @@ from app.organizations.schemas import (
     UpdateOrganizationRequest,
 )
 from app.organizations.service import OrganizationService
-from app.repositories.organization import OrganizationRepository
 
 router = APIRouter(
     prefix="/organizations",
@@ -71,7 +71,7 @@ async def create_organization(
 )
 async def list_organizations(
     _: CurrentSuperuserDependency,
-    service: OrganizationService = OrganizationServiceDependency,
+    service: OrganizationServiceDependency,
 ) -> OrganizationListResponse:
     """Return all organizations."""
     organizations = service.list_organizations()
@@ -91,7 +91,7 @@ async def list_organizations(
 async def get_organization(
     organization_id: UUID,
     _: CurrentSuperuserDependency,
-    service: OrganizationService = OrganizationServiceDependency,
+    service: OrganizationServiceDependency,
 ) -> OrganizationResponse:
     """Return a single organization."""
     organization = service.get_organization(
@@ -112,7 +112,7 @@ async def update_organization(
     organization_id: UUID,
     request: UpdateOrganizationRequest,
     _: CurrentSuperuserDependency,
-    service: OrganizationService = OrganizationServiceDependency,
+    service: OrganizationServiceDependency,
 ) -> OrganizationResponse:
     """Update an organization."""
     organization = service.update_organization(
@@ -133,7 +133,7 @@ async def update_organization(
 async def delete_organization(
     organization_id: UUID,
     _: CurrentSuperuserDependency,
-    service: OrganizationService = OrganizationServiceDependency,
+    service: OrganizationServiceDependency,
 ) -> Response:
     """Soft-delete an organization."""
     service.delete_organization(

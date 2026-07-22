@@ -1,6 +1,6 @@
-from __future__ import annotations
+"""Tests for TeamRepository."""
 
-"""Tests for the user repository."""
+from __future__ import annotations
 
 import pytest
 from sqlalchemy.orm import Session
@@ -119,18 +119,6 @@ def test_exists_by_email_returns_false_for_deleted_user(
     db_session.commit()
 
     assert not repository.exists_by_email(user.email)
-
-
-def test_exists_by_username_returns_false_for_deleted_user(
-    db_session: Session,
-    repository: UserRepository,
-    user: User,
-) -> None:
-    """Deleted users should not exist."""
-    user.is_deleted = True
-    db_session.commit()
-
-    assert not repository.exists_by_username(user.username)
 
 
 def test_exists_by_username_returns_false_for_deleted_user(

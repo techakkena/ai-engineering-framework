@@ -1,11 +1,12 @@
+"""Organization repository."""
+
 from __future__ import annotations
 
-"""Organization repository."""
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models.organization import Organization
 from app.repositories.base import BaseRepository
-from sqlalchemy import select
-from sqlalchemy.orm import Session
 
 
 class OrganizationRepository(BaseRepository[Organization]):

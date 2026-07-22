@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Database session management."""
+
+from __future__ import annotations
 
 from collections.abc import Generator
 

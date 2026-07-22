@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for Users API router."""
+
+from __future__ import annotations
 
 from unittest.mock import MagicMock
 from uuid import uuid4
@@ -244,13 +244,15 @@ class TestUsersRouter:
         self,
         client: TestClient,
     ) -> None:
-        """Authentication required."""
-        response = client.get("/api/v1/users")
-
-        assert response.status_code in (
-            401,
-            403,
+        """Verify that authentication is required for the users endpoint."""
+        response = client.get(
+            "/api/v1/users",
+            headers={
+                "Authorization": "Bearer invalid-token",
+            },
         )
+
+        assert response.status_code == 401
 
     def test_validation_error(
         self,

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Shared database utilities for repository tests."""
+
+from __future__ import annotations
 
 from collections.abc import Generator
 from pathlib import Path

@@ -1,9 +1,9 @@
-from __future__ import annotations
-
 """Standard API response models."""
 
+from __future__ import annotations
+
 from datetime import UTC, datetime
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -17,7 +17,7 @@ class ResponseMetadata(BaseModel):
     request_id: str | None = None
 
 
-class SuccessResponse(BaseModel, Generic[T]):
+class SuccessResponse[T](BaseModel):
     """Standard success response."""
 
     success: bool = True
@@ -45,7 +45,7 @@ class PaginationMetadata(BaseModel):
     total_pages: int
 
 
-class PaginatedResponse(BaseModel, Generic[T]):
+class PaginatedResponse[T](BaseModel):
     """Standard paginated response."""
 
     success: bool = True

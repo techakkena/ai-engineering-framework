@@ -1,1 +1,3 @@
+"""Email tasks."""
+
 from __future__ import annotations

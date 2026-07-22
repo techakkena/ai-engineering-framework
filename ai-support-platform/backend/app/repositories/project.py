@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from app.models.project import Project
-from app.repositories.base import BaseRepository
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+
+from app.models.project import Project
+from app.repositories.base import BaseRepository
 
 
 class ProjectRepository(BaseRepository[Project]):

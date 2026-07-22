@@ -36,44 +36,49 @@ TicketServiceDependency = Annotated[
 @router.get(
     "",
     response_model=TicketListResponse,
+    operation_id="listTickets",
 )
-@router.get("", response_model=TicketListResponse)
 def list_tickets(
     service: TicketServiceDependency,
+    _: CurrentUserDependency,
 ) -> TicketListResponse:
-
+    """Return all tickets."""
     tickets = service.list_tickets()
 
     return TicketListResponse(
         total=len(tickets),
-        tickets=tickets,
+        tickets=[TicketResponse.model_validate(ticket) for ticket in tickets],
     )
 
 
 @router.get(
     "/{ticket_id}",
     response_model=TicketResponse,
+    operation_id="getTicket",
 )
 def get_ticket(
     ticket_id: UUID,
     service: TicketServiceDependency,
     _: CurrentUserDependency,
 ) -> TicketResponse:
-    """Return ticket."""
-    return service.get_ticket(ticket_id)
+    """Return a ticket by its identifier."""
+    ticket = service.get_ticket(ticket_id)
+
+    return TicketResponse.model_validate(ticket)
 
 
 @router.post(
     "",
     response_model=TicketResponse,
     status_code=status.HTTP_201_CREATED,
+    operation_id="createTicket",
 )
 def create_ticket(
     request: CreateTicketRequest,
     service: TicketServiceDependency,
     current_user: CurrentUserDependency,
 ) -> TicketResponse:
-    """Create ticket."""
+    """Create a new ticket."""
     ticket = service.create_ticket(
         organization_id=current_user.organization_id,
         created_by=current_user.id,
@@ -81,9 +86,12 @@ def create_ticket(
     )
 
     return TicketResponse.model_validate(ticket)
+
+
 @router.patch(
     "/{ticket_id}",
     response_model=TicketResponse,
+    operation_id="updateTicket",
 )
 def update_ticket(
     ticket_id: UUID,
@@ -91,23 +99,26 @@ def update_ticket(
     service: TicketServiceDependency,
     _: CurrentUserDependency,
 ) -> TicketResponse:
-    """Update ticket."""
-    return service.update_ticket(
+    """Update an existing ticket."""
+    ticket = service.update_ticket(
         ticket_id,
         request,
     )
+
+    return TicketResponse.model_validate(ticket)
 
 
 @router.delete(
     "/{ticket_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    operation_id="deleteTicket",
 )
 def delete_ticket(
     ticket_id: UUID,
     service: TicketServiceDependency,
     _: CurrentUserDependency,
 ) -> Response:
-    """Delete ticket."""
+    """Delete a ticket."""
     service.delete_ticket(ticket_id)
 
     return Response(

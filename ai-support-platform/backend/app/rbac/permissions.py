@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """RBAC permission constants."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 

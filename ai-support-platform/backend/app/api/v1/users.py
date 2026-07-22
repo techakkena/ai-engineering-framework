@@ -56,20 +56,23 @@ CurrentUserDependency = Annotated[
     summary="List users",
 )
 async def list_users(
-    skip: int = Query(default=0, ge=0),
+    _: CurrentUserDependency,
+    service: UserServiceDependency,
+    offset: int = Query(default=0, ge=0),
     limit: int = Query(default=100, ge=1, le=100),
-    _: CurrentUserDependency = None,
-    service: UserServiceDependency = None,
 ) -> UserListResponse:
     """Return users."""
     users = service.list_users(
-        skip=skip,
+        offset=offset,
         limit=limit,
     )
 
     return UserListResponse(
         total=len(users),
-        users=[UserResponse.model_validate(user) for user in users],
+        users=[
+            UserResponse.model_validate(user)
+            for user in users
+        ],
     )
 
 
@@ -80,8 +83,8 @@ async def list_users(
 )
 async def get_user(
     user_id: UUID,
-    _: CurrentUserDependency = None,
-    service: UserServiceDependency = None,
+    _: CurrentUserDependency,
+    service: UserServiceDependency,
 ) -> UserResponse:
     """Return a user."""
     try:
@@ -102,8 +105,8 @@ async def get_user(
 )
 async def create_user(
     request: CreateUserRequest,
-    _: CurrentUserDependency = None,
-    service: UserServiceDependency = None,
+    _: CurrentUserDependency,
+    service: UserServiceDependency,
 ) -> UserResponse:
     """Create a user."""
     try:
@@ -129,8 +132,8 @@ async def create_user(
 async def update_user(
     user_id: UUID,
     request: UpdateUserRequest,
-    _: CurrentUserDependency = None,
-    service: UserServiceDependency = None,
+    _: CurrentUserDependency,
+    service: UserServiceDependency,
 ) -> UserResponse:
     """Update a user."""
     try:
@@ -160,8 +163,8 @@ async def update_user(
 )
 async def delete_user(
     user_id: UUID,
-    _: CurrentUserDependency = None,
-    service: UserServiceDependency = None,
+    _: CurrentUserDependency,
+    service: UserServiceDependency,
 ) -> Response:
     """Delete a user."""
     try:
