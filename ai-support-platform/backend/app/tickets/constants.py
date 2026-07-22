@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Constants for the tickets module."""
+
+from __future__ import annotations
 
 from enum import StrEnum
 

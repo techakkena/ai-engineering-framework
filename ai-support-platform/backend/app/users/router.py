@@ -1,52 +1,27 @@
-from __future__ import annotations
-
 """User API router."""
+
+from __future__ import annotations
 
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response, status
 
-from app.core.dependencies import DatabaseDependency
 from app.models.user import User
-from app.organizations.repository import OrganizationRepository
 from app.rbac.dependencies import require_permission
-from app.repositories.user import UserRepository
-from app.users.dependencies import (
-    UserServiceDependency,
-    get_user_service,
-)
+from app.users.dependencies import UserServiceDependency
 from app.users.schemas import (
     CreateUserRequest,
     UpdateUserRequest,
     UserListResponse,
     UserResponse,
 )
-from app.users.service import UserService
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"],
 )
 
-
-def get_user_service(
-    db: DatabaseDependency,
-) -> UserService:
-    """Return a user service."""
-    user_repository = UserRepository(db)
-    organization_repository = OrganizationRepository(db)
-
-    return UserService(
-        user_repository=user_repository,
-        organization_repository=organization_repository,
-    )
-
-
-UserServiceDependency = Annotated[
-    UserService,
-    Depends(get_user_service),
-]
 
 CreateUserPermission = Annotated[
     User,
@@ -82,7 +57,6 @@ async def create_user(
 ) -> UserResponse:
     """Create a new user."""
     user = service.create_user(request)
-
     return UserResponse.model_validate(user)
 
 
@@ -99,7 +73,7 @@ async def list_users(
 ) -> UserListResponse:
     """Return all users."""
     users = service.list_users(
-        skip=skip,
+        offset=offset,
         limit=limit,
     )
 
@@ -119,9 +93,8 @@ async def get_user(
     _: ViewUserPermission,
     service: UserServiceDependency,
 ) -> UserResponse:
-    """Return a user."""
+    """Return a user by ID."""
     user = service.get_user(user_id)
-
     return UserResponse.model_validate(user)
 
 

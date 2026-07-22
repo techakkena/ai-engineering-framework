@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Tests for ticket repository."""
+
+from __future__ import annotations
 
 from uuid import UUID, uuid4
 

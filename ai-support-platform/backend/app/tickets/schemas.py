@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Pydantic schemas for tickets."""
+
+from __future__ import annotations
 
 from datetime import datetime
 from uuid import UUID
@@ -19,10 +19,6 @@ from app.tickets.constants import (
 
 class CreateTicketRequest(BaseModel):
     """Request model for creating a ticket."""
-
-    organization_id: UUID
-
-    created_by: UUID
 
     assigned_to: UUID | None = None
 
@@ -102,7 +98,7 @@ class TicketResponse(BaseModel):
 
 
 class TicketListResponse(BaseModel):
-    """Ticket list response."""
+    """Paginated ticket response."""
 
     total: int
 

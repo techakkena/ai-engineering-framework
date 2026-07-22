@@ -3,6 +3,7 @@ from __future__ import annotations
 """JWT token utilities."""
 
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import jwt
 
@@ -22,7 +23,7 @@ def create_access_token(
         else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
 
-    payload = {
+    payload: dict[str, Any] = {
         "sub": subject,
         "exp": expire,
     }
@@ -36,7 +37,7 @@ def create_access_token(
 
 def decode_access_token(
     token: str,
-) -> dict:
+) -> dict[str, Any]:
     """Decode and validate a JWT."""
     return jwt.decode(
         token,

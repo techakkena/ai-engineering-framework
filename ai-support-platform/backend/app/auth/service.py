@@ -29,6 +29,7 @@ class AuthenticationService:
         self,
         repository: UserRepository,
     ) -> None:
+        """Initialize the authentication service."""
         self._repository = repository
 
     def authenticate(
@@ -81,10 +82,12 @@ class AuthenticationService:
 
         password_hash = hash_password(password)
 
-        return self._repository.create(
+        user = User(
             email=email,
             username=username,
             full_name=full_name,
             password_hash=password_hash,
             organization_id=organization_id,
         )
+
+        return self._repository.create(user)

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Ticket repository."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
@@ -68,18 +68,15 @@ class TicketRepository:
         skip: int = 0,
         limit: int = 100,
     ) -> list[Ticket]:
-
+        """Return a paginated list of tickets."""
         statement = (
             select(Ticket)
             .where(Ticket.is_deleted.is_(False))
-            .order_by(Ticket.created_at.desc())
             .offset(skip)
             .limit(limit)
         )
 
-        result = list(self._session.scalars(statement).all())
-
-        return result
+        return list(self._session.scalars(statement).all())
 
     def update(
         self,

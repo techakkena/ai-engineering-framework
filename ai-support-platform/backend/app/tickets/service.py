@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Ticket service."""
+
+from __future__ import annotations
 
 from uuid import UUID
 
@@ -17,35 +17,36 @@ from app.tickets.schemas import (
 
 
 class TicketService:
-    """Business logic for tickets."""
+    """Business logic for ticket management."""
 
     def __init__(
         self,
         repository: TicketRepository,
     ) -> None:
-        """Initialize service."""
+        """Initialize the ticket service."""
         self._repository = repository
 
     def create_ticket(
         self,
+        *,
+        organization_id: UUID,
+        created_by: UUID,
         request: CreateTicketRequest,
     ) -> Ticket:
-        """Create a ticket."""
-        if self._repository.exists_by_title(
-            request.title,
-        ):
+        """Create a new ticket."""
+        if self._repository.exists_by_title(request.title):
             raise ConflictException(
                 "Ticket title already exists.",
             )
 
         ticket = Ticket(
-            organization_id=request.organization_id,
-            created_by=request.created_by,
+            organization_id=organization_id,
+            created_by=created_by,
             assigned_to=request.assigned_to,
             title=request.title,
             description=request.description,
-            status=request.status,
             priority=request.priority,
+            status=request.status,
             is_active=True,
         )
 
@@ -55,7 +56,7 @@ class TicketService:
         self,
         ticket_id: UUID,
     ) -> Ticket:
-        """Return a ticket."""
+        """Return a ticket by its identifier."""
         ticket = self._repository.get(ticket_id)
 
         if ticket is None:
@@ -71,23 +72,21 @@ class TicketService:
         skip: int = 0,
         limit: int = 100,
     ) -> list[Ticket]:
-
-        result = self._repository.list(
+        """Return a paginated list of tickets."""
+        return self._repository.list(
             skip=skip,
             limit=limit,
         )
-
-        return result
 
     def update_ticket(
         self,
         ticket_id: UUID,
         request: UpdateTicketRequest,
     ) -> Ticket:
-        """Update a ticket."""
+        """Update an existing ticket."""
         ticket = self.get_ticket(ticket_id)
 
-        if request.title and request.title != ticket.title:
+        if request.title is not None and request.title != ticket.title:
             if self._repository.exists_by_title(
                 request.title,
             ):

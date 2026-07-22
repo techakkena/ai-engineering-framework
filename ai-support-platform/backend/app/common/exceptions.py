@@ -3,32 +3,31 @@ from __future__ import annotations
 """Application exception handlers."""
 
 import logging
+from collections.abc import Awaitable, Callable
 from typing import cast
+
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, Response
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 from app.common.responses import ErrorResponse
 from app.core.exceptions import AppException
-from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 logger = logging.getLogger(__name__)
 
 
+ExceptionHandler = Callable[
+    [Request, Exception],
+    Awaitable[Response],
+]
+
+
 async def app_exception_handler(
     request: Request,
-    exc: Exception,
+    exc: AppException,
 ) -> JSONResponse:
-    """Handle application exceptions.
-
-    Args:
-        request: Incoming request.
-        exc: Application exception.
-
-    Returns:
-        JSON error response.
-    """
-    app_exc = cast(AppException, exc)
+    """Handle application exceptions."""
 
     logger.warning(
         "%s %s - %s",
@@ -49,18 +48,11 @@ async def app_exception_handler(
 
 
 async def validation_exception_handler(
-    RequestValidationError,
-    exc,
+    request: Request,
+    exc: RequestValidationError,
 ) -> JSONResponse:
-    """Handle request validation errors.
+    """Handle request validation errors."""
 
-    Args:
-        request: Incoming request.
-        exc: Validation exception.
-
-    Returns:
-        JSON error response.
-    """
     logger.warning(
         "%s %s - Request validation failed.",
         request.method,
@@ -83,15 +75,8 @@ async def unhandled_exception_handler(
     request: Request,
     exc: Exception,
 ) -> JSONResponse:
-    """Handle unexpected exceptions.
+    """Handle unexpected exceptions."""
 
-    Args:
-        request: Incoming request.
-        exc: Unexpected exception.
-
-    Returns:
-        JSON error response.
-    """
     logger.exception(
         "%s %s - Unhandled exception.",
         request.method,
@@ -111,22 +96,19 @@ async def unhandled_exception_handler(
 
 
 def register_exception_handlers(app: FastAPI) -> None:
-    """Register all application exception handlers.
+    """Register all application exception handlers."""
 
-    Args:
-        app: FastAPI application.
-    """
     app.add_exception_handler(
         AppException,
-        app_exception_handler,
+        cast(ExceptionHandler, app_exception_handler),
     )
 
     app.add_exception_handler(
         RequestValidationError,
-        validation_exception_handler,
+        cast(ExceptionHandler, validation_exception_handler),
     )
 
     app.add_exception_handler(
         Exception,
-        unhandled_exception_handler,
+        cast(ExceptionHandler, unhandled_exception_handler),
     )

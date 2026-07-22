@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Ticket API."""
+
+from __future__ import annotations
 
 from typing import Annotated
 from uuid import UUID
@@ -71,12 +71,16 @@ def get_ticket(
 def create_ticket(
     request: CreateTicketRequest,
     service: TicketServiceDependency,
-    _: CurrentUserDependency,
+    current_user: CurrentUserDependency,
 ) -> TicketResponse:
     """Create ticket."""
-    return service.create_ticket(request)
+    ticket = service.create_ticket(
+        organization_id=current_user.organization_id,
+        created_by=current_user.id,
+        request=request,
+    )
 
-
+    return TicketResponse.model_validate(ticket)
 @router.patch(
     "/{ticket_id}",
     response_model=TicketResponse,

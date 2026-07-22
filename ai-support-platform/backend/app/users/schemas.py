@@ -87,3 +87,5 @@ class UserListResponse(BaseModel):
     """User list response."""
 
     users: list[UserResponse]
+
+    total: int

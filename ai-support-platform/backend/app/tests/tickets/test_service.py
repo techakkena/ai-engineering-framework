@@ -1,6 +1,6 @@
-from __future__ import annotations
+"""Tests for the ticket service."""
 
-"""Tests for ticket service."""
+from __future__ import annotations
 
 from uuid import uuid4
 
@@ -9,6 +9,12 @@ import pytest
 from app.core.exceptions import (
     ConflictException,
     ResourceNotFoundException,
+)
+from app.models.organization import Organization
+from app.models.user import User
+from app.tickets.constants import (
+    TicketPriority,
+    TicketStatus,
 )
 from app.tickets.repository import TicketRepository
 from app.tickets.schemas import (
@@ -22,27 +28,41 @@ from app.tickets.service import TicketService
 def ticket_service(
     ticket_repository: TicketRepository,
 ) -> TicketService:
-    """Return ticket service."""
+    """Return a ticket service."""
     return TicketService(ticket_repository)
+
+
+def build_request(
+    user: User,
+    *,
+    title: str,
+) -> CreateTicketRequest:
+    """Build a ticket creation request."""
+    return CreateTicketRequest(
+        assigned_to=user.id,
+        title=title,
+        description="Description",
+        priority=TicketPriority.MEDIUM,
+        status=TicketStatus.OPEN,
+    )
 
 
 def test_create_ticket(
     ticket_service: TicketService,
-    organization,
-    user,
+    organization: Organization,
+    user: User,
 ) -> None:
-    """Create ticket."""
-    request = CreateTicketRequest(
-        organization_id=organization.id,
-        created_by=user.id,
-        assigned_to=user.id,
+    """Create a ticket."""
+    request = build_request(
+        user,
         title="Printer Issue",
-        description="Printer is offline.",
-        priority="medium",
-        status="open",
     )
 
-    ticket = ticket_service.create_ticket(request)
+    ticket = ticket_service.create_ticket(
+        organization_id=organization.id,
+        created_by=user.id,
+        request=request,
+    )
 
     assert ticket.id is not None
     assert ticket.title == "Printer Issue"
@@ -50,42 +70,42 @@ def test_create_ticket(
 
 def test_duplicate_title(
     ticket_service: TicketService,
-    organization,
-    user,
+    organization: Organization,
+    user: User,
 ) -> None:
     """Duplicate titles are rejected."""
-    request = CreateTicketRequest(
-        organization_id=organization.id,
-        created_by=user.id,
-        assigned_to=user.id,
+    request = build_request(
+        user,
         title="Duplicate",
-        description="Description",
-        priority="medium",
-        status="open",
     )
 
-    ticket_service.create_ticket(request)
+    ticket_service.create_ticket(
+        organization_id=organization.id,
+        created_by=user.id,
+        request=request,
+    )
 
     with pytest.raises(ConflictException):
-        ticket_service.create_ticket(request)
+        ticket_service.create_ticket(
+            organization_id=organization.id,
+            created_by=user.id,
+            request=request,
+        )
 
 
 def test_get_ticket(
     ticket_service: TicketService,
-    organization,
-    user,
+    organization: Organization,
+    user: User,
 ) -> None:
-    """Return ticket."""
+    """Return a ticket."""
     created = ticket_service.create_ticket(
-        CreateTicketRequest(
-            organization_id=organization.id,
-            created_by=user.id,
-            assigned_to=user.id,
+        organization_id=organization.id,
+        created_by=user.id,
+        request=build_request(
+            user,
             title="Login Issue",
-            description="Cannot login.",
-            priority="high",
-            status="open",
-        )
+        ),
     )
 
     ticket = ticket_service.get_ticket(created.id)
@@ -103,21 +123,18 @@ def test_get_missing_ticket(
 
 def test_list_tickets(
     ticket_service: TicketService,
-    organization,
-    user,
+    organization: Organization,
+    user: User,
 ) -> None:
     """List tickets."""
     for index in range(3):
         ticket_service.create_ticket(
-            CreateTicketRequest(
-                organization_id=organization.id,
-                created_by=user.id,
-                assigned_to=user.id,
+            organization_id=organization.id,
+            created_by=user.id,
+            request=build_request(
+                user,
                 title=f"Ticket {index}",
-                description="Description",
-                priority="medium",
-                status="open",
-            )
+            ),
         )
 
     tickets = ticket_service.list_tickets()
@@ -127,20 +144,17 @@ def test_list_tickets(
 
 def test_update_ticket(
     ticket_service: TicketService,
-    organization,
-    user,
+    organization: Organization,
+    user: User,
 ) -> None:
-    """Update ticket."""
+    """Update a ticket."""
     created = ticket_service.create_ticket(
-        CreateTicketRequest(
-            organization_id=organization.id,
-            created_by=user.id,
-            assigned_to=user.id,
+        organization_id=organization.id,
+        created_by=user.id,
+        request=build_request(
+            user,
             title="Old Title",
-            description="Old Description",
-            priority="medium",
-            status="open",
-        )
+        ),
     )
 
     updated = ticket_service.update_ticket(
@@ -148,8 +162,8 @@ def test_update_ticket(
         UpdateTicketRequest(
             title="New Title",
             description="New Description",
-            priority="high",
-            status="closed",
+            priority=TicketPriority.HIGH,
+            status=TicketStatus.CLOSED,
         ),
     )
 
@@ -159,20 +173,17 @@ def test_update_ticket(
 
 def test_delete_ticket(
     ticket_service: TicketService,
-    organization,
-    user,
+    organization: Organization,
+    user: User,
 ) -> None:
-    """Delete ticket."""
+    """Delete a ticket."""
     created = ticket_service.create_ticket(
-        CreateTicketRequest(
-            organization_id=organization.id,
-            created_by=user.id,
-            assigned_to=user.id,
+        organization_id=organization.id,
+        created_by=user.id,
+        request=build_request(
+            user,
             title="Delete Ticket",
-            description="Delete me.",
-            priority="medium",
-            status="open",
-        )
+        ),
     )
 
     ticket_service.delete_ticket(created.id)

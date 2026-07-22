@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Health check endpoints."""
+
+from __future__ import annotations
 
 from datetime import UTC, datetime
 

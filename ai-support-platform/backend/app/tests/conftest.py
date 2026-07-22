@@ -17,6 +17,7 @@ from app.models.organization import Organization
 from app.models.ticket import Ticket
 from app.models.user import User
 from app.organizations.repository import OrganizationRepository
+from app.repositories.project import ProjectRepository
 from app.repositories.user import UserRepository
 from app.tests.database import (
     create_database,
@@ -46,7 +47,6 @@ def db_session() -> Generator[Session]:
     finally:
         session.rollback()
         session.close()
-
 
 @pytest.fixture
 def organization(
@@ -206,3 +206,10 @@ def created_user(
         password_hash="hashed",
         organization_id=organization.id,
     )
+
+@pytest.fixture
+def project_repository(
+    db_session: Session,
+) -> ProjectRepository:
+    """Return project repository."""
+    return ProjectRepository(db_session)

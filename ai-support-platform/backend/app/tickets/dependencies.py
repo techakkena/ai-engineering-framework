@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Dependencies for the tickets module."""
+
+from __future__ import annotations
 
 from typing import Annotated
 

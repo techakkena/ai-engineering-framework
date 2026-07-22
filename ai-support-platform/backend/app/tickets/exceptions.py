@@ -1,23 +1,23 @@
+"""Ticket exceptions."""
+
 from __future__ import annotations
 
-"""Exceptions for the tickets module."""
 
-
-class TicketException(Exception):
+class TicketError(Exception):
     """Base exception for ticket errors."""
 
 
-class TicketNotFoundException(TicketException):
-    """Raised when a ticket cannot be found."""
+class TicketNotFoundError(TicketError):
+    """Raised when a ticket is not found."""
 
 
-class TicketAlreadyExistsException(TicketException):
-    """Raised when a duplicate ticket exists."""
+class TicketConflictError(TicketError):
+    """Raised when a ticket conflict occurs."""
 
 
-class TicketValidationException(TicketException):
+class TicketPermissionError(TicketError):
+    """Raised when ticket access is denied."""
+
+
+class TicketValidationError(TicketError):
     """Raised when ticket validation fails."""
-
-
-class TicketAssignmentException(TicketException):
-    """Raised when ticket assignment fails."""

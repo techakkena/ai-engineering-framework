@@ -74,13 +74,15 @@ class UserService:
 
         password_hash = hash_password(request.password)
 
-        user = self.user_repository.create(
+        user = User(
             email=request.email,
             username=request.username,
             full_name=request.full_name,
             password_hash=password_hash,
             organization_id=request.organization_id,
         )
+
+        user = self.user_repository.create(user)
 
         return user
 
@@ -103,8 +105,9 @@ class UserService:
         offset: int = 0,
         limit: int = 100,
     ) -> list[User]:
+        """Return a paginated list of users."""
         return self.user_repository.list(
-            skip=offset,
+            offset=offset,
             limit=limit,
         )
 
@@ -142,15 +145,15 @@ class UserService:
             exclude_unset=True,
         )
 
-        IMMUTABLE_FIELDS = frozenset(
+        immutable_fields = frozenset(
             {
                 "id",
                 "organization_id",
-            }
+            },
         )
 
         for field, value in updates.items():
-            if field in IMMUTABLE_FIELDS:
+            if field in immutable_fields:
                 continue
 
             setattr(user, field, value)

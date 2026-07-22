@@ -1,21 +1,20 @@
+"""Ticket router."""
+
 from __future__ import annotations
 
 from typing import Annotated
-from uuid import UUID
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import DatabaseDependency
 from app.models import User
 from app.rbac.dependencies import require_permission
+from app.tickets.repository import TicketRepository
 from app.tickets.schemas import (
     CreateTicketRequest,
-    TicketListResponse,
     TicketResponse,
-    UpdateTicketRequest,
 )
 from app.tickets.service import TicketService
-
 
 router = APIRouter(
     prefix="/tickets",
@@ -27,14 +26,23 @@ def get_ticket_service(
     db: DatabaseDependency,
 ) -> TicketService:
     """Return a ticket service."""
+    repository = TicketRepository(db)
 
-    return TicketService(db)
+    return TicketService(repository)
 
 
 TicketServiceDependency = Annotated[
     TicketService,
     Depends(get_ticket_service),
 ]
+
+TicketCreatePermission = Depends(
+    require_permission(
+        "ticket",
+        "create",
+    ),
+)
+
 
 @router.post(
     "",
@@ -44,19 +52,14 @@ TicketServiceDependency = Annotated[
 )
 async def create_ticket(
     request: CreateTicketRequest,
-    current_user: User = Depends(
-        require_permission(
-            "ticket",
-            "create",
-        ),
-    ),
     service: TicketServiceDependency,
+    current_user: User = TicketCreatePermission,
 ) -> TicketResponse:
     """Create a ticket."""
-
     ticket = service.create_ticket(
         organization_id=current_user.organization_id,
-        created_by_id=current_user.id,
+        created_by=current_user.id,
         request=request,
     )
+
     return TicketResponse.model_validate(ticket)
