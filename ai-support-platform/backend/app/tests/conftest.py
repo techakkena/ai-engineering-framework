@@ -13,6 +13,13 @@ from sqlalchemy.orm import Session
 
 from app.auth.password import hash_password
 from app.database.session import get_db
+from app.email.constants import (
+    EmailPriority,
+    EmailProvider,
+    EmailStatus,
+    EmailTemplate,
+)
+from app.email.models import Email
 from app.knowledge.models import KnowledgeArticle
 from app.knowledge.repository import KnowledgeRepository
 from app.knowledge.types import KnowledgeStatus
@@ -293,3 +300,72 @@ def knowledge_article_factory(
         return article
 
     return factory
+
+
+@pytest.fixture
+def email(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> Email:
+    """Create a persisted email."""
+    email = Email(
+        organization_id=organization.id,
+        sender_id=user.id,
+        recipient="customer@example.com",
+        subject="Test Subject",
+        body="Test email body",
+        cc=None,
+        bcc=None,
+        template=EmailTemplate.GENERIC,
+        provider=EmailProvider.SMTP,
+        priority=EmailPriority.NORMAL,
+        status=EmailStatus.PENDING,
+        retry_count=0,
+        is_deleted=False,
+    )
+
+    db_session.add(email)
+    db_session.commit()
+    db_session.refresh(email)
+
+    return email
+
+
+@pytest.fixture
+def email_factory(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> Callable[..., Email]:
+    """Return a persisted email factory."""
+
+    def factory(
+        subject: str = "Test Subject",
+        recipient: str = "customer@example.com",
+        status: EmailStatus = EmailStatus.PENDING,
+    ) -> Email:
+        email = Email(
+            organization_id=organization.id,
+            sender_id=user.id,
+            recipient=recipient,
+            subject=subject,
+            body="Test email body",
+            cc=None,
+            bcc=None,
+            template=EmailTemplate.GENERIC,
+            provider=EmailProvider.SMTP,
+            priority=EmailPriority.NORMAL,
+            status=status,
+            retry_count=0,
+            is_deleted=False,
+        )
+
+        db_session.add(email)
+        db_session.commit()
+        db_session.refresh(email)
+
+        return email
+
+    return factory
+
