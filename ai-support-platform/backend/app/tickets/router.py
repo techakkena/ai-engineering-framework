@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 
 from app.core.dependencies import DatabaseDependency
 from app.models import User
@@ -36,12 +36,40 @@ TicketServiceDependency = Annotated[
     Depends(get_ticket_service),
 ]
 
+TicketReadPermission = Depends(
+    require_permission(
+        "ticket",
+        "read",
+    ),
+)
+
 TicketCreatePermission = Depends(
     require_permission(
         "ticket",
         "create",
     ),
 )
+
+
+@router.get(
+    "",
+    response_model=list[TicketResponse],
+    status_code=status.HTTP_200_OK,
+    summary="List tickets",
+)
+async def list_tickets(
+    service: TicketServiceDependency,
+    current_user: User = TicketReadPermission,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 100,
+) -> list[TicketResponse]:
+    """Return a paginated list of tickets."""
+    tickets = service.list_tickets(
+        offset=offset,
+        limit=limit,
+    )
+
+    return [TicketResponse.model_validate(ticket) for ticket in tickets]
 
 
 @router.post(

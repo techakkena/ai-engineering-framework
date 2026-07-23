@@ -22,8 +22,7 @@ def test_list_tickets(
 
     body = response.json()
 
-    assert "tickets" in body
-    assert "total" in body
+    assert isinstance(body, list)
 
 
 def test_create_ticket(

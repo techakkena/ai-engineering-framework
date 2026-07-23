@@ -38,13 +38,10 @@ class UserService:
         Returns:
             A list of users.
         """
-        total = self._repository.count()
-        users = self._repository.list(
+        return self._repository.list(
             offset=offset,
             limit=limit,
         )
-
-        return total, users
 
     def get_user(
         self,

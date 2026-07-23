@@ -1,3 +1,3 @@
-"""RBAC router provider."""
+"""Text utility functions."""
 
 from __future__ import annotations

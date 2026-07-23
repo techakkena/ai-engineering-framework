@@ -44,6 +44,7 @@ class BaseModel(TimestampMixin, Base):
         self.is_deleted = False
         self.deleted_at = None
 
+
 __all__ = [
     "Base",
     "BaseModel",

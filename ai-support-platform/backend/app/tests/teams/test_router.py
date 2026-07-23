@@ -39,7 +39,7 @@ def current_user() -> SimpleNamespace:
 def client(
     service: Mock,
     current_user: SimpleNamespace,
-)-> Generator[TestClient]:
+) -> Generator[TestClient]:
     """Create API client."""
     app.dependency_overrides[get_team_service] = lambda: service
 

@@ -29,7 +29,10 @@ RBACServiceDependency = Annotated[
 def require_permission(
     resource: str,
     action: str,
-) -> Callable[[CurrentActiveUserDependency, RBACService], Coroutine[Any, Any, User]]:
+) -> Callable[
+    [CurrentActiveUserDependency, RBACServiceDependency],
+    Coroutine[Any, Any, User],
+]:
     """Return a dependency that checks a user's permission."""
 
     async def dependency(
@@ -37,6 +40,10 @@ def require_permission(
         rbac_service: RBACServiceDependency,
     ) -> User:
         """Validate that the current user has the required permission."""
+        # Superusers bypass RBAC checks.
+        if current_user.is_superuser:
+            return current_user
+
         if not rbac_service.has_permission(
             current_user.id,
             resource,

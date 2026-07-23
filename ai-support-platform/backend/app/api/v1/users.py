@@ -69,10 +69,7 @@ async def list_users(
 
     return UserListResponse(
         total=len(users),
-        users=[
-            UserResponse.model_validate(user)
-            for user in users
-        ],
+        users=[UserResponse.model_validate(user) for user in users],
     )
 
 

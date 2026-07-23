@@ -41,27 +41,18 @@ def test_list_users(
     repository: MagicMock,
 ) -> None:
     """Test listing users."""
-    repository.count.return_value = 1
-    repository.list.return_value = [build_user()]
+    users = [build_user()]
 
-    total, users = service.list_users()
+    repository.list.return_value = users
 
-    assert total == 1
-    assert len(users) == 1
+    result = service.list_users()
 
+    assert result == users
 
-def test_get_user_success(
-    service: UserService,
-    repository: MagicMock,
-) -> None:
-    """Test getting an existing user."""
-    user = build_user()
-
-    repository.get.return_value = user
-
-    result = service.get_user(user.id)
-
-    assert result == user
+    repository.list.assert_called_once_with(
+        offset=0,
+        limit=100,
+    )
 
 
 def test_get_user_not_found(

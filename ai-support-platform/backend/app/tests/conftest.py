@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.auth.password import hash_password
 from app.database.session import get_db
+from app.knowledge.models import KnowledgeArticle
+from app.knowledge.repository import KnowledgeRepository
+from app.knowledge.types import KnowledgeStatus
 from app.main import app
 from app.models.organization import Organization
 from app.models.ticket import Ticket
@@ -217,3 +221,75 @@ def project_repository(
 ) -> ProjectRepository:
     """Return project repository."""
     return ProjectRepository(db_session)
+
+
+@pytest.fixture
+def knowledge_repository(
+    db_session: Session,
+) -> KnowledgeRepository:
+    """Return knowledge repository."""
+    return KnowledgeRepository(db_session)
+
+
+@pytest.fixture
+def knowledge_article(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> KnowledgeArticle:
+    """Create a persisted knowledge article."""
+    article = KnowledgeArticle(
+        organization_id=organization.id,
+        title="Getting Started",
+        slug=slugify("Getting Started"),
+        summary="Knowledge summary",
+        content="Knowledge content",
+        category="General",
+        tags="docs,help",
+        status=KnowledgeStatus.DRAFT,
+        version=1,
+        is_published=False,
+        is_deleted=False,
+        author_id=user.id,
+    )
+
+    db_session.add(article)
+    db_session.commit()
+    db_session.refresh(article)
+
+    return article
+
+
+@pytest.fixture
+def knowledge_article_factory(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> Callable[..., KnowledgeArticle]:
+    """Return a persisted knowledge article factory."""
+
+    def factory(
+        title: str = "Article",
+    ) -> KnowledgeArticle:
+        article = KnowledgeArticle(
+            organization_id=organization.id,
+            author_id=user.id,
+            title=title,
+            slug=slugify(title),
+            summary="Summary",
+            content="Content",
+            category="General",
+            tags="tag1,tag2",
+            status=KnowledgeStatus.DRAFT,
+            version=1,
+            is_published=False,
+            is_deleted=False,
+        )
+
+        db_session.add(article)
+        db_session.commit()
+        db_session.refresh(article)
+
+        return article
+
+    return factory

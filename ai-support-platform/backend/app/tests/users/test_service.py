@@ -9,43 +9,43 @@ from uuid import uuid4
 import pytest
 
 from app.core.exceptions import (
-        ConflictException,
-        ResourceNotFoundException,
+    ConflictException,
+    ResourceNotFoundException,
 )
 from app.models.user import User
 from app.organizations.repository import OrganizationRepository
 from app.repositories.user import UserRepository
 from app.users.schemas import (
-        CreateUserRequest,
-        UpdateUserRequest,
+    CreateUserRequest,
+    UpdateUserRequest,
 )
 from app.users.service import UserService
 
 
 @pytest.fixture
 def user_repository() -> MagicMock:
-        """Return a mocked user repository."""
-        return cast(
-            MagicMock,
-            create_autospec(
-                UserRepository,
-                instance=True,
-                spec_set=True,
-            ),
-        )
+    """Return a mocked user repository."""
+    return cast(
+        MagicMock,
+        create_autospec(
+            UserRepository,
+            instance=True,
+            spec_set=True,
+        ),
+    )
 
 
 @pytest.fixture
 def organization_repository() -> MagicMock:
-        """Return a mocked organization repository."""
-        return cast(
-            MagicMock,
-            create_autospec(
-                OrganizationRepository,
-                instance=True,
-                spec_set=True,
-            ),
-        )
+    """Return a mocked organization repository."""
+    return cast(
+        MagicMock,
+        create_autospec(
+            OrganizationRepository,
+            instance=True,
+            spec_set=True,
+        ),
+    )
 
 
 @pytest.fixture
