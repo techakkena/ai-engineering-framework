@@ -25,11 +25,7 @@ def to_email_response(
     email: Email,
 ) -> EmailResponse:
     """Convert Email model to API response."""
-    data = {
-        key: value
-        for key, value in vars(email).items()
-        if not key.startswith("_")
-    }
+    data = {key: value for key, value in vars(email).items() if not key.startswith("_")}
 
     data["cc"] = email.cc.split(",") if email.cc else []
     data["bcc"] = email.bcc.split(",") if email.bcc else []
@@ -80,10 +76,7 @@ def list_emails(
 
     return EmailListResponse(
         total=total,
-        items=[
-            to_email_response(email)
-            for email in items
-        ],
+        items=[to_email_response(email) for email in items],
     )
 
 
@@ -108,10 +101,7 @@ def search_emails(
 
     emails = service.search(request)
 
-    return [
-        to_email_response(email)
-        for email in emails
-    ]
+    return [to_email_response(email) for email in emails]
 
 
 @router.get(
@@ -144,6 +134,7 @@ def update_email(
 
     return to_email_response(email)
 
+
 @router.post(
     "/{email_id}/send",
     response_model=EmailResponse,
@@ -167,11 +158,7 @@ def retry_email(
     service: EmailServiceDep,
 ) -> EmailResponse:
     """Retry an email."""
-    email = (
-        service.retry(email_id)
-        if request.retry
-        else service.get(email_id)
-    )
+    email = service.retry(email_id) if request.retry else service.get(email_id)
 
     return to_email_response(email)
 
@@ -186,11 +173,7 @@ def cancel_email(
     service: EmailServiceDep,
 ) -> EmailResponse:
     """Cancel an email."""
-    email = (
-        service.cancel(email_id)
-        if request.cancel
-        else service.get(email_id)
-    )
+    email = service.cancel(email_id) if request.cancel else service.get(email_id)
 
     return to_email_response(email)
 

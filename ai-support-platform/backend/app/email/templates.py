@@ -25,8 +25,7 @@ class EmailTemplates:
 
     _BODIES: dict[EmailTemplate, Template] = {
         EmailTemplate.GENERIC: Template("$body"),
-        EmailTemplate.WELCOME: Template(
-            """Hello $name,
+        EmailTemplate.WELCOME: Template("""Hello $name,
 
 Welcome to Enterprise AI Support Platform.
 
@@ -34,10 +33,8 @@ We're excited to have you on board.
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.PASSWORD_RESET: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.PASSWORD_RESET: Template("""Hello $name,
 
 You requested a password reset.
 
@@ -49,10 +46,8 @@ If you did not request this change, please ignore this email.
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.EMAIL_VERIFICATION: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.EMAIL_VERIFICATION: Template("""Hello $name,
 
 Please verify your email address by visiting:
 
@@ -60,10 +55,8 @@ $verification_link
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.INVITATION: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.INVITATION: Template("""Hello $name,
 
 You have been invited to join our organization.
 
@@ -73,10 +66,8 @@ $invitation_link
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.TICKET_CREATED: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.TICKET_CREATED: Template("""Hello $name,
 
 Your ticket #$ticket_id has been created successfully.
 
@@ -85,44 +76,35 @@ $title
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.TICKET_ASSIGNED: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.TICKET_ASSIGNED: Template("""Hello $name,
 
 Ticket #$ticket_id has been assigned to you.
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.TICKET_UPDATED: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.TICKET_UPDATED: Template("""Hello $name,
 
 Ticket #$ticket_id has been updated.
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.TICKET_RESOLVED: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.TICKET_RESOLVED: Template("""Hello $name,
 
 Ticket #$ticket_id has been resolved.
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
-        EmailTemplate.COMMENT_ADDED: Template(
-            """Hello $name,
+"""),
+        EmailTemplate.COMMENT_ADDED: Template("""Hello $name,
 
 A new comment has been added to ticket #$ticket_id.
 
 Regards,
 Enterprise AI Support Team
-"""
-        ),
+"""),
     }
 
     @classmethod

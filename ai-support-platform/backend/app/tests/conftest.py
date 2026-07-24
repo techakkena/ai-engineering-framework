@@ -20,6 +20,12 @@ from app.email.constants import (
     EmailTemplate,
 )
 from app.email.models import Email
+from app.files.constants import (
+    FileCategory,
+    FileProvider,
+    FileStatus,
+)
+from app.files.models import File
 from app.knowledge.models import KnowledgeArticle
 from app.knowledge.repository import KnowledgeRepository
 from app.knowledge.types import KnowledgeStatus
@@ -369,3 +375,71 @@ def email_factory(
 
     return factory
 
+
+@pytest.fixture
+def file_factory(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> Callable[..., File]:
+    """Return a factory for creating files."""
+
+    def factory(
+        **kwargs: object,
+    ) -> File:
+        file = File(
+            organization_id=organization.id,
+            uploaded_by_id=user.id,
+            filename=kwargs.get(
+                "filename",
+                "document.pdf",
+            ),
+            original_filename=kwargs.get(
+                "original_filename",
+                "document.pdf",
+            ),
+            content_type=kwargs.get(
+                "content_type",
+                "application/pdf",
+            ),
+            size=kwargs.get(
+                "size",
+                1024,
+            ),
+            checksum=kwargs.get(
+                "checksum",
+                "abc123checksum",
+            ),
+            storage_path=kwargs.get(
+                "storage_path",
+                "uploads/document.pdf",
+            ),
+            provider=kwargs.get(
+                "provider",
+                FileProvider.LOCAL,
+            ),
+            category=kwargs.get(
+                "category",
+                FileCategory.DOCUMENT,
+            ),
+            status=kwargs.get(
+                "status",
+                FileStatus.ACTIVE,
+            ),
+        )
+
+        db_session.add(file)
+        db_session.commit()
+        db_session.refresh(file)
+
+        return file
+
+    return factory
+
+
+@pytest.fixture
+def file(
+    file_factory: Callable[..., File],
+) -> File:
+    """Return a persisted file."""
+    return file_factory()

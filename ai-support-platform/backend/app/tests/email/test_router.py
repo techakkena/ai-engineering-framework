@@ -40,6 +40,7 @@ def create_email(
     body = cast(dict[str, Any], response.json())
     return str(body["id"])
 
+
 def test_create_email(
     client: TestClient,
     auth_headers: dict[str, str],
@@ -82,8 +83,8 @@ def test_list_emails(
     )
 
     create_email(
-    client,
-    auth_headers,
+        client,
+        auth_headers,
     )
 
     response = client.get(

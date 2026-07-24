@@ -46,12 +46,8 @@ class EmailService:
             recipient=str(request.recipient),
             subject=request.subject,
             body=request.body,
-            cc=",".join(str(item) for item in request.cc)
-            if request.cc
-            else None,
-            bcc=",".join(str(item) for item in request.bcc)
-            if request.bcc
-            else None,
+            cc=",".join(str(item) for item in request.cc) if request.cc else None,
+            bcc=",".join(str(item) for item in request.bcc) if request.bcc else None,
             template=request.template,
             provider=request.provider,
             priority=request.priority,

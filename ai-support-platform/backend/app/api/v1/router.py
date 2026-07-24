@@ -1,9 +1,12 @@
 """API V1 router for all modules."""
 
+from __future__ import annotations
+
 from app.auth.router import router as auth_router
 from app.comments.router import router as comment_router
 from app.customers.router import router as customer_router
 from app.email.router import router as email_router
+from app.files.router import router as file_router
 from app.knowledge.router import router as knowledge_router
 from app.notifications.router import router as notification_router
 from app.teams.router import router as teams_router
@@ -22,3 +25,4 @@ api_router.include_router(comment_router)
 api_router.include_router(knowledge_router)
 api_router.include_router(notification_router)
 api_router.include_router(email_router)
+api_router.include_router(file_router)
