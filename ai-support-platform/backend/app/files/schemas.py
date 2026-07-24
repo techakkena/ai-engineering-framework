@@ -1,17 +1,17 @@
-""" "Schemas provider to file module."""
+"""Schemas for the file module."""
 
 from __future__ import annotations
 
 from datetime import datetime
 from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
 from app.files.constants import (
     FileCategory,
     FileProvider,
     FileStatus,
 )
-from pydantic import BaseModel, ConfigDict, Field
-
-from app.files.constants import FileProvider, FileStatus
 
 
 class FileBase(BaseModel):
@@ -24,6 +24,8 @@ class FileBase(BaseModel):
 
 
 class FileCreate(BaseModel):
+    """Schema for creating a file."""
+
     filename: str
     original_filename: str
     content: bytes

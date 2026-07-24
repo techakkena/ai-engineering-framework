@@ -8,7 +8,7 @@ from fastapi import APIRouter, Query, Response, status
 
 from app.auth.dependencies import CurrentActiveUserDependency
 from app.files.constants import FileProvider, FileStatus
-from app.files.dependencies import FileServiceDep
+from app.files.dependencies import FileServiceDependency
 from app.files.models import File
 from app.files.schemas import (
     FileCreate,
@@ -42,7 +42,7 @@ router = APIRouter(
 def create_file(
     request: FileCreate,
     current_user: CurrentActiveUserDependency,
-    service: FileServiceDep,
+    service: FileServiceDependency,
 ) -> FileResponse:
     """Create a file."""
     file = service.create(
@@ -59,7 +59,7 @@ def create_file(
     response_model=FileListResponse,
 )
 def list_files(
-    service: FileServiceDep,
+    service: FileServiceDependency,
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=100, ge=1, le=100),
 ) -> FileListResponse:
@@ -80,7 +80,7 @@ def list_files(
     response_model=list[FileResponse],
 )
 def search_files(
-    service: FileServiceDep,
+    service: FileServiceDependency,
     filename: str | None = None,
     provider: FileProvider | None = None,
     status: FileStatus | None = None,
@@ -107,7 +107,7 @@ def search_files(
 )
 def get_file(
     file_id: UUID,
-    service: FileServiceDep,
+    service: FileServiceDependency,
 ) -> FileResponse:
     """Retrieve a file."""
     file = service.get(file_id)
@@ -122,7 +122,7 @@ def get_file(
 def update_file(
     file_id: UUID,
     request: FileUpdate,
-    service: FileServiceDep,
+    service: FileServiceDependency,
 ) -> FileResponse:
     """Update a file."""
     file = service.update(
@@ -139,7 +139,7 @@ def update_file(
 )
 def delete_file(
     file_id: UUID,
-    service: FileServiceDep,
+    service: FileServiceDependency,
 ) -> Response:
     """Delete a file."""
     service.delete(file_id)

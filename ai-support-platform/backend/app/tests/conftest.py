@@ -11,6 +11,9 @@ from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.audit.models import AuditLog
+from app.audit.repository import AuditRepository
+from app.audit.service import AuditService
 from app.auth.password import hash_password
 from app.database.session import get_db
 from app.email.constants import (
@@ -443,3 +446,48 @@ def file(
 ) -> File:
     """Return a persisted file."""
     return file_factory()
+
+
+@pytest.fixture
+def audit_repository(
+    db_session: Session,
+) -> AuditRepository:
+    """Return an audit repository."""
+    return AuditRepository(db_session)
+
+
+@pytest.fixture
+def audit_service(
+    audit_repository: AuditRepository,
+) -> AuditService:
+    """Return an audit service."""
+    return AuditService(audit_repository)
+
+
+@pytest.fixture
+def audit_log(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> AuditLog:
+    """Create a persisted audit log."""
+    audit_log = AuditLog(
+        organization_id=organization.id,
+        user_id=user.id,
+        action="create",
+        entity_type="ticket",
+        entity_id=uuid4(),
+        entity_name="Ticket-1",
+        old_values=None,
+        new_values={"status": "open"},
+        ip_address="127.0.0.1",
+        user_agent="pytest",
+        request_id="req-123",
+        status="success",
+    )
+
+    db_session.add(audit_log)
+    db_session.commit()
+    db_session.refresh(audit_log)
+
+    return audit_log

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from uuid import UUID
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from typing import List
 
 from app.files.models import File
 from app.files.schemas import FileSearchParams

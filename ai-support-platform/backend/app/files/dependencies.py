@@ -1,4 +1,4 @@
-"""Dependency injection providers for the file module."""
+""" "dependency provider for audit logs."""
 
 from __future__ import annotations
 
@@ -12,19 +12,16 @@ from app.files.providers import LocalStorageProvider
 from app.files.repository import FileRepository
 from app.files.service import FileService
 
-
 DatabaseSession = Annotated[
     Session,
     Depends(get_db),
 ]
 
+
 def get_file_repository(
-    session: Annotated[
-        Session,
-        Depends(get_db),
-    ],
+    session: DatabaseSession,
 ) -> FileRepository:
-    """Return a file repository instance."""
+    """Return a file repository."""
     return FileRepository(session)
 
 
@@ -47,17 +44,17 @@ StorageProviderDep = Annotated[
 
 def get_file_service(
     session: DatabaseSession,
+    storage: StorageProviderDep,
 ) -> FileService:
+    """Return a file service."""
     repository = FileRepository(session)
-    storage = LocalStorageProvider()
-
     return FileService(
         repository=repository,
         storage=storage,
     )
 
 
-FileServiceDep = Annotated[
+FileServiceDependency = Annotated[
     FileService,
     Depends(get_file_service),
 ]

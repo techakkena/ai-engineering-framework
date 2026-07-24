@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.audit.router import router as audit_router
 from app.auth.router import router as auth_router
 from app.comments.router import router as comment_router
 from app.customers.router import router as customer_router
@@ -17,6 +18,7 @@ from fastapi import APIRouter
 api_router = APIRouter(prefix="/api/v1")
 
 api_router.include_router(auth_router)
+api_router.include_router(audit_router)
 api_router.include_router(user_router)
 api_router.include_router(teams_router)
 api_router.include_router(ticket_router)

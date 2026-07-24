@@ -5,8 +5,6 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from app.files.models import File
-
 
 @dataclass(slots=True, frozen=True)
 class StorageResult:
@@ -18,19 +16,24 @@ class StorageResult:
 
 
 class BaseStorageProvider(ABC):
+    """Abstract base class for storage providers."""
 
     @abstractmethod
     def save(
         self,
         storage_path: str,
         content: bytes,
-    ) -> StorageResult: ...
+    ) -> StorageResult:
+        """Store a file."""
+        raise NotImplementedError
 
     @abstractmethod
     def delete(
         self,
         storage_path: str,
-    ) -> StorageResult: ...
+    ) -> StorageResult:
+        """Delete a stored file."""
+        raise NotImplementedError
 
 
 class LocalStorageProvider(BaseStorageProvider):

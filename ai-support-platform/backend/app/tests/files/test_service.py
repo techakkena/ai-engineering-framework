@@ -7,7 +7,7 @@ from uuid import UUID
 
 import pytest
 from sqlalchemy.orm import Session
-from app.files.providers import StorageResult
+
 from app.files.constants import (
     FileCategory,
     FileProvider,
@@ -18,6 +18,7 @@ from app.files.exceptions import (
     FileNotFoundException,
 )
 from app.files.models import File
+from app.files.providers import StorageResult
 from app.files.repository import FileRepository
 from app.files.schemas import (
     FileCreate,
@@ -111,9 +112,9 @@ def test_create_duplicate_file(
 ) -> None:
     """Test duplicate checksum."""
     storage.save.return_value = StorageResult(
-    success=True,
-    storage_path="uploads/document.pdf",
-)
+        success=True,
+        storage_path="uploads/document.pdf",
+    )
 
     request = FileCreate(
         filename="document.pdf",
