@@ -63,3 +63,5 @@ async def root() -> dict[str, str]:
         "version": settings.APP_VERSION,
         "status": "running",
     }
+
+print("REGISTERING EXCEPTION HANDLERS")

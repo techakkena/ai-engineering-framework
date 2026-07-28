@@ -7,23 +7,24 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
-from fastapi import FastAPI
+from app.main import app
 from fastapi.testclient import TestClient
 
-from app.api.v1.organizations import router
 from app.auth.dependencies import get_current_user
 from app.core.exceptions import (
     ConflictException,
     ResourceNotFoundException,
+    AppException,
 )
 from app.models.organization import Organization
 from app.models.user import User
 from app.organizations.dependencies import (
     get_organization_service,
 )
+from app.organizations.router import router
 
-app = FastAPI()
-app.include_router(router, prefix="/api/v1")
+# app = FastAPI()
+# app.include_router(router, prefix="/api/v1")
 
 
 class TestOrganizationsRouter:
@@ -147,7 +148,7 @@ class TestOrganizationsRouter:
     ) -> None:
         """Unknown organization."""
         organization_service.get_organization.side_effect = ResourceNotFoundException(
-            "Organization not found.",
+            "Organization",
         )
 
         app.dependency_overrides[get_current_user] = lambda: current_user
@@ -312,3 +313,9 @@ class TestOrganizationsRouter:
             app.dependency_overrides.clear()
 
         assert response.status_code == 422
+
+    exc = ResourceNotFoundException("Organization")
+
+    print(app.exception_handlers)
+    print(AppException)
+    print(app.exception_handlers.get(AppException))

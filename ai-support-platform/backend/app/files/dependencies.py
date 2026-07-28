@@ -1,4 +1,4 @@
-""" "dependency provider for audit logs."""
+"""dependency provider for audit logs."""
 
 from __future__ import annotations
 

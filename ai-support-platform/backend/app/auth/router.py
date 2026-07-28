@@ -20,7 +20,7 @@ from app.auth.service import (
     UsernameAlreadyExistsError,
 )
 from app.models.user import User
-from app.schemas.user import UserResponse
+from app.users.schemas import UserResponse
 
 router = APIRouter(
     prefix="/auth",

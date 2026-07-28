@@ -2,47 +2,23 @@
 
 from __future__ import annotations
 
-from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Response, status
 
 from app.auth.dependencies import CurrentSuperuserDependency
-from app.core.dependencies import DatabaseDependency
-from app.organizations.repository import OrganizationRepository
+from app.organizations.dependencies import OrganizationServiceDependency
 from app.organizations.schemas import (
     CreateOrganizationRequest,
     OrganizationListResponse,
     OrganizationResponse,
     UpdateOrganizationRequest,
 )
-from app.organizations.service import OrganizationService
 
 router = APIRouter(
     prefix="/organizations",
     tags=["Organizations"],
 )
-
-
-def get_organization_service(
-    db: DatabaseDependency,
-) -> OrganizationService:
-    """Return an organization service.
-
-    Args:
-        db: Database session.
-
-    Returns:
-        Organization service instance.
-    """
-    repository = OrganizationRepository(db)
-    return OrganizationService(repository)
-
-
-OrganizationServiceDependency = Annotated[
-    OrganizationService,
-    Depends(get_organization_service),
-]
 
 
 @router.post(

@@ -10,7 +10,14 @@ from app.repositories.base import BaseRepository
 
 
 class OrganizationRepository(BaseRepository[Organization]):
-    """Repository for organization entities."""
+    """Repository for organization entities.
+
+    Used by app.teams. A second, independent OrganizationRepository lives at
+    app.organizations.repository (hand-written CRUD, not BaseRepository) and
+    is used by app.organizations and app.users. Both are live; consolidating
+    them requires a method-by-method behavioral diff that hasn't been done,
+    so treat them as intentionally separate until that verification happens.
+    """
 
     def __init__(
         self,

@@ -11,7 +11,15 @@ from app.models.organization import Organization
 
 
 class OrganizationRepository:
-    """Repository for organization persistence."""
+    """Repository for organization persistence.
+
+    Used by the organizations feature (service, router, dependencies) and by
+    app.users. A second, independent OrganizationRepository lives at
+    app.repositories.organization (built on BaseRepository) and is used by
+    app.teams. Both are live; consolidating them requires a method-by-method
+    behavioral diff that hasn't been done, so treat them as intentionally
+    separate until that verification happens.
+    """
 
     def __init__(self, session: Session) -> None:
         """Initialize repository."""

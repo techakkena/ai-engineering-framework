@@ -12,7 +12,7 @@ from app.models.user import User
 
 if TYPE_CHECKING:
     from app.models.ticket import Ticket
-
+    from app.sla.models import SLAPolicy
 
 class Organization(BaseModel):
     """Organization entity."""
@@ -95,6 +95,12 @@ class Organization(BaseModel):
     )
 
     users: Mapped[list[User]] = relationship(
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+
+    sla_policies: Mapped[list["SLAPolicy"]] = relationship(
+        "SLAPolicy",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

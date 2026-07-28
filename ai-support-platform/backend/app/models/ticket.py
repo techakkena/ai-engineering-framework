@@ -14,7 +14,7 @@ from app.models.base import BaseModel
 if TYPE_CHECKING:
     from app.models.organization import Organization
     from app.models.user import User
-
+    from app.sla.models import SLAEvent
 
 class Ticket(BaseModel):
     """Support ticket."""
@@ -87,4 +87,10 @@ class Ticket(BaseModel):
         "User",
         foreign_keys=[assigned_to],
         back_populates="assigned_tickets",
+    )
+
+    sla_event: Mapped["SLAEvent | None"] = relationship(
+        "SLAEvent",
+        back_populates="ticket",
+        uselist=False,
     )

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Callable, Generator
 from uuid import uuid4
+from datetime import UTC, datetime, timedelta
 
+from app.sla.models import SLAEvent, SLAPolicy
 import pytest
 from fastapi.testclient import TestClient
 from slugify import slugify
@@ -46,6 +48,8 @@ from app.tests.database import (
 )
 from app.tickets.repository import TicketRepository
 
+
+now = datetime.now(UTC)
 
 @pytest.fixture(autouse=True)
 def setup_database() -> Generator[None]:
@@ -491,3 +495,126 @@ def audit_log(
     db_session.refresh(audit_log)
 
     return audit_log
+
+@pytest.fixture
+def sla_policy(
+    db_session: Session,
+    organization: Organization,
+) -> SLAPolicy:
+    """Create a persisted SLA policy."""
+    policy = SLAPolicy(
+        id=uuid4(),
+        organization_id=organization.id,
+        name="Default SLA",
+        description="Default policy",
+        priority="medium",
+        first_response_minutes=60,
+        resolution_minutes=480,
+        business_hours_only=False,
+        is_active=True,
+        created_at=now,
+        updated_at=now,
+    )
+
+    db_session.add(policy)
+    db_session.commit()
+    db_session.refresh(policy)
+
+    return policy
+
+@pytest.fixture
+def sla_policy_factory(
+    db_session: Session,
+    organization: Organization,
+) -> Callable[..., SLAPolicy]:
+    """Return an SLA policy factory."""
+
+    def factory(
+        name: str = "Default SLA",
+        priority: str = "medium",
+        first_response_minutes: int = 60,
+        resolution_minutes: int = 480,
+        is_active: bool = True,
+    ) -> SLAPolicy:
+        policy = SLAPolicy(
+            id=uuid4(),
+            organization_id=organization.id,
+            name="Default SLA",
+            description="Default policy",
+            priority="medium",
+            first_response_minutes=60,
+            resolution_minutes=480,
+            business_hours_only=False,
+            is_active=True,
+            created_at=now,
+            updated_at=now,
+        )
+
+        db_session.add(policy)
+        db_session.commit()
+        db_session.refresh(policy)
+
+        return policy
+
+    return factory
+
+@pytest.fixture
+def sla_event(
+    db_session: Session,
+    ticket: Ticket,
+    sla_policy: SLAPolicy,
+) -> SLAEvent:
+    """Create a persisted SLA event."""
+    now = datetime.now(UTC)
+
+    event = SLAEvent(
+        id=uuid4(),
+        ticket_id=ticket.id,
+        policy_id=sla_policy.id,
+        started_at=now,
+        first_response_due=now,
+        resolution_due=now,
+        first_response_at=None,
+        resolved_at=None,
+        first_response_breached=False,
+        resolution_breached=False,
+    )
+
+    db_session.add(event)
+    db_session.commit()
+    db_session.refresh(event)
+
+    return event
+
+@pytest.fixture
+def sla_event_factory(
+    db_session: Session,
+    ticket: Ticket,
+    sla_policy: SLAPolicy,
+) -> Callable[..., SLAEvent]:
+    """Return an SLA event factory."""
+
+    def factory(
+        *,
+        first_response_breached: bool = False,
+        resolution_breached: bool = False,
+    ) -> SLAEvent:
+        now = datetime.now(UTC)
+
+        event = SLAEvent(
+            ticket_id=ticket.id,
+            policy_id=sla_policy.id,
+            started_at=now,
+            first_response_due=now + timedelta(minutes=60),
+            resolution_due=now + timedelta(minutes=480),
+            first_response_breached=first_response_breached,
+            resolution_breached=resolution_breached,
+        )
+
+        db_session.add(event)
+        db_session.commit()
+        db_session.refresh(event)
+
+        return event
+
+    return factory
