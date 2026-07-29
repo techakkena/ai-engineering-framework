@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from unittest.mock import MagicMock
 
 import pytest
+from fastapi.testclient import TestClient
+
 from app.main import app
+from app.sla.constants import SLAPriority
 from app.sla.dependencies import get_sla_service
 from app.sla.models import SLAEvent, SLAPolicy
 from app.sla.schemas import (
     SLAPolicyCreate,
     SLAPolicyUpdate,
 )
-from fastapi.testclient import TestClient
-
 
 @pytest.fixture
 def service() -> MagicMock:
@@ -24,7 +26,7 @@ def service() -> MagicMock:
 @pytest.fixture
 def client(
     service: MagicMock,
-) -> TestClient:
+) -> Generator[TestClient, None, None]:
     """Return configured test client."""
     app.dependency_overrides[get_sla_service] = lambda: service
 
@@ -62,7 +64,7 @@ def test_create_policy(
         organization_id=sla_policy.organization_id,
         name=sla_policy.name,
         description=sla_policy.description,
-        priority=sla_policy.priority,
+        priority=SLAPriority(sla_policy.priority),
         first_response_minutes=sla_policy.first_response_minutes,
         resolution_minutes=sla_policy.resolution_minutes,
         business_hours_only=sla_policy.business_hours_only,

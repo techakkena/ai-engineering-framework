@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Database models for SLA management."""
+
+from __future__ import annotations
 
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -92,12 +92,12 @@ class SLAPolicy(Base):
         nullable=False,
     )
 
-    organization: Mapped["Organization"] = relationship(
+    organization: Mapped[Organization] = relationship(
         "Organization",
         back_populates="sla_policies",
     )
 
-    events: Mapped[list["SLAEvent"]] = relationship(
+    events: Mapped[list[SLAEvent]] = relationship(
         "SLAEvent",
         back_populates="policy",
         cascade="all, delete-orphan",
@@ -165,12 +165,12 @@ class SLAEvent(Base):
         nullable=False,
     )
 
-    policy: Mapped["SLAPolicy"] = relationship(
+    policy: Mapped[SLAPolicy] = relationship(
         "SLAPolicy",
         back_populates="events",
     )
 
-    ticket: Mapped["Ticket"] = relationship(
+    ticket: Mapped[Ticket] = relationship(
         "Ticket",
         back_populates="sla_event",
     )

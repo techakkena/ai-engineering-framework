@@ -7,21 +7,20 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
-from app.main import app
 from fastapi.testclient import TestClient
 
 from app.auth.dependencies import get_current_user
 from app.core.exceptions import (
+    AppException,
     ConflictException,
     ResourceNotFoundException,
-    AppException,
 )
+from app.main import app
 from app.models.organization import Organization
 from app.models.user import User
 from app.organizations.dependencies import (
     get_organization_service,
 )
-from app.organizations.router import router
 
 # app = FastAPI()
 # app.include_router(router, prefix="/api/v1")

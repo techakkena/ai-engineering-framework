@@ -6,14 +6,12 @@ from uuid import uuid4
 
 import pytest
 from app.models.organization import Organization
-from app.workflows.models import (
-    Workflow,
-    WorkflowAction,
-    WorkflowCondition,
-)
 from app.workflows.exceptions import (
     WorkflowDisabledException,
     WorkflowNotFoundException,
+)
+from app.workflows.models import (
+    Workflow,
 )
 from app.workflows.repository import WorkflowRepository
 from app.workflows.schemas import (
@@ -23,7 +21,8 @@ from app.workflows.schemas import (
     WorkflowUpdate,
 )
 from app.workflows.service import WorkflowService
-
+from app.workflows.constants import WorkflowTrigger,WorkflowCondition,WorkflowAction
+ 
 
 def test_create_workflow(
     workflow_repository: WorkflowRepository,
@@ -36,8 +35,8 @@ def test_create_workflow(
         organization_id=organization.id,
         name="Default Workflow",
         description="Workflow description",
-        trigger="ticket_created",
-        status="active",
+        trigger=WorkflowTrigger.TICKET_CREATED,
+        is_active=True,
         conditions=[],
         actions=[],
     )
@@ -114,7 +113,7 @@ def test_create_condition(
 ) -> None:
     """Test creating a condition."""
     condition = WorkflowConditionCreate(
-        field="priority",
+        field=WorkflowCondition.PRIORITY,
         operator="eq",
         value="high",
     )
@@ -148,7 +147,7 @@ def test_create_action(
 ) -> None:
     """Test creating an action."""
     action = WorkflowActionCreate(
-        action="assign_user",
+        action=WorkflowAction.ASSIGN_USER,
         value="support",
         execution_order=1,
     )

@@ -3,16 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Generator
-from uuid import uuid4
 from datetime import UTC, datetime, timedelta
+from uuid import uuid4
 
-from app.sla.models import SLAEvent, SLAPolicy
 import pytest
 from fastapi.testclient import TestClient
 from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.analytics.repository import AnalyticsRepository
+from app.analytics.service import AnalyticsService
 from app.audit.models import AuditLog
 from app.audit.repository import AuditRepository
 from app.audit.service import AuditService
@@ -41,24 +42,24 @@ from app.models.user import User
 from app.organizations.repository import OrganizationRepository
 from app.repositories.project import ProjectRepository
 from app.repositories.user import UserRepository
+from app.sla.models import SLAEvent, SLAPolicy
 from app.tests.database import (
     create_database,
     drop_database,
     get_db_session,
 )
 from app.tickets.repository import TicketRepository
+
 # ---------------------------------------------------------------------
 # Workflow Fixtures
 # ---------------------------------------------------------------------
-
 from app.workflows.models import (
     Workflow,
     WorkflowAction,
     WorkflowCondition,
 )
-from app.workflows.service import WorkflowService
 from app.workflows.repository import WorkflowRepository
-
+from app.workflows.service import WorkflowService
 
 now = datetime.now(UTC)
 
@@ -653,8 +654,8 @@ def workflow(
 
 @pytest.fixture
 def workflow_condition(
-    db_session,
-    workflow,
+    db_session: Session,
+    workflow: Workflow,
 ) -> WorkflowCondition:
     """Create a workflow condition fixture."""
     condition = WorkflowCondition(
@@ -673,8 +674,8 @@ def workflow_condition(
 
 @pytest.fixture
 def workflow_action(
-    db_session,
-    workflow,
+    db_session: Session,
+   workflow: Workflow,
 ) -> WorkflowAction:
     """Create a workflow action fixture."""
     action = WorkflowAction(
@@ -693,7 +694,7 @@ def workflow_action(
 
 @pytest.fixture
 def workflow_repository(
-    db_session,
+     db_session: Session,
 ) -> WorkflowRepository:
     """Create a workflow repository."""
     return WorkflowRepository(db_session)
@@ -701,7 +702,22 @@ def workflow_repository(
 
 @pytest.fixture
 def workflow_service(
-    workflow_repository,
+     workflow_repository: WorkflowRepository,
 ) -> WorkflowService:
     """Create a workflow service."""
     return WorkflowService(workflow_repository)
+
+@pytest.fixture
+def analytics_repository(
+    db_session: Session,
+) -> AnalyticsRepository:
+    """Create a workflow repository."""
+    return AnalyticsRepository(db_session)
+
+
+@pytest.fixture
+def analytics_service(
+    analytics_repository: AnalyticsRepository,
+) -> AnalyticsService:
+    """Create a analytics service."""
+    return AnalyticsService(analytics_repository)

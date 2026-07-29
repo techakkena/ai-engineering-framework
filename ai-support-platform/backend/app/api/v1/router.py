@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.analytics.router import router as analytics_router
 from app.attachments.router import router as attachment_router
 from app.audit.router import router as audit_router
 from app.auth.router import router as auth_router
@@ -13,12 +14,12 @@ from app.knowledge.router import router as knowledge_router
 from app.notifications.router import router as notification_router
 from app.organizations.router import router as organization_router
 from app.projects.router import router as project_router
+from app.sla.router import router as sla_router
 from app.teams.router import router as teams_router
 from app.tickets.router import router as ticket_router
 from app.users.router import router as user_router
-from fastapi import APIRouter
-from app.sla.router import router as sla_router
 from app.workflows.router import router as workflows_router
+from fastapi import APIRouter
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -38,3 +39,4 @@ api_router.include_router(file_router)
 api_router.include_router(attachment_router)
 api_router.include_router(sla_router)
 api_router.include_router(workflows_router)
+api_router.include_router(analytics_router)

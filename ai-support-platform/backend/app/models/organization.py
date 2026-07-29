@@ -99,7 +99,7 @@ class Organization(BaseModel):
         cascade="all, delete-orphan",
     )
 
-    sla_policies: Mapped[list["SLAPolicy"]] = relationship(
+    sla_policies: Mapped[list[SLAPolicy]] = relationship(
         "SLAPolicy",
         back_populates="organization",
         cascade="all, delete-orphan",

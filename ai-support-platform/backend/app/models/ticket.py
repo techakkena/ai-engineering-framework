@@ -89,7 +89,7 @@ class Ticket(BaseModel):
         back_populates="assigned_tickets",
     )
 
-    sla_event: Mapped["SLAEvent | None"] = relationship(
+    sla_event: Mapped[SLAEvent | None] = relationship(
         "SLAEvent",
         back_populates="ticket",
         uselist=False,

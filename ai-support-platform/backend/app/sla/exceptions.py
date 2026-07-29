@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from app.core.exceptions import (
-    ValidationException,
     AuthenticationException,
     ResourceNotFoundException,
+    ValidationException,
 )
-
 from app.sla.constants import (
     EVENT_NOT_FOUND,
     INACTIVE_POLICY,

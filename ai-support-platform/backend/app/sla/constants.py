@@ -23,6 +23,8 @@ DEFAULT_RESOLUTION_MINUTES: int = 480
 
 
 class SLAPriority(StrEnum):
+    """Priority levels for SLA policies."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"

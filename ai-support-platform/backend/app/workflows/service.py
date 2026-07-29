@@ -46,7 +46,6 @@ class WorkflowService:
         workflow_in: WorkflowCreate,
     ) -> Workflow:
         """Create a workflow."""
-
         workflow = Workflow(
             organization_id=workflow_in.organization_id,
             name=workflow_in.name,

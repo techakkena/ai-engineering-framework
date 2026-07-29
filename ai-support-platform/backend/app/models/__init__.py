@@ -9,8 +9,8 @@ from app.models.user import User
 from app.models.user_role import UserRole
 from app.workflows.models import (
     Workflow,
-    WorkflowCondition,
     WorkflowAction,
+    WorkflowCondition,
 )
 
 __all__ = [

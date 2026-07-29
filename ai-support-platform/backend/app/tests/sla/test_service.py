@@ -7,7 +7,8 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from app.models.organization import Organization
 from app.models.ticket import Ticket
-from app.sla.exceptions import InactiveSLAPolicyException,SLAPolicyNotFoundException
+from app.sla.constants import SLAPriority
+from app.sla.exceptions import InactiveSLAPolicyException, SLAPolicyNotFoundException
 from app.sla.models import SLAEvent, SLAPolicy
 from app.sla.repository import SLARepository
 from app.sla.schemas import (
@@ -16,7 +17,6 @@ from app.sla.schemas import (
 )
 from app.sla.service import SLAService
 from sqlalchemy.orm import Session
-from app.sla.constants import SLAPriority
 
 
 @pytest.fixture
@@ -250,7 +250,6 @@ def test_list_active_policies(
     sla_policy: SLAPolicy,
 ) -> None:
     """Only active policies should be returned."""
-
     policies = service.list_policies(
         active_only=True,
     )
@@ -262,7 +261,6 @@ def test_list_policies_by_organization(
     sla_policy: SLAPolicy,
 ) -> None:
     """Filter policies by organization."""
-
     policies = service.list_policies(
         organization_id=sla_policy.organization_id,
     )
@@ -275,7 +273,6 @@ def test_record_first_response_marks_breached(
     sla_event: SLAEvent,
 ) -> None:
     """Late first response marks SLA breached."""
-
     sla_event.first_response_due = (
         datetime.now(UTC) - timedelta(minutes=10)
     )
@@ -294,7 +291,6 @@ def test_resolve_ticket_marks_breached(
     sla_event: SLAEvent,
 ) -> None:
     """Late resolution marks SLA breached."""
-
     sla_event.resolution_due = (
         datetime.now(UTC) - timedelta(minutes=10)
     )
