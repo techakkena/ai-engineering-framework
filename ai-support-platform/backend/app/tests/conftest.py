@@ -47,6 +47,17 @@ from app.tests.database import (
     get_db_session,
 )
 from app.tickets.repository import TicketRepository
+# ---------------------------------------------------------------------
+# Workflow Fixtures
+# ---------------------------------------------------------------------
+
+from app.workflows.models import (
+    Workflow,
+    WorkflowAction,
+    WorkflowCondition,
+)
+from app.workflows.service import WorkflowService
+from app.workflows.repository import WorkflowRepository
 
 
 now = datetime.now(UTC)
@@ -618,3 +629,79 @@ def sla_event_factory(
         return event
 
     return factory
+
+@pytest.fixture
+def workflow(
+    db_session: Session,
+    organization: Organization,
+) -> Workflow:
+    """Create a workflow fixture."""
+    workflow = Workflow(
+        organization_id=organization.id,
+        name="Default Workflow",
+        description="Default workflow",
+        trigger="ticket_created",
+        is_active=True,
+    )
+
+    db_session.add(workflow)
+    db_session.commit()
+    db_session.refresh(workflow)
+
+    return workflow
+
+
+@pytest.fixture
+def workflow_condition(
+    db_session,
+    workflow,
+) -> WorkflowCondition:
+    """Create a workflow condition fixture."""
+    condition = WorkflowCondition(
+        workflow_id=workflow.id,
+        field="priority",
+        operator="eq",
+        value="high",
+    )
+
+    db_session.add(condition)
+    db_session.commit()
+    db_session.refresh(condition)
+
+    return condition
+
+
+@pytest.fixture
+def workflow_action(
+    db_session,
+    workflow,
+) -> WorkflowAction:
+    """Create a workflow action fixture."""
+    action = WorkflowAction(
+        workflow_id=workflow.id,
+        action="assign_user",
+        value="support-agent",
+        execution_order=1,
+    )
+
+    db_session.add(action)
+    db_session.commit()
+    db_session.refresh(action)
+
+    return action
+
+
+@pytest.fixture
+def workflow_repository(
+    db_session,
+) -> WorkflowRepository:
+    """Create a workflow repository."""
+    return WorkflowRepository(db_session)
+
+
+@pytest.fixture
+def workflow_service(
+    workflow_repository,
+) -> WorkflowService:
+    """Create a workflow service."""
+    return WorkflowService(workflow_repository)

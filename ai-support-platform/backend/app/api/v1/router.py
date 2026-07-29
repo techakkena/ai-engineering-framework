@@ -18,6 +18,7 @@ from app.tickets.router import router as ticket_router
 from app.users.router import router as user_router
 from fastapi import APIRouter
 from app.sla.router import router as sla_router
+from app.workflows.router import router as workflows_router
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -36,3 +37,4 @@ api_router.include_router(email_router)
 api_router.include_router(file_router)
 api_router.include_router(attachment_router)
 api_router.include_router(sla_router)
+api_router.include_router(workflows_router)

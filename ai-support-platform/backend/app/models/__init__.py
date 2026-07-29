@@ -7,6 +7,11 @@ from app.models.role_permission import RolePermission
 from app.models.ticket import Ticket
 from app.models.user import User
 from app.models.user_role import UserRole
+from app.workflows.models import (
+    Workflow,
+    WorkflowCondition,
+    WorkflowAction,
+)
 
 __all__ = [
     "Organization",
@@ -16,4 +21,7 @@ __all__ = [
     "Ticket",
     "User",
     "UserRole",
+    "Workflow",
+    "WorkflowCondition",
+    "WorkflowAction",
 ]
