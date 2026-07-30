@@ -12,6 +12,10 @@ from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.ai.chat.constants import ConversationStatus, MessageStatus, MessageType
+from app.ai.chat.models import Conversation, ConversationMessage
+from app.ai.chat.repository import ConversationRepository
+from app.ai.chat.service import ConversationService
 from app.ai.repository import AIRepository
 from app.ai.service import AIService
 from app.analytics.repository import AnalyticsRepository
@@ -20,6 +24,7 @@ from app.audit.models import AuditLog
 from app.audit.repository import AuditRepository
 from app.audit.service import AuditService
 from app.auth.password import hash_password
+from app.customers.models import Customer
 from app.database.session import get_db
 from app.email.constants import (
     EmailPriority,
@@ -746,3 +751,56 @@ def ai_service(
 ) -> AIService:
     """Create an AI service."""
     return AIService(ai_repository)
+
+
+@pytest.fixture
+def conversation(
+    organization: Organization,
+    user: User,
+    customer: Customer,
+    ticket: Ticket,
+) -> Conversation:
+    """Create a conversation fixture."""
+    return Conversation(
+        id=uuid4(),
+        organization_id=organization.id,
+        customer_id=customer.id,
+        ticket_id=ticket.id,
+        created_by=user.id,
+        title="Test Conversation",
+        provider="openai",
+        model="gpt-5.5",
+        status=ConversationStatus.ACTIVE,
+    )
+
+
+@pytest.fixture
+def conversation_message(
+    conversation: Conversation,
+) -> ConversationMessage:
+    """Create a conversation message fixture."""
+    return ConversationMessage(
+        id=uuid4(),
+        conversation_id=conversation.id,
+        role=MessageType.USER,
+        content="Hello AI!",
+        token_count=5,
+        latency_ms=100,
+        status=MessageStatus.COMPLETED,
+    )
+
+
+@pytest.fixture
+def conversation_repository(
+    db_session: Session,
+) -> ConversationRepository:
+    """Create a conversation repository."""
+    return ConversationRepository(db_session)
+
+
+@pytest.fixture
+def conversation_service(
+    conversation_repository: ConversationRepository,
+) -> ConversationService:
+    """Create a conversation service."""
+    return ConversationService(conversation_repository)

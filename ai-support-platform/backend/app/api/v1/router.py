@@ -23,16 +23,21 @@ from fastapi import APIRouter
 
 api_router = APIRouter(prefix="/api/v1")
 
+# Core
 api_router.include_router(auth_router)
 api_router.include_router(organization_router)
 api_router.include_router(teams_router)
 api_router.include_router(user_router)
 api_router.include_router(project_router)
+
+# Support
 api_router.include_router(customer_router)
 api_router.include_router(ticket_router)
 api_router.include_router(comment_router)
 api_router.include_router(attachment_router)
 api_router.include_router(notification_router)
+
+# Business
 api_router.include_router(email_router)
 api_router.include_router(knowledge_router)
 api_router.include_router(sla_router)
