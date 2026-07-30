@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 from uuid import UUID
-from datetime import UTC, datetime
+
 from app.ai.chat.constants import ConversationStatus, MessageStatus, MessageType
 from app.ai.chat.exceptions import (
     ConversationArchivedError,

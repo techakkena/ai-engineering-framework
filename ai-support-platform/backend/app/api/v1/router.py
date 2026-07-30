@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.ai.knowledge.router import router as knowledge_router
 from app.ai.router import router as ai_router
 from app.analytics.router import router as analytics_router
 from app.attachments.router import router as attachment_router
@@ -10,7 +11,7 @@ from app.auth.router import router as auth_router
 from app.comments.router import router as comment_router
 from app.customers.router import router as customer_router
 from app.email.router import router as email_router
-from app.knowledge.router import router as knowledge_router
+from app.knowledge.router import router as ai_knowledge_router
 from app.notifications.router import router as notification_router
 from app.organizations.router import router as organization_router
 from app.projects.router import router as project_router
@@ -47,3 +48,4 @@ api_router.include_router(analytics_router)
 
 # AI
 api_router.include_router(ai_router)
+api_router.include_router(ai_knowledge_router)

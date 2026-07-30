@@ -16,6 +16,8 @@ from app.ai.chat.constants import ConversationStatus, MessageStatus, MessageType
 from app.ai.chat.models import Conversation, ConversationMessage
 from app.ai.chat.repository import ConversationRepository
 from app.ai.chat.service import ConversationService
+from app.ai.knowledge.repository import AIKnowledgeRepository
+from app.ai.knowledge.service import AIKnowledgeService
 from app.ai.repository import AIRepository
 from app.ai.service import AIService
 from app.analytics.repository import AnalyticsRepository
@@ -804,3 +806,19 @@ def conversation_service(
 ) -> ConversationService:
     """Create a conversation service."""
     return ConversationService(conversation_repository)
+
+
+@pytest.fixture
+def ai_knowledge_repository(
+    db_session: Session,
+) -> AIKnowledgeRepository:
+    """Return AI knowledge repository."""
+    return AIKnowledgeRepository(db_session)
+
+
+@pytest.fixture
+def ai_knowledge_service(
+    ai_knowledge_repository: AIKnowledgeRepository,
+) -> AIKnowledgeService:
+    """Return AI knowledge service."""
+    return AIKnowledgeService(ai_knowledge_repository)
