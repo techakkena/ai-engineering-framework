@@ -69,6 +69,15 @@ from app.workflows.models import (
 )
 from app.workflows.repository import WorkflowRepository
 from app.workflows.service import WorkflowService
+from app.ai.embeddings.constants import (
+    EmbeddingProvider,
+    EmbeddingSourceType,
+    EmbeddingStatus,
+)
+from app.ai.embeddings.models import Embedding
+from app.ai.embeddings.repository import AIEmbeddingRepository
+from app.ai.embeddings.service import AIEmbeddingService
+from app.ai.embeddings.schemas import EmbeddingCreate
 
 now = datetime.now(UTC)
 
@@ -822,3 +831,68 @@ def ai_knowledge_service(
 ) -> AIKnowledgeService:
     """Return AI knowledge service."""
     return AIKnowledgeService(ai_knowledge_repository)
+
+
+@pytest.fixture
+def embedding_repository(
+    db_session: Session,
+) -> AIEmbeddingRepository:
+    """Create an embedding repository."""
+    return AIEmbeddingRepository(
+        db_session,
+    )
+
+
+@pytest.fixture
+def embedding_service(
+    embedding_repository: AIEmbeddingRepository,
+) -> AIEmbeddingService:
+    """Create an embedding service."""
+    return AIEmbeddingService(
+        embedding_repository,
+    )
+
+
+@pytest.fixture
+def embedding(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> Embedding:
+    """Create a test embedding."""
+
+    embedding = Embedding(
+        organization_id=organization.id,
+        knowledge_id=None,
+        provider=EmbeddingProvider.OPENAI,
+        model="text-embedding-3-small",
+        source_type=EmbeddingSourceType.DOCUMENT,
+        source_id=uuid4(),
+        content="Test embedding",
+        dimensions=1536,
+        vector=[0.1, 0.2, 0.3],
+        metadata_json={},
+        status=EmbeddingStatus.READY,
+        created_by=user.id,
+        updated_by=user.id,
+    )
+
+    db_session.add(embedding)
+    db_session.commit()
+    db_session.refresh(embedding)
+
+    return embedding
+
+
+@pytest.fixture
+def embedding_create() -> EmbeddingCreate:
+    """Create an embedding request."""
+
+    return EmbeddingCreate(
+        provider=EmbeddingProvider.OPENAI,
+        model="text-embedding-3-small",
+        source_type=EmbeddingSourceType.DOCUMENT,
+        source_id=uuid4(),
+        content="Sample embedding",
+        metadata={},
+    )

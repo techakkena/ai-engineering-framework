@@ -21,6 +21,7 @@ from app.tickets.router import router as ticket_router
 from app.users.router import router as user_router
 from app.workflows.router import router as workflows_router
 from fastapi import APIRouter
+from app.ai.embeddings.router import router as embeddings_router
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -49,3 +50,4 @@ api_router.include_router(analytics_router)
 # AI
 api_router.include_router(ai_router)
 api_router.include_router(ai_knowledge_router)
+api_router.include_router(embeddings_router)
