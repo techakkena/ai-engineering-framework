@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from app.models.ticket import Ticket
     from app.sla.models import SLAPolicy
 
+
 class Organization(BaseModel):
     """Organization entity."""
 

@@ -49,11 +49,9 @@ def create_mock_service() -> MagicMock:
         inactive=2,
     )
 
-    service.get_organization_metrics.return_value = (
-        OrganizationMetrics(
-            total=5,
-            active=4,
-        )
+    service.get_organization_metrics.return_value = OrganizationMetrics(
+        total=5,
+        active=4,
     )
 
     service.get_workflow_metrics.return_value = WorkflowMetrics(

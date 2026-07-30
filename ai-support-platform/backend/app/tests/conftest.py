@@ -12,6 +12,8 @@ from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.ai.repository import AIRepository
+from app.ai.service import AIService
 from app.analytics.repository import AnalyticsRepository
 from app.analytics.service import AnalyticsService
 from app.audit.models import AuditLog
@@ -62,6 +64,7 @@ from app.workflows.repository import WorkflowRepository
 from app.workflows.service import WorkflowService
 
 now = datetime.now(UTC)
+
 
 @pytest.fixture(autouse=True)
 def setup_database() -> Generator[None]:
@@ -508,6 +511,7 @@ def audit_log(
 
     return audit_log
 
+
 @pytest.fixture
 def sla_policy(
     db_session: Session,
@@ -533,6 +537,7 @@ def sla_policy(
     db_session.refresh(policy)
 
     return policy
+
 
 @pytest.fixture
 def sla_policy_factory(
@@ -570,6 +575,7 @@ def sla_policy_factory(
 
     return factory
 
+
 @pytest.fixture
 def sla_event(
     db_session: Session,
@@ -597,6 +603,7 @@ def sla_event(
     db_session.refresh(event)
 
     return event
+
 
 @pytest.fixture
 def sla_event_factory(
@@ -630,6 +637,7 @@ def sla_event_factory(
         return event
 
     return factory
+
 
 @pytest.fixture
 def workflow(
@@ -675,7 +683,7 @@ def workflow_condition(
 @pytest.fixture
 def workflow_action(
     db_session: Session,
-   workflow: Workflow,
+    workflow: Workflow,
 ) -> WorkflowAction:
     """Create a workflow action fixture."""
     action = WorkflowAction(
@@ -694,7 +702,7 @@ def workflow_action(
 
 @pytest.fixture
 def workflow_repository(
-     db_session: Session,
+    db_session: Session,
 ) -> WorkflowRepository:
     """Create a workflow repository."""
     return WorkflowRepository(db_session)
@@ -702,10 +710,11 @@ def workflow_repository(
 
 @pytest.fixture
 def workflow_service(
-     workflow_repository: WorkflowRepository,
+    workflow_repository: WorkflowRepository,
 ) -> WorkflowService:
     """Create a workflow service."""
     return WorkflowService(workflow_repository)
+
 
 @pytest.fixture
 def analytics_repository(
@@ -721,3 +730,19 @@ def analytics_service(
 ) -> AnalyticsService:
     """Create a analytics service."""
     return AnalyticsService(analytics_repository)
+
+
+@pytest.fixture
+def ai_repository(
+    db_session: Session,
+) -> AIRepository:
+    """Create an AI repository."""
+    return AIRepository(db_session)
+
+
+@pytest.fixture
+def ai_service(
+    ai_repository: AIRepository,
+) -> AIService:
+    """Create an AI service."""
+    return AIService(ai_repository)

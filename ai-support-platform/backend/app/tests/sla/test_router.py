@@ -6,8 +6,6 @@ from collections.abc import Generator
 from unittest.mock import MagicMock
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.main import app
 from app.sla.constants import SLAPriority
 from app.sla.dependencies import get_sla_service
@@ -16,6 +14,8 @@ from app.sla.schemas import (
     SLAPolicyCreate,
     SLAPolicyUpdate,
 )
+from fastapi.testclient import TestClient
+
 
 @pytest.fixture
 def service() -> MagicMock:
@@ -26,7 +26,7 @@ def service() -> MagicMock:
 @pytest.fixture
 def client(
     service: MagicMock,
-) -> Generator[TestClient, None, None]:
+) -> Generator[TestClient]:
     """Return configured test client."""
     app.dependency_overrides[get_sla_service] = lambda: service
 

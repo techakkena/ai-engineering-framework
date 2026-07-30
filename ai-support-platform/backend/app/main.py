@@ -64,4 +64,5 @@ async def root() -> dict[str, str]:
         "status": "running",
     }
 
+
 print("REGISTERING EXCEPTION HANDLERS")

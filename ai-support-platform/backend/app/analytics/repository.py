@@ -36,51 +36,75 @@ class AnalyticsRepository:
 
     def count_organizations(self) -> int:
         """Return total organizations."""
-        return self._session.scalar(
-            select(func.count()).select_from(Organization),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(Organization),
+            )
+            or 0
+        )
 
     def count_users(self) -> int:
         """Return total users."""
-        return self._session.scalar(
-            select(func.count()).select_from(User),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(User),
+            )
+            or 0
+        )
 
     def count_projects(self) -> int:
         """Return total projects."""
-        return self._session.scalar(
-            select(func.count()).select_from(Project),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(Project),
+            )
+            or 0
+        )
 
     def count_tickets(self) -> int:
         """Return total tickets."""
-        return self._session.scalar(
-            select(func.count()).select_from(Ticket),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(Ticket),
+            )
+            or 0
+        )
 
     def count_workflows(self) -> int:
         """Return total workflows."""
-        return self._session.scalar(
-            select(func.count()).select_from(Workflow),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(Workflow),
+            )
+            or 0
+        )
 
     def count_knowledge_articles(self) -> int:
         """Return total knowledge articles."""
-        return self._session.scalar(
-            select(func.count()).select_from(KnowledgeArticle),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(KnowledgeArticle),
+            )
+            or 0
+        )
 
     def count_emails(self) -> int:
         """Return total emails."""
-        return self._session.scalar(
-            select(func.count()).select_from(Email),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(Email),
+            )
+            or 0
+        )
 
     def count_audit_logs(self) -> int:
         """Return total audit logs."""
-        return self._session.scalar(
-            select(func.count()).select_from(AuditLog),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(AuditLog),
+            )
+            or 0
+        )
 
     # ------------------------------------------------------------------
     # Ticket Metrics
@@ -88,35 +112,45 @@ class AnalyticsRepository:
 
     def count_open_tickets(self) -> int:
         """Return open tickets."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(Ticket)
-            .where(Ticket.status == "open"),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(Ticket).where(Ticket.status == "open"),
+            )
+            or 0
+        )
 
     def count_pending_tickets(self) -> int:
         """Return pending tickets."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(Ticket)
-            .where(Ticket.status == "pending"),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count())
+                .select_from(Ticket)
+                .where(Ticket.status == "pending"),
+            )
+            or 0
+        )
 
     def count_resolved_tickets(self) -> int:
         """Return resolved tickets."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(Ticket)
-            .where(Ticket.status == "resolved"),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count())
+                .select_from(Ticket)
+                .where(Ticket.status == "resolved"),
+            )
+            or 0
+        )
 
     def count_closed_tickets(self) -> int:
         """Return closed tickets."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(Ticket)
-            .where(Ticket.status == "closed"),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count())
+                .select_from(Ticket)
+                .where(Ticket.status == "closed"),
+            )
+            or 0
+        )
 
     # ------------------------------------------------------------------
     # SLA
@@ -124,20 +158,26 @@ class AnalyticsRepository:
 
     def count_sla_policies(self) -> int:
         """Return SLA policies."""
-        return self._session.scalar(
-            select(func.count()).select_from(SLAPolicy),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(SLAPolicy),
+            )
+            or 0
+        )
 
     def count_sla_breaches(self) -> int:
         """Return SLA breaches."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(SLAEvent)
-            .where(
-                (SLAEvent.first_response_breached.is_(True))
-                | (SLAEvent.resolution_breached.is_(True)),
-            ),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count())
+                .select_from(SLAEvent)
+                .where(
+                    (SLAEvent.first_response_breached.is_(True))
+                    | (SLAEvent.resolution_breached.is_(True)),
+                ),
+            )
+            or 0
+        )
 
     # ------------------------------------------------------------------
     # Active Metrics
@@ -145,24 +185,31 @@ class AnalyticsRepository:
 
     def count_active_users(self) -> int:
         """Return active users."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(User)
-            .where(User.is_active.is_(True)),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count()).select_from(User).where(User.is_active.is_(True)),
+            )
+            or 0
+        )
 
     def count_active_organizations(self) -> int:
         """Return active organizations."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(Organization)
-            .where(Organization.is_active.is_(True)),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count())
+                .select_from(Organization)
+                .where(Organization.is_active.is_(True)),
+            )
+            or 0
+        )
 
     def count_active_workflows(self) -> int:
         """Return active workflows."""
-        return self._session.scalar(
-            select(func.count())
-            .select_from(Workflow)
-            .where(Workflow.is_active.is_(True)),
-        ) or 0
+        return (
+            self._session.scalar(
+                select(func.count())
+                .select_from(Workflow)
+                .where(Workflow.is_active.is_(True)),
+            )
+            or 0
+        )

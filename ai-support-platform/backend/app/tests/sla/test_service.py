@@ -231,7 +231,7 @@ def test_list_breached_tickets(
 
     assert len(events) == 1
     assert events[0].ticket_id == sla_event.ticket_id
-    
+
 
 def test_get_sla_event(
     service: SLAService,
@@ -256,6 +256,7 @@ def test_list_active_policies(
 
     assert sla_policy in policies
 
+
 def test_list_policies_by_organization(
     service: SLAService,
     sla_policy: SLAPolicy,
@@ -267,15 +268,14 @@ def test_list_policies_by_organization(
 
     assert sla_policy in policies
 
+
 def test_record_first_response_marks_breached(
     db_session: Session,
     service: SLAService,
     sla_event: SLAEvent,
 ) -> None:
     """Late first response marks SLA breached."""
-    sla_event.first_response_due = (
-        datetime.now(UTC) - timedelta(minutes=10)
-    )
+    sla_event.first_response_due = datetime.now(UTC) - timedelta(minutes=10)
 
     db_session.commit()
 
@@ -285,15 +285,14 @@ def test_record_first_response_marks_breached(
 
     assert event.first_response_breached is True
 
+
 def test_resolve_ticket_marks_breached(
     db_session: Session,
     service: SLAService,
     sla_event: SLAEvent,
 ) -> None:
     """Late resolution marks SLA breached."""
-    sla_event.resolution_due = (
-        datetime.now(UTC) - timedelta(minutes=10)
-    )
+    sla_event.resolution_due = datetime.now(UTC) - timedelta(minutes=10)
 
     db_session.commit()
 

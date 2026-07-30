@@ -28,7 +28,7 @@ class SLAPolicyCreate(SLAPolicyBase):
     """Schema for creating an SLA policy."""
 
     organization_id: UUID
-    
+
 
 class SLAPolicyUpdate(BaseModel):
     """Schema for updating an SLA policy."""

@@ -88,13 +88,76 @@ class Settings(BaseSettings):
         default=30,
         ge=1,
     )
-
     # -------------------------------------------------------------------------
+    # AI Providers
+    # -------------------------------------------------------------------------
+
     # OpenAI
-    # -------------------------------------------------------------------------
-
     OPENAI_API_KEY: str = Field(
         default="",
+    )
+
+    OPENAI_ORGANIZATION: str = Field(
+        default="",
+    )
+
+    OPENAI_PROJECT: str = Field(
+        default="",
+    )
+
+    OPENAI_BASE_URL: str = Field(
+        default="https://api.openai.com/v1",
+    )
+
+    OPENAI_TIMEOUT: int = Field(
+        default=60,
+        ge=1,
+    )
+
+    # Anthropic
+
+    ANTHROPIC_API_KEY: str = ""
+    ANTHROPIC_BASE_URL: str = "https://api.anthropic.com"
+    ANTHROPIC_TIMEOUT: int = 60
+
+    # Google Gemini
+
+    GEMINI_API_KEY: str = Field(
+        default="",
+    )
+
+    GEMINI_BASE_URL: str = Field(
+        default="https://generativelanguage.googleapis.com",
+    )
+
+    # Groq
+
+    GROQ_API_KEY: str = Field(
+        default="",
+    )
+
+    GROQ_BASE_URL: str = Field(
+        default="https://api.groq.com/openai/v1",
+    )
+
+    # Ollama
+
+    OLLAMA_BASE_URL: str = Field(
+        default="http://localhost:11434",
+    )
+
+    # Azure OpenAI
+
+    AZURE_OPENAI_API_KEY: str = Field(
+        default="",
+    )
+
+    AZURE_OPENAI_ENDPOINT: str = Field(
+        default="",
+    )
+
+    AZURE_OPENAI_API_VERSION: str = Field(
+        default="2025-01-01-preview",
     )
 
     # -------------------------------------------------------------------------

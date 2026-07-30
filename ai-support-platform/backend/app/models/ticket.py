@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.sla.models import SLAEvent
 
+
 class Ticket(BaseModel):
     """Support ticket."""
 
