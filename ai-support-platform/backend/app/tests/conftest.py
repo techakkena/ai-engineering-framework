@@ -27,6 +27,8 @@ from app.ai.embeddings.schemas import EmbeddingCreate
 from app.ai.embeddings.service import AIEmbeddingService
 from app.ai.knowledge.repository import AIKnowledgeRepository
 from app.ai.knowledge.service import AIKnowledgeService
+from app.ai.rag.repository import RAGRepository
+from app.ai.rag.service import RAGService
 from app.ai.repository import AIRepository
 from app.ai.service import AIService
 from app.ai.vectorstore.repository import VectorStoreRepository
@@ -912,3 +914,19 @@ def vectorstore_service(
 ) -> VectorStoreService:
     """Create a Vector Store service."""
     return VectorStoreService(vectorstore_repository)
+
+
+@pytest.fixture
+def rag_repository(
+    db_session: Session,
+) -> RAGRepository:
+    """Create a RAG repository."""
+    return RAGRepository(db_session)
+
+
+@pytest.fixture
+def rag_service(
+    rag_repository: RAGRepository,
+) -> RAGService:
+    """Create a RAG service."""
+    return RAGService(rag_repository)
