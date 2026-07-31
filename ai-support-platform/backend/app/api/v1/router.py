@@ -5,6 +5,7 @@ from __future__ import annotations
 from app.ai.embeddings.router import router as embeddings_router
 from app.ai.knowledge.router import router as ai_knowledge_router
 from app.ai.rag.router import router as rag_router
+from app.ai.retrieval.router import router as retrieval_router
 from app.ai.router import router as ai_router
 from app.ai.vectorstore.router import router as vectorstore_router
 from app.analytics.router import router as analytics_router
@@ -67,3 +68,4 @@ api_router.include_router(ai_knowledge_router)
 api_router.include_router(embeddings_router)
 api_router.include_router(vectorstore_router)
 api_router.include_router(rag_router)
+api_router.include_router(retrieval_router)

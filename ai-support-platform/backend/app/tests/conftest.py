@@ -30,6 +30,8 @@ from app.ai.knowledge.service import AIKnowledgeService
 from app.ai.rag.repository import RAGRepository
 from app.ai.rag.service import RAGService
 from app.ai.repository import AIRepository
+from app.ai.retrieval.repository import RetrievalRepository
+from app.ai.retrieval.service import RetrievalService
 from app.ai.service import AIService
 from app.ai.vectorstore.repository import VectorStoreRepository
 from app.ai.vectorstore.service import VectorStoreService
@@ -930,3 +932,33 @@ def rag_service(
 ) -> RAGService:
     """Create a RAG service."""
     return RAGService(rag_repository)
+
+
+@pytest.fixture
+def retrieval_repository(
+    db_session: Session,
+) -> RetrievalRepository:
+    """Create a retrieval repository.
+
+    Args:
+        db_session: Database session.
+
+    Returns:
+        Retrieval repository.
+    """
+    return RetrievalRepository(db_session)
+
+
+@pytest.fixture
+def retrieval_service(
+    retrieval_repository: RetrievalRepository,
+) -> RetrievalService:
+    """Create a retrieval service.
+
+    Args:
+        retrieval_repository: Retrieval repository.
+
+    Returns:
+        Retrieval service.
+    """
+    return RetrievalService(retrieval_repository)

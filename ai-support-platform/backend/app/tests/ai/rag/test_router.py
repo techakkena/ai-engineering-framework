@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.ai.rag.constants import DEFAULT_PROVIDER
-import pytest
 from app.ai.rag.exceptions import UnsupportedLLMProviderError
+
 
 def test_generate(
     client: TestClient,
@@ -111,7 +112,8 @@ def test_invalid_provider_returns_error(
                 "provider": "invalid-provider",
             },
         )
-     
+
+
 def test_generate_returns_success(
     client: TestClient,
     auth_headers: dict[str, str],
