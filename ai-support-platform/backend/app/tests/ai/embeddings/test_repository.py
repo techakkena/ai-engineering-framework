@@ -33,7 +33,6 @@ def create_embedding(
     Returns:
         A populated Embedding model.
     """
-
     return Embedding(
         organization_id=organization_id,
         knowledge_id=None,
@@ -57,7 +56,6 @@ def test_create_embedding(
     user: User,
 ) -> None:
     """Test creating an embedding."""
-
     repository = AIEmbeddingRepository(db_session)
 
     embedding = create_embedding(
@@ -77,7 +75,6 @@ def test_get_by_id(
     user: User,
 ) -> None:
     """Test retrieving an embedding."""
-
     repository = AIEmbeddingRepository(db_session)
 
     embedding = repository.create(
@@ -101,7 +98,6 @@ def test_get_by_id_not_found(
     organization: Organization,
 ) -> None:
     """Test retrieving a missing embedding."""
-
     repository = AIEmbeddingRepository(db_session)
 
     result = repository.get_by_id(
@@ -118,7 +114,6 @@ def test_list_embeddings(
     user: User,
 ) -> None:
     """Test listing embeddings."""
-
     repository = AIEmbeddingRepository(db_session)
 
     repository.create(
@@ -148,7 +143,6 @@ def test_count_embeddings(
     user: User,
 ) -> None:
     """Test counting embeddings."""
-
     repository = AIEmbeddingRepository(db_session)
 
     repository.create(
@@ -179,7 +173,6 @@ def test_update_embedding(
     user: User,
 ) -> None:
     """Test updating an embedding."""
-
     repository = AIEmbeddingRepository(db_session)
 
     embedding = repository.create(
@@ -202,7 +195,6 @@ def test_delete_embedding(
     user: User,
 ) -> None:
     """Test deleting an embedding."""
-
     repository = AIEmbeddingRepository(db_session)
 
     embedding = repository.create(

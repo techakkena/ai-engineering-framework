@@ -23,7 +23,6 @@ def create_embedding(
     user: User,
 ) -> Embedding:
     """Create an embedding for router tests."""
-
     embedding = Embedding(
         organization_id=organization.id,
         knowledge_id=None,
@@ -52,7 +51,6 @@ def test_create_embedding(
     auth_headers: dict[str, str],
 ) -> None:
     """Test creating an embedding."""
-
     payload = {
         "provider": "openai",
         "model": "text-embedding-3-small",
@@ -85,7 +83,6 @@ def test_get_embedding(
     user: User,
 ) -> None:
     """Test retrieving an embedding."""
-
     embedding = create_embedding(
         db_session,
         organization,
@@ -110,7 +107,6 @@ def test_get_embedding_not_found(
     auth_headers: dict[str, str],
 ) -> None:
     """Test retrieving a missing embedding."""
-
     response = client.get(
         f"/api/v1/embeddings/{uuid4()}",
         headers=auth_headers,
@@ -127,7 +123,6 @@ def test_list_embeddings(
     user: User,
 ) -> None:
     """Test listing embeddings."""
-
     create_embedding(
         db_session,
         organization,
@@ -163,7 +158,6 @@ def test_update_embedding(
     user: User,
 ) -> None:
     """Test updating an embedding."""
-
     embedding = create_embedding(
         db_session,
         organization,
@@ -197,7 +191,6 @@ def test_delete_embedding(
     user: User,
 ) -> None:
     """Test deleting an embedding."""
-
     embedding = create_embedding(
         db_session,
         organization,
@@ -229,7 +222,6 @@ def test_delete_embedding_not_found(
     auth_headers: dict[str, str],
 ) -> None:
     """Test deleting a missing embedding."""
-
     response = client.delete(
         f"/api/v1/embeddings/{uuid4()}",
         headers=auth_headers,

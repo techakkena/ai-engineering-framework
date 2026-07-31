@@ -61,7 +61,6 @@ def test_create_embedding(
     user: User,
 ) -> None:
     """Test creating an embedding."""
-
     response = embedding_service.create(
         organization_id=organization.id,
         user_id=user.id,
@@ -82,7 +81,6 @@ def test_create_duplicate_embedding(
     user: User,
 ) -> None:
     """Test duplicate embedding creation."""
-
     embedding_service.create(
         organization_id=organization.id,
         user_id=user.id,
@@ -104,7 +102,6 @@ def test_get_embedding(
     user: User,
 ) -> None:
     """Test retrieving an embedding."""
-
     created = embedding_service.create(
         organization_id=organization.id,
         user_id=user.id,
@@ -124,7 +121,6 @@ def test_get_embedding_not_found(
     organization: Organization,
 ) -> None:
     """Test retrieving a missing embedding."""
-
     with pytest.raises(EmbeddingNotFoundError):
         embedding_service.get(
             embedding_id=uuid4(),
@@ -138,7 +134,6 @@ def test_list_embeddings(
     embedding_service: AIEmbeddingService,
 ) -> None:
     """Test listing embeddings."""
-
     response = embedding_service.list_embeddings(
         organization_id=organization.id,
         offset=0,
@@ -156,7 +151,6 @@ def test_update_embedding(
     user: User,
 ) -> None:
     """Test updating an embedding."""
-
     repository = AIEmbeddingRepository(db_session)
 
     embedding = repository.create(
@@ -197,7 +191,6 @@ def test_update_embedding_not_found(
     user: User,
 ) -> None:
     """Test updating a missing embedding."""
-
     with pytest.raises(EmbeddingNotFoundError):
         embedding_service.update(
             embedding_id=uuid4(),
@@ -216,7 +209,6 @@ def test_delete_embedding(
     user: User,
 ) -> None:
     """Test deleting an embedding."""
-
     created = embedding_service.create(
         organization_id=organization.id,
         user_id=user.id,
@@ -240,7 +232,6 @@ def test_delete_embedding_not_found(
     organization: Organization,
 ) -> None:
     """Test deleting a missing embedding."""
-
     with pytest.raises(EmbeddingNotFoundError):
         embedding_service.delete(
             embedding_id=uuid4(),

@@ -16,10 +16,21 @@ from app.ai.chat.constants import ConversationStatus, MessageStatus, MessageType
 from app.ai.chat.models import Conversation, ConversationMessage
 from app.ai.chat.repository import ConversationRepository
 from app.ai.chat.service import ConversationService
+from app.ai.embeddings.constants import (
+    EmbeddingProvider,
+    EmbeddingSourceType,
+    EmbeddingStatus,
+)
+from app.ai.embeddings.models import Embedding
+from app.ai.embeddings.repository import AIEmbeddingRepository
+from app.ai.embeddings.schemas import EmbeddingCreate
+from app.ai.embeddings.service import AIEmbeddingService
 from app.ai.knowledge.repository import AIKnowledgeRepository
 from app.ai.knowledge.service import AIKnowledgeService
 from app.ai.repository import AIRepository
 from app.ai.service import AIService
+from app.ai.vectorstore.repository import VectorStoreRepository
+from app.ai.vectorstore.service import VectorStoreService
 from app.analytics.repository import AnalyticsRepository
 from app.analytics.service import AnalyticsService
 from app.audit.models import AuditLog
@@ -69,15 +80,6 @@ from app.workflows.models import (
 )
 from app.workflows.repository import WorkflowRepository
 from app.workflows.service import WorkflowService
-from app.ai.embeddings.constants import (
-    EmbeddingProvider,
-    EmbeddingSourceType,
-    EmbeddingStatus,
-)
-from app.ai.embeddings.models import Embedding
-from app.ai.embeddings.repository import AIEmbeddingRepository
-from app.ai.embeddings.service import AIEmbeddingService
-from app.ai.embeddings.schemas import EmbeddingCreate
 
 now = datetime.now(UTC)
 
@@ -860,7 +862,6 @@ def embedding(
     user: User,
 ) -> Embedding:
     """Create a test embedding."""
-
     embedding = Embedding(
         organization_id=organization.id,
         knowledge_id=None,
@@ -887,7 +888,6 @@ def embedding(
 @pytest.fixture
 def embedding_create() -> EmbeddingCreate:
     """Create an embedding request."""
-
     return EmbeddingCreate(
         provider=EmbeddingProvider.OPENAI,
         model="text-embedding-3-small",
@@ -896,3 +896,19 @@ def embedding_create() -> EmbeddingCreate:
         content="Sample embedding",
         metadata={},
     )
+
+
+@pytest.fixture
+def vectorstore_repository(
+    db_session: Session,
+) -> VectorStoreRepository:
+    """Create a Vector Store repository."""
+    return VectorStoreRepository(db_session)
+
+
+@pytest.fixture
+def vectorstore_service(
+    vectorstore_repository: VectorStoreRepository,
+) -> VectorStoreService:
+    """Create a Vector Store service."""
+    return VectorStoreService(vectorstore_repository)
