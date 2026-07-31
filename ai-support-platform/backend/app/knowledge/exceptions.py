@@ -2,29 +2,38 @@
 
 from __future__ import annotations
 
+from http import HTTPStatus
+
 from app.core.exceptions import AppException
 
 
 class KnowledgeError(AppException):
-    """Base exception for all knowledge module errors."""
+    """Base exception for the knowledge module."""
 
     def __init__(
         self,
         message: str = "Knowledge module error.",
+        status_code: HTTPStatus = HTTPStatus.BAD_REQUEST,
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=status_code,
+        )
 
 
 class KnowledgeNotFoundError(KnowledgeError):
-    """Raised when a knowledge article is not found."""
+    """Raised when a knowledge article cannot be found."""
 
     def __init__(
         self,
         message: str = "Knowledge article not found.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.NOT_FOUND,
+        )
 
 
 class KnowledgeAlreadyExistsError(KnowledgeError):
@@ -35,7 +44,10 @@ class KnowledgeAlreadyExistsError(KnowledgeError):
         message: str = "Knowledge article already exists.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.CONFLICT,
+        )
 
 
 class KnowledgeSlugExistsError(KnowledgeError):
@@ -46,7 +58,10 @@ class KnowledgeSlugExistsError(KnowledgeError):
         message: str = "Knowledge article slug already exists.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.CONFLICT,
+        )
 
 
 class KnowledgeValidationError(KnowledgeError):
@@ -57,7 +72,10 @@ class KnowledgeValidationError(KnowledgeError):
         message: str = "Knowledge article validation failed.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
+        )
 
 
 class KnowledgePublishError(KnowledgeError):
@@ -68,7 +86,10 @@ class KnowledgePublishError(KnowledgeError):
         message: str = "Knowledge article cannot be published.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
 
 
 class KnowledgeArchiveError(KnowledgeError):
@@ -79,48 +100,63 @@ class KnowledgeArchiveError(KnowledgeError):
         message: str = "Knowledge article cannot be archived.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
 
 
 class KnowledgePermissionDeniedError(KnowledgeError):
-    """Raised when the user lacks permission."""
+    """Raised when the user lacks permission to access a knowledge article."""
 
     def __init__(
         self,
         message: str = "Permission denied for knowledge article.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.FORBIDDEN,
+        )
 
 
 class KnowledgeVersionConflictError(KnowledgeError):
-    """Raised when a version conflict occurs."""
+    """Raised when a knowledge article version conflict occurs."""
 
     def __init__(
         self,
         message: str = "Knowledge article version conflict.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.CONFLICT,
+        )
 
 
 class KnowledgeDeletedError(KnowledgeError):
-    """Raised when an operation targets a deleted article."""
+    """Raised when an operation targets a deleted knowledge article."""
 
     def __init__(
         self,
         message: str = "Knowledge article has been deleted.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.GONE,
+        )
 
 
 class KnowledgeSearchError(KnowledgeError):
-    """Raised when knowledge search fails."""
+    """Raised when a knowledge search operation fails."""
 
     def __init__(
         self,
         message: str = "Knowledge search failed.",
     ) -> None:
         """Initialize the exception."""
-        super().__init__(message)
+        super().__init__(
+            message=message,
+            status_code=HTTPStatus.BAD_REQUEST,
+        )

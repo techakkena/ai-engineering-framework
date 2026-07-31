@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from app.ai.documents.router import router as document_router
 from app.ai.embeddings.router import router as embeddings_router
+from app.ai.ingestion.router import router as ingestion_router
 from app.ai.knowledge.router import router as ai_knowledge_router
 from app.ai.rag.router import router as rag_router
 from app.ai.retrieval.router import router as retrieval_router
@@ -69,3 +71,5 @@ api_router.include_router(embeddings_router)
 api_router.include_router(vectorstore_router)
 api_router.include_router(rag_router)
 api_router.include_router(retrieval_router)
+api_router.include_router(document_router)
+api_router.include_router(ingestion_router)

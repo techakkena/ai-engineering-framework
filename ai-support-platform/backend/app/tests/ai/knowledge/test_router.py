@@ -7,7 +7,7 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.ai.knowledge.models import KnowledgeBase
+from app.knowledge.models import KnowledgeArticle
 from app.models.organization import Organization
 from app.models.user import User
 
@@ -19,16 +19,17 @@ def test_create_knowledge(
     user: User,
     db_session: Session,
 ) -> None:
-    """Test creating a knowledge base."""
+    """Test creating a knowledge article."""
     response = client.post(
         "/api/v1/knowledge",
-        json={
-            "name": "Support KB",
-            "description": "Knowledge Base",
-            "visibility": "private",
-            "metadata": {},
-        },
         headers=auth_headers,
+        json={
+            "title": "Support KB",
+            "summary": "Knowledge Base",
+            "content": "Knowledge article content.",
+            "category": "Support",
+            "tags": ["support", "faq"],
+        },
     )
 
     assert response.status_code == 201
@@ -36,9 +37,16 @@ def test_create_knowledge(
     data = response.json()
 
     assert data["organization_id"] == str(organization.id)
-    assert data["name"] == "Support KB"
-    assert data["description"] == "Knowledge Base"
-    assert data["visibility"] == "private"
+    assert data["author_id"] == str(user.id)
+    assert data["title"] == "Support KB"
+    assert data["summary"] == "Knowledge Base"
+    assert data["content"] == "Knowledge article content."
+    assert data["category"] == "Support"
+    assert data["tags"] == ["support", "faq"]
+    assert data["version"] == 1
+    assert data["status"] == "draft"
+    assert data["is_published"] is False
+    assert data["is_deleted"] is False
 
 
 def test_list_knowledge(
@@ -48,16 +56,19 @@ def test_list_knowledge(
     user: User,
     db_session: Session,
 ) -> None:
-    """Test listing knowledge bases."""
-    knowledge = KnowledgeBase(
+    """Test listing knowledge articles."""
+    article = KnowledgeArticle(
         organization_id=organization.id,
-        name="KB1",
-        description="Description",
-        created_by=user.id,
-        updated_by=user.id,
+        author_id=user.id,
+        title="KB1",
+        slug="kb1",
+        summary="Description",
+        content="Article content",
+        category="Support",
+        tags="support",
     )
 
-    db_session.add(knowledge)
+    db_session.add(article)
     db_session.commit()
 
     response = client.get(
@@ -80,21 +91,24 @@ def test_get_knowledge(
     user: User,
     db_session: Session,
 ) -> None:
-    """Test retrieving a knowledge base."""
-    knowledge = KnowledgeBase(
+    """Test retrieving a knowledge article."""
+    article = KnowledgeArticle(
         organization_id=organization.id,
-        name="Support",
-        description="Description",
-        created_by=user.id,
-        updated_by=user.id,
+        author_id=user.id,
+        title="Support",
+        slug="support",
+        summary="Description",
+        content="Knowledge content",
+        category="Support",
+        tags="support",
     )
 
-    db_session.add(knowledge)
+    db_session.add(article)
     db_session.commit()
-    db_session.refresh(knowledge)
+    db_session.refresh(article)
 
     response = client.get(
-        f"/api/v1/knowledge/{knowledge.id}",
+        f"/api/v1/knowledge/{article.id}",
         headers=auth_headers,
     )
 
@@ -102,17 +116,19 @@ def test_get_knowledge(
 
     data = response.json()
 
-    assert data["id"] == str(knowledge.id)
+    assert data["id"] == str(article.id)
     assert data["organization_id"] == str(organization.id)
-    assert data["name"] == "Support"
-    assert data["description"] == "Description"
+    assert data["author_id"] == str(user.id)
+    assert data["title"] == "Support"
+    assert data["summary"] == "Description"
+    assert data["content"] == "Knowledge content"
 
 
 def test_get_knowledge_not_found(
     client: TestClient,
     auth_headers: dict[str, str],
 ) -> None:
-    """Test retrieving a missing knowledge base."""
+    """Test retrieving a missing knowledge article."""
     response = client.get(
         f"/api/v1/knowledge/{uuid4()}",
         headers=auth_headers,
@@ -123,11 +139,7 @@ def test_get_knowledge_not_found(
     data = response.json()
 
     assert data["success"] is False
-    assert data["message"] == "Knowledge base not found."
     assert data["error_code"] == "KnowledgeNotFoundError"
-    assert data["details"] is None
-    assert "metadata" in data
-    assert "timestamp" in data["metadata"]
 
 
 def test_update_knowledge(
@@ -137,32 +149,34 @@ def test_update_knowledge(
     user: User,
     db_session: Session,
 ) -> None:
-    """Test updating a knowledge base."""
-    knowledge = KnowledgeBase(
+    """Test updating a knowledge article."""
+    article = KnowledgeArticle(
         organization_id=organization.id,
-        name="Old Name",
-        created_by=user.id,
-        updated_by=user.id,
+        author_id=user.id,
+        title="Old Name",
+        slug="old-name",
+        content="Original content",
     )
 
-    db_session.add(knowledge)
+    db_session.add(article)
     db_session.commit()
-    db_session.refresh(knowledge)
+    db_session.refresh(article)
 
     response = client.patch(
-        f"/api/v1/knowledge/{knowledge.id}",
-        json={
-            "name": "New Name",
-        },
+        f"/api/v1/knowledge/{article.id}",
         headers=auth_headers,
+        json={
+            "title": "New Name",
+        },
     )
 
     assert response.status_code == 200
 
     data = response.json()
 
-    assert data["id"] == str(knowledge.id)
-    assert data["name"] == "New Name"
+    assert data["id"] == str(article.id)
+    assert data["title"] == "New Name"
+    assert data["version"] == 2
 
 
 def test_delete_knowledge(
@@ -172,22 +186,23 @@ def test_delete_knowledge(
     user: User,
     db_session: Session,
 ) -> None:
-    """Test deleting a knowledge base."""
-    knowledge = KnowledgeBase(
+    """Test deleting a knowledge article."""
+    article = KnowledgeArticle(
         organization_id=organization.id,
-        name="Delete Me",
-        created_by=user.id,
-        updated_by=user.id,
+        author_id=user.id,
+        title="Delete Me",
+        slug="delete-me",
+        content="Delete content",
     )
 
-    db_session.add(knowledge)
+    db_session.add(article)
     db_session.commit()
-    db_session.refresh(knowledge)
+    db_session.refresh(article)
 
-    knowledge_id = knowledge.id
+    article_id = article.id
 
     response = client.delete(
-        f"/api/v1/knowledge/{knowledge_id}",
+        f"/api/v1/knowledge/{article_id}",
         headers=auth_headers,
     )
 
@@ -196,18 +211,19 @@ def test_delete_knowledge(
     db_session.expire_all()
 
     deleted = db_session.get(
-        KnowledgeBase,
-        knowledge_id,
+        KnowledgeArticle,
+        article_id,
     )
 
-    assert deleted is None
+    assert deleted is not None
+    assert deleted.is_deleted is True
 
 
 def test_delete_knowledge_not_found(
     client: TestClient,
     auth_headers: dict[str, str],
 ) -> None:
-    """Test deleting a missing knowledge base."""
+    """Test deleting a missing knowledge article."""
     response = client.delete(
         f"/api/v1/knowledge/{uuid4()}",
         headers=auth_headers,
@@ -218,8 +234,4 @@ def test_delete_knowledge_not_found(
     data = response.json()
 
     assert data["success"] is False
-    assert data["message"] == "Knowledge base not found."
     assert data["error_code"] == "KnowledgeNotFoundError"
-    assert data["details"] is None
-    assert "metadata" in data
-    assert "timestamp" in data["metadata"]

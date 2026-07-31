@@ -16,6 +16,9 @@ from app.ai.chat.constants import ConversationStatus, MessageStatus, MessageType
 from app.ai.chat.models import Conversation, ConversationMessage
 from app.ai.chat.repository import ConversationRepository
 from app.ai.chat.service import ConversationService
+from app.ai.documents.models import Document
+from app.ai.documents.repository import DocumentRepository
+from app.ai.documents.service import DocumentService
 from app.ai.embeddings.constants import (
     EmbeddingProvider,
     EmbeddingSourceType,
@@ -25,6 +28,19 @@ from app.ai.embeddings.models import Embedding
 from app.ai.embeddings.repository import AIEmbeddingRepository
 from app.ai.embeddings.schemas import EmbeddingCreate
 from app.ai.embeddings.service import AIEmbeddingService
+from app.ai.ingestion.constants import (
+    DEFAULT_CHUNK_OVERLAP,
+    DEFAULT_CHUNK_SIZE,
+    DEFAULT_STATUS,
+)
+from app.ai.ingestion.models import IngestionJob
+from app.ai.ingestion.repository import IngestionRepository
+from app.ai.ingestion.schemas import (
+    IngestionCreateRequest,
+    IngestionUpdateRequest,
+)
+from app.ai.ingestion.service import IngestionService
+from app.ai.knowledge.models import KnowledgeBase
 from app.ai.knowledge.repository import AIKnowledgeRepository
 from app.ai.knowledge.service import AIKnowledgeService
 from app.ai.rag.repository import RAGRepository
@@ -962,3 +978,166 @@ def retrieval_service(
         Retrieval service.
     """
     return RetrievalService(retrieval_repository)
+
+
+@pytest.fixture
+def document(
+    db_session: Session,
+    organization: Organization,
+    knowledge_base: KnowledgeBase,
+    user: User,
+) -> Document:
+    """Create a persisted AI document."""
+    document = Document(
+        organization_id=organization.id,
+        knowledge_id=knowledge_base.id,
+        filename="sample.pdf",
+        original_filename="sample.pdf",
+        content_type="application/pdf",
+        file_size=1024,
+        storage_path="uploads/sample.pdf",
+        checksum="checksum-123",
+        version=1,
+        status="registered",
+        chunk_count=0,
+        embedding_count=0,
+        metadata_json={},
+        created_by=user.id,
+        updated_by=user.id,
+    )
+
+    db_session.add(document)
+    db_session.commit()
+    db_session.refresh(document)
+
+    return document
+
+
+@pytest.fixture
+def document_repository(
+    db_session: Session,
+) -> DocumentRepository:
+    """Return a document repository."""
+    return DocumentRepository(db_session)
+
+
+@pytest.fixture
+def document_service(
+    document_repository: DocumentRepository,
+) -> DocumentService:
+    """Return a document service."""
+    return DocumentService(document_repository)
+
+
+@pytest.fixture
+def ingestion_repository(
+    db_session: Session,
+) -> IngestionRepository:
+    """Create an ingestion repository."""
+    return IngestionRepository(db_session)
+
+
+@pytest.fixture
+def ingestion_service(
+    ingestion_repository: IngestionRepository,
+) -> IngestionService:
+    """Create an AI ingestion service."""
+    return IngestionService(
+        ingestion_repository,
+    )
+
+
+@pytest.fixture
+def ingestion_create_request(
+    organization: Organization,
+    document: Document,
+) -> IngestionCreateRequest:
+    """Return a sample ingestion creation request."""
+    return IngestionCreateRequest(
+        organization_id=organization.id,
+        document_id=document.id,
+        file_type="application/pdf",
+        chunk_size=DEFAULT_CHUNK_SIZE,
+        chunk_overlap=DEFAULT_CHUNK_OVERLAP,
+        metadata={},
+    )
+
+
+@pytest.fixture
+def ingestion_update_request() -> IngestionUpdateRequest:
+    """Return a sample ingestion update request."""
+    return IngestionUpdateRequest(
+        status="processing",
+        chunks_created=12,
+        embeddings_created=12,
+        metadata={"updated": True},
+    )
+
+
+@pytest.fixture
+def ingestion_job(
+    organization: Organization,
+    document: Document,
+    user: User,
+) -> IngestionJob:
+    """Return an ingestion job."""
+    return IngestionJob(
+        organization_id=organization.id,
+        document_id=document.id,
+        status=DEFAULT_STATUS,
+        file_type="application/pdf",
+        chunk_size=DEFAULT_CHUNK_SIZE,
+        chunk_overlap=DEFAULT_CHUNK_OVERLAP,
+        chunks_created=0,
+        embeddings_created=0,
+        error_message=None,
+        metadata_json={},
+        created_by=user.id,
+        updated_by=user.id,
+    )
+
+
+@pytest.fixture
+def persisted_ingestion_job(
+    db_session: Session,
+    ingestion_job: IngestionJob,
+) -> IngestionJob:
+    """Persist an ingestion job."""
+    db_session.add(ingestion_job)
+    db_session.commit()
+    db_session.refresh(ingestion_job)
+
+    return ingestion_job
+
+
+@pytest.fixture
+def knowledge_base(
+    db_session: Session,
+    organization: Organization,
+    user: User,
+) -> KnowledgeBase:
+    """Create a persisted knowledge base."""
+    knowledge = KnowledgeBase(
+        organization_id=organization.id,
+        name="Test Knowledge Base",
+        description="Knowledge base for tests",
+        metadata_json={},
+        created_by=user.id,
+        updated_by=user.id,
+    )
+
+    db_session.add(knowledge)
+    db_session.commit()
+    db_session.refresh(knowledge)
+
+    return knowledge
+
+
+@pytest.fixture
+def authenticated_client(
+    client: TestClient,
+    auth_headers: dict[str, str],
+) -> TestClient:
+    """Create an authenticated test client."""
+    client.headers.update(auth_headers)
+    return client

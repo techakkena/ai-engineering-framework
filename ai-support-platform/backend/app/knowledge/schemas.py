@@ -5,7 +5,12 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    model_validator,
+)
 
 from app.knowledge.types import KnowledgeStatus
 
@@ -84,6 +89,27 @@ class KnowledgeResponse(KnowledgeBase):
 
     created_at: datetime
     updated_at: datetime
+
+    @model_validator(mode="before")
+    @classmethod
+    def convert_tags(
+        cls,
+        value: object,
+    ) -> object:
+        """Convert database tag string into a list."""
+        if not hasattr(value, "tags"):
+            return value
+
+        tags = value.tags
+
+        if isinstance(tags, str):
+            value.tags = (
+                [tag.strip() for tag in tags.split(",") if tag.strip()] if tags else []
+            )
+        elif tags is None:
+            value.tags = []
+
+        return value
 
 
 class KnowledgeListResponse(BaseModel):
