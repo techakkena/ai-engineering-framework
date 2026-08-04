@@ -8,6 +8,7 @@ from app.ai.constants import (
     AIRequestType,
     PromptRole,
 )
+from app.ai.providers.service import AIService
 from app.ai.schemas import (
     AIConfiguration,
     AIHealth,
@@ -15,7 +16,6 @@ from app.ai.schemas import (
     AIResponse,
     PromptMessage,
 )
-from app.ai.service import AIService
 
 
 def test_generate(

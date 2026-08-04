@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from app.audit.models import AuditLog
 from app.email.models import Email
-from app.knowledge.models import KnowledgeArticle
 from app.models.organization import Organization
 from app.models.project import Project
 from app.models.ticket import Ticket
@@ -75,15 +74,6 @@ class AnalyticsRepository:
         return (
             self._session.scalar(
                 select(func.count()).select_from(Workflow),
-            )
-            or 0
-        )
-
-    def count_knowledge_articles(self) -> int:
-        """Return total knowledge articles."""
-        return (
-            self._session.scalar(
-                select(func.count()).select_from(KnowledgeArticle),
             )
             or 0
         )

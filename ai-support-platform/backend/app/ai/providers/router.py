@@ -7,14 +7,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import StreamingResponse
 
-from app.ai.dependencies import get_ai_service
+from app.ai.providers.dependencies import get_ai_service
+from app.ai.providers.service import AIService
 from app.ai.schemas import (
     AIConfiguration,
     AIHealth,
     AIRequest,
     AIResponse,
 )
-from app.ai.service import AIService
 
 router = APIRouter(
     prefix="/ai",

@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from app.ai.dependencies import (
+from app.ai.providers.dependencies import (
     get_ai_repository,
     get_ai_service,
 )
-from app.ai.repository import AIRepository
-from app.ai.router import router
-from app.ai.service import AIService
+from app.ai.providers.repository import AIRepository
+from app.ai.providers.router import router
+from app.ai.providers.service import AIService
 
 __all__ = [
     "AIRepository",

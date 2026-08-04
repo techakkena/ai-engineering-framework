@@ -9,7 +9,7 @@ from app.ai.constants import (
     AIModel,
     AIProvider,
 )
-from app.ai.repository import AIRepository
+from app.ai.providers.repository import AIRepository
 from app.ai.schemas import AIConfiguration
 
 

@@ -34,7 +34,6 @@ def create_service() -> tuple[
     repository.count_closed_tickets.return_value = 25
     repository.count_sla_breaches.return_value = 3
     repository.count_workflows.return_value = 12
-    repository.count_knowledge_articles.return_value = 18
     repository.count_active_users.return_value = 18
     repository.count_active_organizations.return_value = 4
     repository.count_active_workflows.return_value = 10

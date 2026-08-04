@@ -75,15 +75,6 @@ def test_count_workflows(
     assert isinstance(result, int)
 
 
-def test_count_knowledge_articles(
-    analytics_repository: AnalyticsRepository,
-) -> None:
-    """Count knowledge articles."""
-    result = analytics_repository.count_knowledge_articles()
-
-    assert isinstance(result, int)
-
-
 def test_count_sla_policies(
     analytics_repository: AnalyticsRepository,
 ) -> None:

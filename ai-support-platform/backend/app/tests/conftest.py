@@ -8,7 +8,6 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
-from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -43,12 +42,12 @@ from app.ai.ingestion.service import IngestionService
 from app.ai.knowledge.models import KnowledgeBase
 from app.ai.knowledge.repository import AIKnowledgeRepository
 from app.ai.knowledge.service import AIKnowledgeService
+from app.ai.providers.repository import AIRepository
+from app.ai.providers.service import AIService
 from app.ai.rag.repository import RAGRepository
 from app.ai.rag.service import RAGService
-from app.ai.repository import AIRepository
 from app.ai.retrieval.repository import RetrievalRepository
 from app.ai.retrieval.service import RetrievalService
-from app.ai.service import AIService
 from app.ai.vectorstore.repository import VectorStoreRepository
 from app.ai.vectorstore.service import VectorStoreService
 from app.analytics.repository import AnalyticsRepository
@@ -72,9 +71,6 @@ from app.files.constants import (
     FileStatus,
 )
 from app.files.models import File
-from app.knowledge.models import KnowledgeArticle
-from app.knowledge.repository import KnowledgeRepository
-from app.knowledge.types import KnowledgeStatus
 from app.main import app
 from app.models.organization import Organization
 from app.models.ticket import Ticket
@@ -294,78 +290,6 @@ def project_repository(
 ) -> ProjectRepository:
     """Return project repository."""
     return ProjectRepository(db_session)
-
-
-@pytest.fixture
-def knowledge_repository(
-    db_session: Session,
-) -> KnowledgeRepository:
-    """Return knowledge repository."""
-    return KnowledgeRepository(db_session)
-
-
-@pytest.fixture
-def knowledge_article(
-    db_session: Session,
-    organization: Organization,
-    user: User,
-) -> KnowledgeArticle:
-    """Create a persisted knowledge article."""
-    article = KnowledgeArticle(
-        organization_id=organization.id,
-        title="Getting Started",
-        slug=slugify("Getting Started"),
-        summary="Knowledge summary",
-        content="Knowledge content",
-        category="General",
-        tags="docs,help",
-        status=KnowledgeStatus.DRAFT,
-        version=1,
-        is_published=False,
-        is_deleted=False,
-        author_id=user.id,
-    )
-
-    db_session.add(article)
-    db_session.commit()
-    db_session.refresh(article)
-
-    return article
-
-
-@pytest.fixture
-def knowledge_article_factory(
-    db_session: Session,
-    organization: Organization,
-    user: User,
-) -> Callable[..., KnowledgeArticle]:
-    """Return a persisted knowledge article factory."""
-
-    def factory(
-        title: str = "Article",
-    ) -> KnowledgeArticle:
-        article = KnowledgeArticle(
-            organization_id=organization.id,
-            author_id=user.id,
-            title=title,
-            slug=slugify(title),
-            summary="Summary",
-            content="Content",
-            category="General",
-            tags="tag1,tag2",
-            status=KnowledgeStatus.DRAFT,
-            version=1,
-            is_published=False,
-            is_deleted=False,
-        )
-
-        db_session.add(article)
-        db_session.commit()
-        db_session.refresh(article)
-
-        return article
-
-    return factory
 
 
 @pytest.fixture

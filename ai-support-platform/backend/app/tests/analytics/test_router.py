@@ -32,7 +32,6 @@ def create_mock_service() -> MagicMock:
         closed_tickets=25,
         sla_breaches=3,
         workflows=12,
-        knowledge_articles=18,
     )
 
     service.get_ticket_metrics.return_value = TicketMetrics(

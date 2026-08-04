@@ -18,7 +18,6 @@ class DashboardSummary(BaseModel):
     closed_tickets: int
     sla_breaches: int
     workflows: int
-    knowledge_articles: int
 
 
 class TicketMetrics(BaseModel):

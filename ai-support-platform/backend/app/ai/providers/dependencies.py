@@ -7,8 +7,8 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.ai.repository import AIRepository
-from app.ai.service import AIService
+from app.ai.providers.repository import AIRepository
+from app.ai.providers.service import AIService
 from app.database.session import get_db
 
 

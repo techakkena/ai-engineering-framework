@@ -39,7 +39,6 @@ class AnalyticsService:
             closed_tickets=self._repository.count_closed_tickets(),
             sla_breaches=self._repository.count_sla_breaches(),
             workflows=self._repository.count_workflows(),
-            knowledge_articles=self._repository.count_knowledge_articles(),
         )
 
     def get_ticket_metrics(self) -> TicketMetrics:

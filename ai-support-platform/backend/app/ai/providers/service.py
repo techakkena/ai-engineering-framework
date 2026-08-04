@@ -6,9 +6,9 @@ from collections.abc import AsyncIterator
 from datetime import UTC, datetime
 
 from app.ai.constants import AIModel, AIProvider
-from app.ai.llm import LLM
 from app.ai.providers.base import AIProvider as BaseAIProvider
-from app.ai.repository import AIRepository
+from app.ai.providers.llm import LLM
+from app.ai.providers.repository import AIRepository
 from app.ai.schemas import (
     AIConfiguration,
     AIHealth,
