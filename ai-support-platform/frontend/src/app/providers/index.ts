@@ -1,5 +1,5 @@
 export * from "./AppProviders";
-export * from "./AuthProvider";
+export * from "./auth/AuthProvider";
 export * from "./QueryProvider";
 export * from "./RouterProvider";
-export * from "./ThemeProvider";
+export * from "./theme/ThemeProvider";

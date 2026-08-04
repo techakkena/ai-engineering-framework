@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
 
 import { Navigate } from "react-router-dom";
 
-import { useAuth } from "../providers/AuthProvider";
+import { useAuth } from "../providers/auth/useAuth";
 import { PROTECTED_ROUTES } from "./route-config";
 
 interface PublicRouteProps {

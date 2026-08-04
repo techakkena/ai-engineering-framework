@@ -6,10 +6,10 @@
 
 import type { PropsWithChildren } from "react";
 
-import { AuthProvider } from "./AuthProvider";
+import { AuthProvider } from "./auth/AuthProvider";
 import { QueryProvider } from "./QueryProvider";
 import { RouterProvider } from "./RouterProvider";
-import { ThemeProvider } from "./ThemeProvider";
+import { ThemeProvider } from "../providers/theme";
 
 /**
  * Root application providers.
