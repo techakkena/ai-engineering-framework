@@ -1,56 +1,78 @@
 /**
  * Dashboard validation schemas.
+ *
+ * Provides Zod schemas and inferred types for
+ * dashboard query validation.
  */
 
 import { z } from "zod";
 
-export const dashboardStatsSchema = z.object({
-  totalOrganizations: z.number().nonnegative(),
-  totalTeams: z.number().nonnegative(),
-  totalUsers: z.number().nonnegative(),
-  totalProjects: z.number().nonnegative(),
-  totalCustomers: z.number().nonnegative(),
-  totalTickets: z.number().nonnegative(),
-  openTickets: z.number().nonnegative(),
-  closedTickets: z.number().nonnegative(),
-});
+/**
+ * Dashboard refresh interval schema.
+ */
+export const dashboardRefreshIntervalSchema =
+  z.enum([
+    "off",
+    "30s",
+    "1m",
+    "5m",
+    "15m",
+  ]);
 
-export const dashboardSummarySchema = z.object({
-  stats: dashboardStatsSchema,
-});
+/**
+ * Dashboard date range schema.
+ */
+export const dashboardDateRangeSchema =
+  z.enum([
+    "today",
+    "7d",
+    "30d",
+    "90d",
+    "1y",
+  ]);
 
-export const dashboardActivitySchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  createdAt: z.string(),
-});
+/**
+ * Dashboard query schema.
+ */
+export const dashboardQuerySchema =
+  z.object({
+    /**
+     * Selected date range.
+     */
+    dateRange:
+      dashboardDateRangeSchema.default(
+        "30d",
+      ),
 
-export const dashboardChartDataSchema = z.object({
-  label: z.string(),
-  value: z.number(),
-});
+    /**
+     * Auto refresh interval.
+     */
+    refreshInterval:
+      dashboardRefreshIntervalSchema.default(
+        "off",
+      ),
+  });
 
-export const dashboardResponseSchema = z.object({
-  summary: dashboardSummarySchema,
-  activities: z.array(dashboardActivitySchema),
-  charts: z.array(dashboardChartDataSchema),
-});
+/**
+ * Dashboard query values.
+ */
+export type DashboardQueryValues =
+  z.infer<
+    typeof dashboardQuerySchema
+  >;
 
-export type DashboardStatsSchema = z.infer<typeof dashboardStatsSchema>;
+/**
+ * Dashboard refresh interval.
+ */
+export type DashboardRefreshInterval =
+  z.infer<
+    typeof dashboardRefreshIntervalSchema
+  >;
 
-export type DashboardSummarySchema = z.infer<
-  typeof dashboardSummarySchema
->;
-
-export type DashboardActivitySchema = z.infer<
-  typeof dashboardActivitySchema
->;
-
-export type DashboardChartDataSchema = z.infer<
-  typeof dashboardChartDataSchema
->;
-
-export type DashboardResponseSchema = z.infer<
-  typeof dashboardResponseSchema
->;
+/**
+ * Dashboard date range.
+ */
+export type DashboardDateRange =
+  z.infer<
+    typeof dashboardDateRangeSchema
+  >;

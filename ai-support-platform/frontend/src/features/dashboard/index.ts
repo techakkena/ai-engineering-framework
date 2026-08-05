@@ -4,10 +4,14 @@
 
 export * from "./api/dashboard.api";
 
-export * from "./components/DashboardCharts";
+export * from "./components/AIInsightsCard";
+export * from "./components/DashboardHeader";
+export * from "./components/DashboardStats";
+export * from "./components/NotificationSummary";
 export * from "./components/RecentCustomers";
+export * from "./components/RecentProjects";
 export * from "./components/RecentTickets";
-export * from "./components/StatCard";
+export * from "./components/SystemHealthCard";
 
 export * from "./hooks/useDashboard";
 

@@ -1,32 +1,71 @@
 /**
  * Dashboard service.
  *
- * Contains business logic for dashboard operations.
+ * Provides the service layer between the UI and the
+ * dashboard API client.
  */
 
-import { DashboardApi } from "../api/dashboard.api";
-import { dashboardResponseSchema } from "../schemas/dashboard.schema";
-import type { DashboardResponse } from "../types/dashboard.types";
+import {
+  getAIInsights,
+  getDashboard,
+  getSystemHealth,
+  refreshDashboard,
+} from "../api/dashboard.api";
+
+import type {
+  DashboardResponse,
+  SystemHealth,
+  AIInsight,
+} from "../types/dashboard.types";
+
+import type {
+  DashboardQueryValues,
+} from "../schemas/dashboard.schema";
 
 /**
  * Dashboard service.
  */
-export class DashboardService {
+export const dashboardService = {
   /**
-   * Get dashboard data.
+   * Retrieves dashboard data.
+   *
+   * @param query - Dashboard query parameters.
+   * @returns Dashboard response.
    */
-  public static async getDashboard(): Promise<DashboardResponse> {
-    const response = await DashboardApi.getDashboard();
-
-    return dashboardResponseSchema.parse(response);
-  }
+  async getDashboard(
+    query?: DashboardQueryValues,
+  ): Promise<DashboardResponse> {
+    return getDashboard(
+      query,
+    );
+  },
 
   /**
-   * Refresh dashboard data.
+   * Refreshes dashboard data.
+   *
+   * @returns Dashboard response.
    */
-  public static async refreshDashboard(): Promise<DashboardResponse> {
-    const response = await DashboardApi.refreshDashboard();
+  async refreshDashboard(): Promise<DashboardResponse> {
+    return refreshDashboard();
+  },
 
-    return dashboardResponseSchema.parse(response);
-  }
-}
+  /**
+   * Retrieves current system health.
+   *
+   * @returns System health information.
+   */
+  async getSystemHealth(): Promise<SystemHealth> {
+    return getSystemHealth();
+  },
+
+  /**
+   * Retrieves AI insights.
+   *
+   * @returns AI insights.
+   */
+  async getAIInsights(): Promise<
+    readonly AIInsight[]
+  > {
+    return getAIInsights();
+  },
+};

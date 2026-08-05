@@ -1,103 +1,160 @@
 /**
  * Recent tickets component.
- *
- * Displays the latest support tickets.
  */
 
-export interface RecentTicket {
-  /**
-   * Ticket identifier.
-   */
-  readonly id: string;
+import type {
+  DashboardTicket,
+} from "../types/dashboard.types";
 
-  /**
-   * Ticket title.
-   */
-  readonly title: string;
-
-  /**
-   * Ticket status.
-   */
-  readonly status: string;
-
-  /**
-   * Customer name.
-   */
-  readonly customer: string;
-}
-
+/**
+ * Component properties.
+ */
 export interface RecentTicketsProps {
   /**
    * Recent tickets.
    */
-  readonly tickets: readonly RecentTicket[];
+  readonly tickets: readonly DashboardTicket[];
+}
+
+/**
+ * Returns badge classes for a ticket status.
+ *
+ * @param status - Ticket status.
+ * @returns Tailwind CSS classes.
+ */
+function getStatusClasses(
+  status: string,
+): string {
+  switch (
+    status.toLowerCase()
+  ) {
+    case "open":
+      return "bg-blue-100 text-blue-800";
+
+    case "in_progress":
+    case "in progress":
+      return "bg-yellow-100 text-yellow-800";
+
+    case "resolved":
+      return "bg-green-100 text-green-800";
+
+    case "closed":
+      return "bg-gray-100 text-gray-800";
+
+    default:
+      return "bg-gray-100 text-gray-700";
+  }
+}
+
+/**
+ * Returns badge classes for a ticket priority.
+ *
+ * @param priority - Ticket priority.
+ * @returns Tailwind CSS classes.
+ */
+function getPriorityClasses(
+  priority: string,
+): string {
+  switch (
+    priority.toLowerCase()
+  ) {
+    case "critical":
+      return "bg-red-100 text-red-800";
+
+    case "high":
+      return "bg-orange-100 text-orange-800";
+
+    case "medium":
+      return "bg-yellow-100 text-yellow-800";
+
+    case "low":
+      return "bg-green-100 text-green-800";
+
+    default:
+      return "bg-gray-100 text-gray-700";
+  }
 }
 
 /**
  * Recent tickets.
+ *
+ * @param props - Component properties.
+ * @returns Recent tickets component.
  */
 export function RecentTickets({
   tickets,
 }: RecentTicketsProps): React.JSX.Element {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-6 text-xl font-semibold text-slate-900">
-        Recent Tickets
-      </h2>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left">
-          <thead className="border-b">
-            <tr>
-              <th className="py-3 text-sm font-semibold">
-                Ticket
-              </th>
-
-              <th className="py-3 text-sm font-semibold">
-                Customer
-              </th>
-
-              <th className="py-3 text-sm font-semibold">
-                Status
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {tickets.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="py-8 text-center text-slate-500"
-                >
-                  No tickets found.
-                </td>
-              </tr>
-            ) : (
-              tickets.map((ticket) => (
-                <tr
-                  key={ticket.id}
-                  className="border-b last:border-0"
-                >
-                  <td className="py-4">
-                    {ticket.title}
-                  </td>
-
-                  <td className="py-4">
-                    {ticket.customer}
-                  </td>
-
-                  <td className="py-4">
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium">
-                      {ticket.status}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+    <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="border-b border-gray-200 px-6 py-4">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Recent Tickets
+        </h2>
       </div>
-    </div>
+
+      {tickets.length ===
+      0 ? (
+        <div className="p-8 text-center text-gray-500">
+          No recent tickets.
+        </div>
+      ) : (
+        <div className="divide-y divide-gray-200">
+          {tickets.map(
+            (
+              ticket,
+            ) => (
+              <div
+                key={
+                  ticket.id
+                }
+                className="flex flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-900">
+                      {
+                        ticket.ticketNumber
+                      }
+                    </span>
+
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusClasses(
+                        ticket.status,
+                      )}`}
+                    >
+                      {
+                        ticket.status
+                      }
+                    </span>
+
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${getPriorityClasses(
+                        ticket.priority,
+                      )}`}
+                    >
+                      {
+                        ticket.priority
+                      }
+                    </span>
+                  </div>
+
+                  <p className="mt-2 truncate text-sm text-gray-700">
+                    {
+                      ticket.title
+                    }
+                  </p>
+                </div>
+
+                <div className="text-sm text-gray-500">
+                  {new Date(
+                    ticket.createdAt,
+                  ).toLocaleDateString()}
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+      )}
+    </section>
   );
 }

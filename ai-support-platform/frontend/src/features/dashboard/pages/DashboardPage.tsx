@@ -1,96 +1,160 @@
 /**
  * Dashboard page.
- *
- * Enterprise dashboard overview.
  */
 
-import {
-  Building2,
-  FolderKanban,
-  Ticket,
-  Users,
-} from "lucide-react";
+import { useState } from "react";
 
-import { PageContainer } from "../../../layouts";
-import { PageLoader } from "../../../layouts";
-import { Topbar } from "../../../layouts";
-
-import { useDashboard } from "../hooks/useDashboard";
-
-import { DashboardCharts } from "../components/DashboardCharts";
+import { AIInsightsCard } from "../components/AIInsightsCard";
+import { DashboardHeader } from "../components/DashboardHeader";
+import { DashboardStats } from "../components/DashboardStats";
+import { NotificationSummary } from "../components/NotificationSummary";
 import { RecentCustomers } from "../components/RecentCustomers";
+import { RecentProjects } from "../components/RecentProjects";
 import { RecentTickets } from "../components/RecentTickets";
-import { StatCard } from "../components/StatCard";
+import { SystemHealthCard } from "../components/SystemHealthCard";
+
+import {
+  useDashboard,
+  useRefreshDashboard,
+} from "../hooks/useDashboard";
+
+import type { DashboardQueryValues } from "../schemas/dashboard.schema";
 
 /**
  * Dashboard page.
  */
 export function DashboardPage(): React.JSX.Element {
+  const [query, setQuery] =
+    useState<DashboardQueryValues>({
+      dateRange: "30d",
+      refreshInterval: "off",
+    });
+
   const {
     data,
     isLoading,
+    isError,
     error,
-  } = useDashboard();
+  } = useDashboard(query);
+
+  const refreshMutation =
+    useRefreshDashboard();
+
+  /**
+   * Refreshes dashboard data.
+   */
+  const handleRefresh = async (): Promise<void> => {
+    try {
+      await refreshMutation.mutateAsync();
+    } catch (error) {
+      console.error(
+        "Failed to refresh dashboard.",
+        error,
+      );
+    }
+  };
 
   if (isLoading) {
     return (
-      <PageLoader message="Loading dashboard..." />
+      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-500">
+        Loading dashboard...
+      </div>
     );
   }
 
-  if (error || !data) {
+  if (isError) {
     return (
-      <PageContainer title="Dashboard">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-700">
-          Failed to load dashboard data.
-        </div>
-      </PageContainer>
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        {error instanceof Error
+          ? error.message
+          : "Failed to load dashboard."}
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-700">
+        Dashboard data unavailable.
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      <Topbar
-        title="Dashboard"
-        subtitle="Enterprise AI Support Platform Overview"
+    <div className="space-y-6">
+      <DashboardHeader
+        query={query}
+        isRefreshing={
+          refreshMutation.isPending
+        }
+        onRefresh={() => {
+          void handleRefresh();
+        }}
+        onDateRangeChange={(
+          dateRange,
+        ) =>
+          setQuery((previous) => ({
+            ...previous,
+            dateRange,
+          }))
+        }
+        onRefreshIntervalChange={(
+          refreshInterval,
+        ) =>
+          setQuery((previous) => ({
+            ...previous,
+            refreshInterval,
+          }))
+        }
       />
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          title="Organizations"
-          value={data.summary.stats.totalOrganizations}
-          icon={<Building2 size={28} />}
-        />
-
-        <StatCard
-          title="Users"
-          value={data.summary.stats.totalUsers}
-          icon={<Users size={28} />}
-        />
-
-        <StatCard
-          title="Projects"
-          value={data.summary.stats.totalProjects}
-          icon={<FolderKanban size={28} />}
-        />
-
-        <StatCard
-          title="Tickets"
-          value={data.summary.stats.totalTickets}
-          icon={<Ticket size={28} />}
-        />
-      </div>
-
-      <DashboardCharts
-        data={data.charts}
-        title="Support Analytics"
+      <DashboardStats
+        statistics={
+          data.statistics
+        }
       />
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <RecentTickets tickets={[]} />
+        <RecentTickets
+          tickets={
+            data.recentTickets
+          }
+        />
 
-        <RecentCustomers customers={[]} />
+        <RecentCustomers
+          customers={
+            data.recentCustomers
+          }
+        />
       </div>
-    </PageContainer>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <RecentProjects
+          projects={
+            data.recentProjects
+          }
+        />
+
+        <NotificationSummary
+          notifications={
+            data.recentNotifications
+          }
+        />
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <SystemHealthCard
+          health={
+            data.systemHealth
+          }
+        />
+
+        <AIInsightsCard
+          insights={
+            data.aiInsights
+          }
+        />
+      </div>
+    </div>
   );
 }

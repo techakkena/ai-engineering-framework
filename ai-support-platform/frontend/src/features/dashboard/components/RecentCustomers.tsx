@@ -1,103 +1,85 @@
 /**
  * Recent customers component.
- *
- * Displays recently added customers.
  */
 
-export interface RecentCustomer {
-  /**
-   * Customer identifier.
-   */
-  readonly id: string;
+import type {
+  DashboardCustomer,
+} from "../types/dashboard.types";
 
-  /**
-   * Customer name.
-   */
-  readonly name: string;
-
-  /**
-   * Customer email.
-   */
-  readonly email: string;
-
-  /**
-   * Customer status.
-   */
-  readonly status: string;
-}
-
+/**
+ * Component properties.
+ */
 export interface RecentCustomersProps {
   /**
    * Recent customers.
    */
-  readonly customers: readonly RecentCustomer[];
+  readonly customers: readonly DashboardCustomer[];
 }
 
 /**
  * Recent customers.
+ *
+ * @param props - Component properties.
+ * @returns Recent customers component.
  */
 export function RecentCustomers({
   customers,
 }: RecentCustomersProps): React.JSX.Element {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-6 text-xl font-semibold text-slate-900">
-        Recent Customers
-      </h2>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left">
-          <thead className="border-b">
-            <tr>
-              <th className="py-3 text-sm font-semibold">
-                Name
-              </th>
-
-              <th className="py-3 text-sm font-semibold">
-                Email
-              </th>
-
-              <th className="py-3 text-sm font-semibold">
-                Status
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {customers.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="py-8 text-center text-slate-500"
-                >
-                  No customers found.
-                </td>
-              </tr>
-            ) : (
-              customers.map((customer) => (
-                <tr
-                  key={customer.id}
-                  className="border-b last:border-0"
-                >
-                  <td className="py-4 font-medium">
-                    {customer.name}
-                  </td>
-
-                  <td className="py-4 text-slate-600">
-                    {customer.email}
-                  </td>
-
-                  <td className="py-4">
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                      {customer.status}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+    <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="border-b border-gray-200 px-6 py-4">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Recent Customers
+        </h2>
       </div>
-    </div>
+
+      {customers.length ===
+      0 ? (
+        <div className="p-8 text-center text-gray-500">
+          No recent customers.
+        </div>
+      ) : (
+        <div className="divide-y divide-gray-200">
+          {customers.map(
+            (
+              customer,
+            ) => (
+              <div
+                key={
+                  customer.id
+                }
+                className="flex flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between"
+              >
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-base font-semibold text-gray-900">
+                    {
+                      customer.name
+                    }
+                  </h3>
+
+                  <p className="mt-1 truncate text-sm text-gray-600">
+                    {
+                      customer.email
+                    }
+                  </p>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    {
+                      customer.company
+                    }
+                  </p>
+                </div>
+
+                <div className="text-sm text-gray-500">
+                  {new Date(
+                    customer.createdAt,
+                  ).toLocaleDateString()}
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+      )}
+    </section>
   );
 }
